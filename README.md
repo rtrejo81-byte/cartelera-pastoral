@@ -70,7 +70,7 @@ Alternativas: extensión **Live Server** de VS Code, o cualquier servidor estát
 4. En *Source* elige **Deploy from a branch**, rama `main`, carpeta `/ (root)` y guarda.
 5. En uno o dos minutos la web estará en `https://TU-USUARIO.github.io/cartelera-pastoral/`.
 
-Guía detallada, con comandos y solución de problemas: **[docs/GUIA-DESPLIEGUE.md](docs/GUIA-DESPLIEGUE.md)**.
+Guía detallada, con comandos y solución de problemas: **[docs/GUIA-DESPLIEGUE.md](docs/GUIA-DESPLIEGUE.md)**. Ruta corta: **[docs/PUBLICAR-RAPIDO.md](docs/PUBLICAR-RAPIDO.md)**.
 
 ### Revisión con el equipo
 
