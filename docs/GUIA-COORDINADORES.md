@@ -123,6 +123,43 @@ Así la temporal deja de servir.
 
 ---
 
+## Si alguien olvida su contraseña
+
+Como las cuentas usan un correo interno (no reciben mensajes), **no sirve** el botón “Reset password” que envía correo. El administrador debe asignar una nueva.
+
+### Opción A · Recrear el usuario (la más simple)
+
+1. **Authentication → Users**.
+2. Busca el correo interno de la persona, por ejemplo `50376540943@coordinadores.pastoralfamiliar.org`.
+3. Menú de tres puntos → **Delete user**.
+4. **Add user → Create new user** con el mismo correo, una contraseña temporal nueva y **Auto Confirm User**.
+5. Ejecuta de nuevo `coordinators.sql` para devolverle nombre y rol.
+6. Comparte la temporal en privado y pídele cambiarla en **Ajustes → Mi contraseña**.
+
+No se pierde el contenido que haya publicado: las actividades, fotos y avisos no dependen del usuario.
+
+### Opción B · Admin API (sin borrar la cuenta)
+
+Requiere la clave `service_role`, que **nunca** debe ir en la web ni en GitHub. Desde una computadora de confianza:
+
+```bash
+curl -X PUT "https://fpipersxktkkctwdesgs.supabase.co/auth/v1/admin/users/USER_ID" \
+  -H "apikey: SERVICE_ROLE_KEY" \
+  -H "Authorization: Bearer SERVICE_ROLE_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"password":"NuevaTemporal123"}'
+```
+
+El `USER_ID` se ve en Authentication → Users o en la URL del usuario. Si no te sientes cómodo con esto, usa la Opción A.
+
+### Recomendaciones
+
+- Que haya **dos administradores** (Ricardo y Roberto) para que siempre haya quien restablezca.
+- No compartas la `service_role` por WhatsApp ni la pongas en el proyecto.
+- Si más adelante quieren recuperación automática, se pueden usar correos reales o agregar una función de recuperación; hoy no es necesaria para 10 personas.
+
+---
+
 ## Roles y permisos actuales
 
 | Rol | Puede |

@@ -57,7 +57,7 @@ function renderLogin(root) {
                   <b>Estás en modo demostración.</b><br>
                   Puedes entrar con cualquier correo, teléfono o contraseña para conocer el panel. En este modo los datos viven solo en tu navegador.
                 </div>`
-              : `<div class="login-help">¿Olvidaste tu contraseña? Pídele al administrador que la restablezca desde Supabase.</div>`
+              : `<div class="login-help">¿Olvidaste tu contraseña? <a href="#/contactos">Escribe a un administrador</a> y te asignará una temporal. Por seguridad, no se envía por correo.</div>`
           }
           <p style="text-align:center;margin-top:1rem"><a class="text-sm" href="#/">← Volver a la cartelera</a></p>
         </div>
