@@ -1,0 +1,330 @@
+/* =========================================================
+   Formularios del panel de administración
+   Definidos por esquema: agregar un campo es agregar un objeto.
+   ========================================================= */
+
+import { icon } from '../icons.js';
+import { store } from '../store.js';
+import {
+  CATEGORIES, PRIORITIES, RESOURCE_KINDS, BIRTHDAY_KINDS, STATUS,
+} from '../config.js';
+import { openModal, closeModal, field, readForm, showFormError, setBusy, toast } from '../ui.js';
+import { esc, toDateInput, toDateTimeInput, uid } from '../utils.js';
+
+const statusOptions = Object.entries(STATUS).map(([value, meta]) => ({ value, label: meta.label }));
+
+const TONES = [
+  { value: 'sage', label: 'Verde salvia' },
+  { value: 'clay', label: 'Terracota' },
+  { value: 'gold', label: 'Dorado' },
+  { value: 'teal', label: 'Azul petróleo' },
+  { value: 'rose', label: 'Rosa' },
+  { value: 'ink', label: 'Verde oscuro' },
+];
+
+export const FORMS = {
+  activities: {
+    label: 'Actividad',
+    wide: true,
+    fields: [
+      { name: 'title', label: 'Nombre de la actividad', type: 'text', required: true, full: true },
+      { name: 'category', label: 'Tipo', type: 'select', options: CATEGORIES.map((c) => ({ value: c.id, label: c.label })) },
+      { name: 'status', label: 'Estado', type: 'select', options: statusOptions },
+      { name: 'starts_at', label: 'Fecha y hora de inicio', type: 'datetime-local', required: true },
+      { name: 'ends_at', label: 'Fecha y hora de fin', type: 'datetime-local' },
+      { name: 'location', label: 'Lugar', type: 'text' },
+      { name: 'responsible', label: 'Responsable', type: 'text' },
+      { name: 'contact', label: 'Teléfono de informes', type: 'text' },
+      { name: 'capacity', label: 'Cupo (0 = sin límite)', type: 'number', min: '0' },
+      { name: 'description', label: 'Descripción', type: 'textarea', full: true },
+    ],
+    defaults: { category: 'familiar', status: 'approved', capacity: 0 },
+  },
+
+  notices: {
+    label: 'Aviso',
+    wide: true,
+    fields: [
+      { name: 'title', label: 'Título del aviso', type: 'text', required: true, full: true },
+      { name: 'priority', label: 'Prioridad', type: 'select', options: PRIORITIES.map((p) => ({ value: p.id, label: p.label })) },
+      { name: 'status', label: 'Estado', type: 'select', options: statusOptions },
+      { name: 'published_at', label: 'Fecha de publicación', type: 'datetime-local' },
+      { name: 'expires_at', label: 'Vigente hasta', type: 'datetime-local' },
+      { name: 'author', label: 'Firma (quién lo publica)', type: 'text' },
+      { name: 'pinned', label: 'Fijar arriba en la lista', type: 'checkbox' },
+      { name: 'body', label: 'Contenido', type: 'textarea', rows: 6, full: true },
+    ],
+    defaults: { priority: 'normal', status: 'approved', pinned: false },
+  },
+
+  birthdays: {
+    label: 'Celebración',
+    fields: [
+      { name: 'name', label: 'Nombre de la persona o familia', type: 'text', required: true, full: true },
+      { name: 'kind', label: 'Tipo', type: 'select', options: BIRTHDAY_KINDS.map((k) => ({ value: k.id, label: k.label })) },
+      { name: 'date', label: 'Fecha', type: 'date', required: true },
+      { name: 'phone', label: 'Teléfono', type: 'text' },
+      { name: 'note', label: 'Nota (área, parentesco…)', type: 'text', full: true },
+    ],
+    defaults: { kind: 'birthday' },
+  },
+
+  resources: {
+    label: 'Recurso',
+    fields: [
+      { name: 'title', label: 'Nombre del recurso', type: 'text', required: true, full: true },
+      { name: 'category', label: 'Categoría', type: 'text', placeholder: 'Ej. Formación, Liturgia…' },
+      { name: 'kind', label: 'Tipo', type: 'select', options: RESOURCE_KINDS.map((k) => ({ value: k.id, label: k.label })) },
+      { name: 'url', label: 'Enlace o archivo', type: 'url', required: true, full: true, placeholder: 'https://…' },
+      { name: 'status', label: 'Estado', type: 'select', options: statusOptions },
+      { name: 'description', label: 'Descripción', type: 'textarea', full: true },
+    ],
+    defaults: { kind: 'doc', status: 'approved', category: 'General' },
+  },
+
+  contacts: {
+    label: 'Contacto',
+    fields: [
+      { name: 'name', label: 'Nombre', type: 'text', required: true },
+      { name: 'role', label: 'Cargo o rol', type: 'text', placeholder: 'Ej. Coordinadora de formación' },
+      { name: 'area', label: 'Área', type: 'text', placeholder: 'Ej. Formación' },
+      { name: 'sort', label: 'Orden', type: 'number', min: '0' },
+      { name: 'phone', label: 'Teléfono', type: 'text' },
+      { name: 'whatsapp', label: 'WhatsApp (con código de país)', type: 'text', placeholder: '50370000000' },
+      { name: 'email', label: 'Correo', type: 'email' },
+      { name: 'notes', label: 'Notas', type: 'textarea', full: true },
+    ],
+    defaults: { sort: 99, area: 'Equipo' },
+  },
+
+  prayers: {
+    label: 'Intención',
+    fields: [
+      { name: 'name', label: 'Nombre o seudónimo', type: 'text' },
+      { name: 'visibility', label: 'Visibilidad', type: 'select', options: [{ value: 'public', label: 'Pública' }, { value: 'equipo', label: 'Solo equipo' }] },
+      { name: 'status', label: 'Estado', type: 'select', options: statusOptions },
+      { name: 'prayers', label: 'Amén acumulados', type: 'number', min: '0' },
+      { name: 'text', label: 'Intención', type: 'textarea', rows: 5, required: true, full: true },
+    ],
+    defaults: { visibility: 'public', status: 'pending', prayers: 0 },
+  },
+
+  albums: {
+    label: 'Álbum',
+    wide: true,
+    fields: [
+      { name: 'title', label: 'Título del álbum', type: 'text', required: true },
+      { name: 'date', label: 'Fecha', type: 'date', required: true },
+      { name: 'tone', label: 'Color de portada', type: 'select', options: TONES },
+      { name: 'status', label: 'Estado', type: 'select', options: statusOptions },
+      { name: 'description', label: 'Descripción', type: 'textarea', full: true },
+    ],
+    defaults: { tone: 'sage', status: 'approved' },
+    photos: true,
+  },
+};
+
+function valueFor(fieldDef, record) {
+  const raw = record ? record[fieldDef.name] : fieldDef.defaultValue ?? undefined;
+  if (fieldDef.type === 'datetime-local') return toDateTimeInput(raw);
+  if (fieldDef.type === 'date') return toDateInput(raw);
+  if (fieldDef.type === 'checkbox') return Boolean(raw);
+  if (raw === null || raw === undefined) return '';
+  return raw;
+}
+
+function fieldHTML(fieldDef, record) {
+  const value = valueFor(fieldDef, record);
+  const html =
+    fieldDef.type === 'checkbox'
+      ? field({ label: fieldDef.label, name: fieldDef.name, type: 'checkbox', value })
+      : field({
+          label: fieldDef.label,
+          name: fieldDef.name,
+          type: fieldDef.type,
+          value,
+          required: fieldDef.required,
+          placeholder: fieldDef.placeholder || '',
+          hint: fieldDef.hint || '',
+          options: fieldDef.options,
+          rows: fieldDef.rows || 4,
+          min: fieldDef.min || '',
+          max: fieldDef.max || '',
+        });
+  return `<div style="${fieldDef.full ? 'grid-column:1 / -1' : ''}">${html}</div>`;
+}
+
+export function openRecordForm(name, record = null, { onSaved, defaults = null } = {}) {
+  const spec = FORMS[name];
+  if (!spec) return;
+
+  const isEdit = Boolean(record && record.id);
+  const initial = record || { ...(spec.defaults || {}), ...(defaults || {}) };
+  const photos = name === 'albums' && record ? Array.isArray(record.photos) ? [...record.photos] : [] : [];
+
+  const { el } = openModal({
+    title: `${isEdit ? 'Editar' : 'Nuevo'} · ${spec.label}`,
+    subtitle: isEdit ? 'Los cambios se publican al guardar.' : 'Completa los datos y guarda.',
+    wide: spec.wide,
+    body: `
+      <form id="record-form" class="form-grid two" novalidate>
+        ${spec.fields.map((f) => fieldHTML(f, initial)).join('')}
+        ${spec.photos ? photosEditorHTML(photos) : ''}
+      </form>`,
+    footer: `
+      <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+      <button type="button" class="btn btn-primary" data-save>${icon('check', 16)} Guardar</button>`,
+  });
+
+  const form = el.querySelector('#record-form');
+  const saveBtn = el.querySelector('[data-save]');
+
+  if (spec.photos) bindPhotos(el, photos);
+
+  const save = async () => {
+    const data = readForm(form);
+
+    for (const f of spec.fields) {
+      if (f.required && (!data[f.name] || String(data[f.name]).trim() === '')) {
+        showFormError(form, `El campo “${f.label}” es obligatorio.`);
+        return;
+      }
+    }
+    if (name === 'activities' && data.starts_at && data.ends_at && data.ends_at < data.starts_at) {
+      showFormError(form, 'La actividad no puede terminar antes de comenzar.');
+      return;
+    }
+
+    const payload = {};
+    for (const f of spec.fields) {
+      let value = data[f.name];
+      if (f.type === 'checkbox') value = Boolean(value);
+      else if (f.type === 'number') value = value === '' ? 0 : Number(value);
+      else if (f.type === 'datetime-local' || f.type === 'date') value = value || null;
+      payload[f.name] = value;
+    }
+
+    if (name === 'resources') payload.updated_at = new Date().toISOString();
+    if (name === 'notices' && !payload.published_at) payload.published_at = new Date().toISOString();
+    if (name === 'albums') {
+      payload.photos = [...el.querySelectorAll('[data-photo-row]')]
+        .map((row) => ({
+          id: row.dataset.photoId || uid('ph'),
+          caption: row.querySelector('[data-caption]').value.trim(),
+          url: row.querySelector('[data-url]').value.trim(),
+        }))
+        .filter((p) => p.caption || p.url);
+    }
+
+    setBusy(saveBtn, true);
+    try {
+      if (isEdit) {
+        await store.update(name, record.id, payload);
+        toast(`${spec.label} actualizado.`, 'ok');
+      } else {
+        await store.create(name, payload);
+        toast(`${spec.label} creado.`, 'ok');
+      }
+      closeModal({ silent: true });
+      onSaved?.();
+    } catch (err) {
+      setBusy(saveBtn, false);
+      showFormError(form, err.message || 'No se pudo guardar.');
+    }
+  };
+
+  saveBtn.addEventListener('click', save);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    save();
+  });
+}
+
+function photosEditorHTML(photos) {
+  return `<div style="grid-column:1 / -1" class="form-section">
+    <div class="between" style="margin-bottom:.7rem">
+      <p class="form-section-title" style="margin:0">Fotos del álbum</p>
+      <div class="cluster">
+        <label class="btn btn-light btn-sm" style="cursor:pointer;margin:0">
+          ${icon('upload', 15)} Subir imágenes
+          <input type="file" id="photo-upload" accept="image/*" multiple hidden>
+        </label>
+        <button type="button" class="btn btn-ghost btn-sm" data-add-photo>${icon('plus', 15)} Agregar por enlace</button>
+      </div>
+    </div>
+    <div id="photos-editor" class="stack" style="gap:.55rem">
+      ${photos.map((p) => photoRowHTML(p)).join('')}
+    </div>
+    <p class="field-hint mt-1">Puedes pegar un enlace de imagen o subir archivos. Las fotos se muestran en la galería pública.</p>
+  </div>`;
+}
+
+function photoRowHTML(p = {}) {
+  const id = p.id || uid('ph');
+  return `<div class="photo-row" data-photo-row data-photo-id="${esc(id)}">
+    <div class="photo-thumb" data-thumb>${p.url ? `<img src="${esc(p.url)}" alt="">` : icon('image', 18)}</div>
+    <div class="photo-fields">
+      <input class="input" data-caption placeholder="Descripción de la foto" value="${esc(p.caption || '')}">
+      <input class="input" data-url placeholder="https://… (opcional si subes el archivo)" value="${esc(p.url || '')}">
+    </div>
+    <button type="button" class="btn-icon" data-remove-photo aria-label="Quitar foto">${icon('trash', 16)}</button>
+  </div>`;
+}
+
+function bindPhotos(el, initial) {
+  const editor = el.querySelector('#photos-editor');
+  if (!editor) return;
+  if (!initial.length) editor.insertAdjacentHTML('beforeend', photoRowHTML());
+
+  const wireRow = (row) => {
+    row.querySelector('[data-remove-photo]').addEventListener('click', () => {
+      if (el.querySelectorAll('[data-photo-row]').length === 1) {
+        row.querySelector('[data-caption]').value = '';
+        row.querySelector('[data-url]').value = '';
+        row.querySelector('[data-thumb]').innerHTML = icon('image', 18);
+        return;
+      }
+      row.remove();
+    });
+    const urlInput = row.querySelector('[data-url]');
+    urlInput.addEventListener('change', () => {
+      const url = urlInput.value.trim();
+      row.querySelector('[data-thumb]').innerHTML = url ? `<img src="${esc(url)}" alt="">` : icon('image', 18);
+    });
+  };
+
+  editor.querySelectorAll('[data-photo-row]').forEach(wireRow);
+
+  el.querySelector('[data-add-photo]').addEventListener('click', () => {
+    editor.insertAdjacentHTML('beforeend', photoRowHTML());
+    wireRow(editor.lastElementChild);
+    editor.lastElementChild.querySelector('[data-caption]').focus();
+  });
+
+  const upload = el.querySelector('#photo-upload');
+  upload?.addEventListener('change', async () => {
+    const files = Array.from(upload.files || []);
+    if (!files.length) return;
+    upload.disabled = true;
+    try {
+      for (const file of files) {
+        toast(`Subiendo ${file.name}…`, 'info', 2000);
+        const url = await store.uploadImage(file);
+        const row = editor.querySelector('[data-photo-row]:last-child');
+        if (row && !row.querySelector('[data-url]').value && !row.querySelector('[data-caption]').value) {
+          row.querySelector('[data-url]').value = url;
+          row.querySelector('[data-thumb]').innerHTML = `<img src="${esc(url)}" alt="">`;
+        } else {
+          editor.insertAdjacentHTML('beforeend', photoRowHTML({ url }));
+          wireRow(editor.lastElementChild);
+        }
+      }
+      toast('Imágenes listas. No olvides guardar el álbum.', 'ok');
+    } catch (err) {
+      toast(err.message || 'No se pudieron subir las imágenes.', 'error', 6000);
+    } finally {
+      upload.disabled = false;
+      upload.value = '';
+    }
+  });
+}
