@@ -81,6 +81,8 @@ Al recargar, el banner amarillo de “Modo demostración” desaparece y el pane
 
 Repite para cada coordinador. Cada uno entrará en `/#/admin` con ese correo y contraseña.
 
+> Para los 10 coordinadores actuales hay una guía específica con sus teléfonos, correos internos y roles: **[GUIA-COORDINADORES.md](GUIA-COORDINADORES.md)**.
+
 > Si prefieres que se registren solos, puedes activar el registro público en **Authentication → Providers → Email**, pero para un grupo pequeño es más seguro crearlos tú.
 
 ---

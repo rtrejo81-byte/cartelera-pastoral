@@ -600,26 +600,42 @@ export function isAuthenticated() {
   return Boolean(state.user);
 }
 
-export async function signIn(email, password) {
-  const cleanEmail = String(email || '').trim();
-  if (!cleanEmail || !password) {
-    return { ok: false, error: 'Escribe tu correo y contraseña.' };
+const LOGIN_DOMAIN = 'coordinadores.pastoralfamiliar.org';
+
+/** Convierte un correo o un teléfono (8 dígitos o 503 + 8) en el correo de acceso. */
+export function loginEmail(identifier) {
+  const clean = String(identifier || '').trim();
+  if (!clean) return '';
+  if (clean.includes('@')) return clean.toLowerCase();
+  const digits = clean.replace(/\D/g, '');
+  const phone = digits.length === 8 ? `503${digits}` : digits;
+  if (phone.length !== 11 || !phone.startsWith('503')) return '';
+  return `${phone}@${LOGIN_DOMAIN}`;
+}
+
+export async function signIn(identifier, password) {
+  const email = loginEmail(identifier);
+  if (!email || !password) {
+    return { ok: false, error: 'Escribe tu correo o número de teléfono, y tu contraseña.' };
   }
 
   if (state.mode === 'demo') {
-    state.user = { id: 'demo-user', email: cleanEmail };
+    const display = String(identifier).includes('@')
+      ? email.split('@')[0].replace(/[._-]/g, ' ')
+      : String(identifier).trim();
+    state.user = { id: 'demo-user', email };
     state.profile = {
       id: 'demo-user',
-      full_name: cleanEmail.split('@')[0].replace(/[._-]/g, ' '),
+      full_name: display,
       role: 'admin',
       demo: true,
     };
-    sessionStorage.setItem(SS_KEY, JSON.stringify({ email: cleanEmail, name: state.profile.full_name }));
+    sessionStorage.setItem(SS_KEY, JSON.stringify({ email, name: display }));
     emit('auth');
     return { ok: true };
   }
 
-  const { error } = await client.auth.signInWithPassword({ email: cleanEmail, password });
+  const { error } = await client.auth.signInWithPassword({ email, password });
   if (error) {
     return { ok: false, error: translateAuthError(error.message) };
   }
@@ -627,6 +643,15 @@ export async function signIn(email, password) {
   await refresh();
   emit('auth');
   return { ok: true };
+}
+
+export async function changePassword(newPassword) {
+  if (state.mode !== 'cloud' || !client) {
+    throw new Error('Conecta Supabase para cambiar la contraseña.');
+  }
+  const { error } = await client.auth.updateUser({ password: newPassword });
+  if (error) throw new Error(translateAuthError(error.message));
+  return true;
 }
 
 export async function signOut() {
@@ -645,7 +670,7 @@ export async function signOut() {
 
 function translateAuthError(message = '') {
   const m = message.toLowerCase();
-  if (m.includes('invalid login credentials')) return 'Correo o contraseña incorrectos.';
+  if (m.includes('invalid login credentials')) return 'Correo/teléfono o contraseña incorrectos.';
   if (m.includes('email not confirmed')) return 'Tu correo aún no está confirmado. Revisa tu bandeja.';
   if (m.includes('rate limit') || m.includes('too many')) return 'Demasiados intentos. Espera un momento e inténtalo de nuevo.';
   return message || 'No se pudo iniciar sesión.';
@@ -705,6 +730,7 @@ export const store = {
   uploadImage,
   signIn,
   signOut,
+  changePassword,
   canEdit,
   isAuthenticated,
   roleLabel,

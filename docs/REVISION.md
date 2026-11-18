@@ -71,8 +71,8 @@ Envíalas por el grupo de coordinación o directamente al responsable de la web.
 
 ## Datos que faltan y conviene recoger en la revisión
 
-- [ ] Nombres y teléfonos de los **cinco responsables de eje**.
-- [ ] Nombres y teléfonos de los **cinco coordinadores de comunidad**.
+- [x] Nombres y teléfonos de los **cinco responsables de eje**.
+- [x] Nombres y teléfonos de los **cinco coordinadores de comunidad**.
 - [ ] Teléfono y WhatsApp generales de la pastoral.
 - [ ] Si la **misa del primer domingo** tiene comunidad asignada.
 - [ ] Horarios del Santísimo de **diciembre en adelante**.

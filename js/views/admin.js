@@ -43,9 +43,10 @@ function renderLogin(root) {
           </span>
           <h1>Bienvenido de nuevo</h1>
           <p class="login-sub">Entra para publicar actividades, avisos y cuidar la cartelera de la comunidad.</p>
+          <p class="field-hint" style="text-align:center;margin:-.7rem 0 1.2rem">Coordinadores: pueden entrar con su número de teléfono y la contraseña asignada.</p>
 
           <form id="login-form" class="form-grid" novalidate>
-            ${inputField('Correo electrónico', 'email', 'email', 'nombre@correo.com', true, 'email')}
+            ${inputField('Correo o teléfono', 'email', 'text', 'Tu correo o tu número de teléfono', true, 'username')}
             ${inputField('Contraseña', 'password', 'password', '••••••••', true, 'current-password')}
             <button type="submit" class="btn btn-primary btn-block">${icon('lock', 16)} Entrar al panel</button>
           </form>
@@ -54,7 +55,7 @@ function renderLogin(root) {
             demo
               ? `<div class="login-help" style="text-align:left">
                   <b>Estás en modo demostración.</b><br>
-                  Puedes entrar con cualquier correo y contraseña para conocer el panel. En este modo los datos viven solo en tu navegador.
+                  Puedes entrar con cualquier correo, teléfono o contraseña para conocer el panel. En este modo los datos viven solo en tu navegador.
                 </div>`
               : `<div class="login-help">¿Olvidaste tu contraseña? Pídele al administrador que la restablezca desde Supabase.</div>`
           }
@@ -596,6 +597,35 @@ function settingsTab() {
     <section class="admin-card">
       <div class="admin-card-head">
         <div>
+          <h2>Mi contraseña</h2>
+          <p>Cambia la contraseña con la que entras al panel.</p>
+        </div>
+      </div>
+      ${
+        store.mode === 'cloud'
+          ? `<form id="password-form" class="form-grid" novalidate>
+              <div class="field-row">
+                <div class="field">
+                  <label class="label" for="new_password">Nueva contraseña</label>
+                  <input class="input" id="new_password" name="password" type="password" minlength="8" autocomplete="new-password" required>
+                  <span class="field-hint">Mínimo 8 caracteres.</span>
+                </div>
+                <div class="field">
+                  <label class="label" for="new_password_confirm">Repetir contraseña</label>
+                  <input class="input" id="new_password_confirm" name="confirm" type="password" minlength="8" autocomplete="new-password" required>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">${icon('lock', 16)} Actualizar contraseña</button>
+              </div>
+            </form>`
+          : `<p class="text-sm text-muted" style="margin:0">En modo demostración no hay contraseñas reales. Al conectar Supabase podrás cambiarla aquí.</p>`
+      }
+    </section>
+
+    <section class="admin-card">
+      <div class="admin-card-head">
+        <div>
           <h2>Conexión y datos</h2>
           <p>Cómo se guarda la información de la cartelera.</p>
         </div>
@@ -738,6 +768,33 @@ function bindAdmin(root, tab) {
         toast(err.message || 'No se pudieron guardar los ajustes.', 'error');
       } finally {
         btn.disabled = false;
+      }
+    });
+  }
+
+  const passwordForm = main.querySelector('#password-form');
+  if (passwordForm) {
+    passwordForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(passwordForm));
+      if (!data.password || data.password.length < 8) {
+        toast('La contraseña debe tener al menos 8 caracteres.', 'error');
+        return;
+      }
+      if (data.password !== data.confirm) {
+        toast('Las contraseñas no coinciden.', 'error');
+        return;
+      }
+      const btn = passwordForm.querySelector('button[type="submit"]');
+      setBusy(btn, true, 'Actualizando…');
+      try {
+        await store.changePassword(data.password);
+        passwordForm.reset();
+        toast('Contraseña actualizada.', 'ok');
+      } catch (err) {
+        toast(err.message || 'No se pudo cambiar la contraseña.', 'error');
+      } finally {
+        setBusy(btn, false);
       }
     });
   }

@@ -23,6 +23,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Oración**: envío de intenciones (públicas o solo para el equipo) y botón “Amén”.
 - **Propuesta pública de actividades**: cualquier miembro envía una idea y un coordinador la aprueba.
 - **Panel de administración** con acceso, bandeja de aprobación, alta/edición/baja de todo el contenido y ajustes del sitio.
+- **Acceso de coordinadores**: cada uno entra con su teléfono y contraseña, y puede cambiar su contraseña desde Ajustes.
 - **Crear desde el calendario**: un coordinador toca un día y agrega la actividad con la fecha ya precargada.
 - **Modo demo local**: la web funciona sin configurar nada, guardando los datos en el navegador.
 - **Tiempo real** cuando está conectada a Supabase.
@@ -91,6 +92,8 @@ GitHub Pages solo sirve archivos estáticos: no puede guardar cambios por sí so
 4. Crea los usuarios de los coordinadores y dale rol de administrador al primero.
 
 Paso a paso con capturas de dónde hacer clic: **[docs/GUIA-SUPABASE.md](docs/GUIA-SUPABASE.md)**.
+
+Para dar de alta a los **10 coordinadores actuales** (acceso por teléfono, roles y cambio de contraseña): **[docs/GUIA-COORDINADORES.md](docs/GUIA-COORDINADORES.md)**.
 
 Mientras `SUPABASE.url` esté vacío, la web sigue funcionando en modo demo sin romperse.
 
@@ -171,9 +174,10 @@ Estos datos quedaron como marcadores o con un valor razonable; se pueden cambiar
 - [x] **Logo oficial**: integrado en la cabecera, el pie y el favicon.
 - [x] **Hora de la misa parroquial**: domingos a las 5:00 p. m. (primer domingo del mes).
 - [x] **Rotación de comunidades** de las misas de viernes: cargada para noviembre y diciembre.
-- [ ] **Teléfono y WhatsApp** de la pastoral (se dejaron vacíos para no publicar datos falsos).
+- [ ] **Teléfono y WhatsApp** generales de la pastoral (se dejaron vacíos para no publicar datos falsos).
 - [ ] **Horario del Santísimo** de los próximos meses (el de noviembre ya está cargado).
-- [ ] Nombre y correo de los coordinadores reales en **Contactos**.
+- [x] Nombres y teléfonos de los **10 coordinadores** actuales en **Contactos**.
+- [ ] **Correos** de los coordinadores, si se prefieren cuentas con correo real en lugar de teléfono.
 
 ---
 

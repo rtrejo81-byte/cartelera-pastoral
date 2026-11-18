@@ -93,16 +93,16 @@ begin
 
     insert into public.contacts (name, role, area, phone, whatsapp, email, notes, sort)
     values
-      ('Coordinación General', 'Coordinador general', 'Equipo general', '', '', '', 'Coordina al equipo y acompaña los ejes. Nombre y contacto por confirmar.', 1),
-      ('Eje de Matrimonios', 'Coordinador del eje', 'Equipo general', '', '', '', 'Acompaña a los matrimonios y su formación.', 2),
-      ('Eje de Jóvenes', 'Coordinador del eje', 'Equipo general', '', '', '', 'Acompaña a los jóvenes de la pastoral.', 3),
-      ('Eje de Encuentro y Convivencia', 'Coordinador del eje', 'Equipo general', '', '', '', 'Organiza encuentros y convivencias.', 4),
-      ('Eje de Tema Fijo', 'Coordinador del eje', 'Equipo general', '', '', '', 'Prepara los temas de formación.', 5),
-      ('Comunidad Santa Mónica', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 10),
-      ('Comunidad San Juan Pablo II', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 11),
-      ('Comunidad San José', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 12),
-      ('Comunidad San Francisco de Asís', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 13),
-      ('Comunidad de Jóvenes', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 14);
+      ('Ricardo Varela', 'Coordinador general', 'Equipo general', '7654-0943', '50376540943', '', 'Coordina al equipo y acompaña los ejes.', 1),
+      ('Roberto Trejo', 'Coordinador del Eje de Encuentro y Convivencia', 'Equipo general', '7745-8014', '50377458014', '', 'Encuentros y convivencias de la pastoral.', 2),
+      ('Edward Minero', 'Coordinador del Eje de Tema Fijo', 'Equipo general', '7616-3574', '50376163574', '', 'Temas de formación.', 3),
+      ('Mariela', 'Coordinadora del Eje de Jóvenes', 'Equipo general', '7931-8852', '50379318852', '', 'Acompaña a los jóvenes.', 4),
+      ('Juan Trejo', 'Coordinador del Eje de Matrimonios', 'Equipo general', '7856-4788', '50378564788', '', 'Acompaña a los matrimonios.', 5),
+      ('Gabriela Trejo', 'Coordinadora de la Comunidad Santa Mónica', 'Comunidades', '7240-0130', '50372400130', '', '', 10),
+      ('Isabel Luna', 'Coordinadora de la Comunidad San Juan Pablo II', 'Comunidades', '7011-3964', '50370113964', '', '', 11),
+      ('Krissia Avalos', 'Coordinadora de la Comunidad San José', 'Comunidades', '6955-6753', '50369556753', '', '', 12),
+      ('Manuel Figueroa', 'Coordinador de la Comunidad San Francisco de Asís', 'Comunidades', '7885-0684', '50378850684', '', '', 13),
+      ('Samuel Avelar', 'Coordinador de la Comunidad de Jóvenes', 'Comunidades', '6979-0977', '50369790977', '', '', 14);
 
     insert into public.resources (title, description, category, kind, url, status)
     values

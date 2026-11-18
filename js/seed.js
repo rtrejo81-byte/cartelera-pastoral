@@ -8,7 +8,7 @@
 import { addDays, ymd, toLocalDateTime } from './utils.js';
 import { firstSundayDay } from './recurrence.js';
 
-export const SEED_VERSION = 9;
+export const SEED_VERSION = 10;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -427,17 +427,17 @@ export function buildSeed() {
 
   const contacts = [
     // Equipo general: coordinación y ejes
-    { id: 'con_team_1', name: 'Coordinación General', role: 'Coordinador general', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Coordina al equipo y acompaña los ejes. Nombre y contacto por confirmar.', sort: 1 },
-    { id: 'con_team_2', name: 'Eje de Matrimonios', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Acompaña a los matrimonios y su formación.', sort: 2 },
-    { id: 'con_team_3', name: 'Eje de Jóvenes', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Acompaña a los jóvenes de la pastoral.', sort: 3 },
-    { id: 'con_team_4', name: 'Eje de Encuentro y Convivencia', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Organiza encuentros y convivencias.', sort: 4 },
-    { id: 'con_team_5', name: 'Eje de Tema Fijo', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Prepara los temas de formación.', sort: 5 },
+    { id: 'con_team_1', name: 'Ricardo Varela', role: 'Coordinador general', area: 'Equipo general', phone: '7654-0943', email: '', whatsapp: '50376540943', notes: 'Coordina al equipo y acompaña los ejes.', sort: 1 },
+    { id: 'con_team_2', name: 'Roberto Trejo', role: 'Coordinador del Eje de Encuentro y Convivencia', area: 'Equipo general', phone: '7745-8014', email: '', whatsapp: '50377458014', notes: 'Encuentros y convivencias de la pastoral.', sort: 2 },
+    { id: 'con_team_3', name: 'Edward Minero', role: 'Coordinador del Eje de Tema Fijo', area: 'Equipo general', phone: '7616-3574', email: '', whatsapp: '50376163574', notes: 'Temas de formación.', sort: 3 },
+    { id: 'con_team_4', name: 'Mariela', role: 'Coordinadora del Eje de Jóvenes', area: 'Equipo general', phone: '7931-8852', email: '', whatsapp: '50379318852', notes: 'Acompaña a los jóvenes.', sort: 4 },
+    { id: 'con_team_5', name: 'Juan Trejo', role: 'Coordinador del Eje de Matrimonios', area: 'Equipo general', phone: '7856-4788', email: '', whatsapp: '50378564788', notes: 'Acompaña a los matrimonios.', sort: 5 },
     // Comunidades
-    { id: 'con_com_1', name: 'Comunidad Santa Mónica', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 10 },
-    { id: 'con_com_2', name: 'Comunidad San Juan Pablo II', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 11 },
-    { id: 'con_com_3', name: 'Comunidad San José', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 12 },
-    { id: 'con_com_4', name: 'Comunidad San Francisco de Asís', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 13 },
-    { id: 'con_com_5', name: 'Comunidad de Jóvenes', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 14 },
+    { id: 'con_com_1', name: 'Gabriela Trejo', role: 'Coordinadora de la Comunidad Santa Mónica', area: 'Comunidades', phone: '7240-0130', email: '', whatsapp: '50372400130', notes: '', sort: 10 },
+    { id: 'con_com_2', name: 'Isabel Luna', role: 'Coordinadora de la Comunidad San Juan Pablo II', area: 'Comunidades', phone: '7011-3964', email: '', whatsapp: '50370113964', notes: '', sort: 11 },
+    { id: 'con_com_3', name: 'Krissia Avalos', role: 'Coordinadora de la Comunidad San José', area: 'Comunidades', phone: '6955-6753', email: '', whatsapp: '50369556753', notes: '', sort: 12 },
+    { id: 'con_com_4', name: 'Manuel Figueroa', role: 'Coordinador de la Comunidad San Francisco de Asís', area: 'Comunidades', phone: '7885-0684', email: '', whatsapp: '50378850684', notes: '', sort: 13 },
+    { id: 'con_com_5', name: 'Samuel Avelar', role: 'Coordinador de la Comunidad de Jóvenes', area: 'Comunidades', phone: '6979-0977', email: '', whatsapp: '50369790977', notes: '', sort: 14 },
   ];
 
   const albums = [

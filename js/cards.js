@@ -228,6 +228,7 @@ export function personCard(c) {
       <div>
         <h3 class="person-name">${esc(c.name)}</h3>
         <p class="person-role">${esc(c.role || 'Coordinador')}</p>
+        ${c.phone ? `<p class="person-phone"><a href="${telUrl(c.phone)}">${esc(c.phone)}</a></p>` : ''}
         ${c.notes ? `<p class="text-sm text-muted" style="margin-top:.35rem">${esc(c.notes)}</p>` : ''}
       </div>
       <div class="person-actions">
