@@ -171,7 +171,7 @@ export default function calendarView(root, ctx) {
                 ${visible
                   .map((a) => {
                     const cat = categoryMeta(a.category);
-                    return `<button type="button" class="cal-event" data-activity="${esc(a.id)}" data-occurrence="${esc(a.starts_at)}" title="${esc(a.title)} · ${esc(fmtTime(a.starts_at))}" style="--ev-bg:${cat.bg};--ev-fg:${cat.color}">
+                    return `<button type="button" class="cal-event" data-activity="${esc(a.id)}" data-occurrence="${esc(a.starts_at)}" title="${esc(a.title)} · ${esc(fmtTime(a.starts_at))}" aria-label="${esc(a.title)} · ${esc(fmtTime(a.starts_at))}" style="--ev-bg:${cat.bg};--ev-fg:${cat.color}">
                       <span class="n">${esc(a.title)}</span>
                     </button>`;
                   })
