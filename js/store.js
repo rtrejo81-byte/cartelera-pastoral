@@ -11,7 +11,7 @@
 
 import { SUPABASE } from './config.js';
 import { buildSeed, SEED_VERSION } from './seed.js';
-import { compressImage, uid, parseLocal, addDays, ymd } from './utils.js';
+import { compressImage, dataUrlToBlob, uid, parseLocal, addDays, ymd } from './utils.js';
 import { expandActivity } from './recurrence.js';
 
 const LS_KEY = 'pf_cartelera_demo_v1';
@@ -563,12 +563,24 @@ export async function uploadImage(file) {
     return compressImage(file, 1400, 0.82);
   }
 
-  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+  let blob = file;
+  let ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+  let contentType = file.type || 'image/jpeg';
+
+  try {
+    const compressed = await compressImage(file, 1600, 0.82);
+    blob = dataUrlToBlob(compressed);
+    ext = 'jpg';
+    contentType = 'image/jpeg';
+  } catch (err) {
+    console.warn('[store] no se pudo comprimir la imagen; se sube el original', err);
+  }
+
   const path = `galeria/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
-  const { error } = await client.storage.from('media').upload(path, file, {
+  const { error } = await client.storage.from('media').upload(path, blob, {
     cacheControl: '3600',
     upsert: false,
-    contentType: file.type,
+    contentType,
   });
   if (error) {
     throw new Error(

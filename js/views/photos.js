@@ -114,15 +114,22 @@ function openUpload(communityValue) {
         </div>
         ${field({ label: 'Descripción', name: 'description', type: 'textarea', rows: 2, placeholder: '¿Qué actividad fue?' })}
         <div class="field">
-          <label class="label" for="photos-files">Fotos <span class="req">*</span></label>
+          <label class="label" for="photos-files">Fotos (archivos)</label>
           <input class="input" type="file" id="photos-files" accept="image/*" multiple>
-          <span class="field-hint">Hasta 4 fotos por vez. Se comprimen automáticamente antes de guardarse.</span>
+          <span class="field-hint">Hasta 4 fotos por vez. Se comprimen a 1600 px para ahorrar espacio.</span>
           <span class="field-hint" id="photos-count">No has seleccionado fotos.</span>
         </div>
+        ${field({
+          label: 'O pega un enlace directo a una imagen',
+          name: 'photo_url',
+          type: 'url',
+          placeholder: 'https://…',
+          hint: 'Drive, Flickr u otro sitio. No ocupa espacio en Supabase; el archivo debe ser público y el enlace debe abrir la imagen directamente.',
+        })}
       </form>`,
     footer: `
       <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
-      <button type="button" class="btn btn-primary" data-save>${icon('upload', 16)} Subir fotos</button>`,
+      <button type="button" class="btn btn-primary" data-save>${icon('upload', 16)} Publicar fotos</button>`,
   });
 
   const form = el.querySelector('#photos-form');
@@ -140,12 +147,13 @@ function openUpload(communityValue) {
   saveBtn.addEventListener('click', async () => {
     const data = readForm(form);
     const files = Array.from(input.files || []);
+    const externalUrl = String(data.photo_url || '').trim();
     if (!data.title || data.title.trim().length < 3) {
       showFormError(form, 'Escribe un título para el álbum.');
       return;
     }
-    if (!files.length) {
-      showFormError(form, 'Selecciona al menos una foto.');
+    if (!files.length && !externalUrl) {
+      showFormError(form, 'Selecciona al menos una foto o pega un enlace directo.');
       return;
     }
     if (files.length > 4) {
@@ -156,8 +164,12 @@ function openUpload(communityValue) {
       showFormError(form, 'Uno de los archivos no es una imagen.');
       return;
     }
+    if (externalUrl && !/^https?:\/\//i.test(externalUrl)) {
+      showFormError(form, 'El enlace debe comenzar con http:// o https://');
+      return;
+    }
 
-    setBusy(saveBtn, true, 'Subiendo fotos…');
+    setBusy(saveBtn, true, 'Guardando fotos…');
     try {
       const photos = [];
       for (const file of files) {
@@ -167,6 +179,9 @@ function openUpload(communityValue) {
           caption: file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '),
           url,
         });
+      }
+      if (externalUrl) {
+        photos.push({ id: uid('ph'), caption: 'Enlace externo', url: externalUrl });
       }
       await store.create('albums', {
         title: data.title.trim(),

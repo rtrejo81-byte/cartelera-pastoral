@@ -18,7 +18,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
 - **Galería** general de álbumes con visor de fotos.
-- **Fotos por comunidad**: cada comunidad tiene su espacio y puede subir sus propios álbumes.
+- **Fotos por comunidad**: cada comunidad tiene su espacio y puede subir sus propios álbumes; también acepta enlaces externos (Drive, etc.).
 - **Equipo y comunidades**: los cinco ejes de la pastoral y las cinco comunidades, con sus coordinadores y datos de contacto.
 - **Oración**: envío de intenciones (públicas o solo para el equipo) y botón “Amén”.
 - **Propuesta pública de actividades**: cualquier miembro envía una idea y un coordinador la aprueba.
@@ -128,6 +128,7 @@ where id = (select id from auth.users where email = 'correo@ejemplo.org');
 - **Colores, tipografía y sombras**: variables al inicio de [`assets/css/base.css`](assets/css/base.css).
 - **Logo**: el emblema oficial ya está integrado en `assets/img/logo-mark.png`; el archivo original quedó en `logo-oficial.jpg`. Si cambia, reemplaza `logo-mark.png` y `favicon.png`.
 - **Contenido inicial de Supabase**: opcional, [`supabase/seed.sql`](supabase/seed.sql).
+- **Fotos y almacenamiento** (límites del plan gratis, compresión y enlaces de Drive): **[docs/FOTOS-Y-ALMACENAMIENTO.md](docs/FOTOS-Y-ALMACENAMIENTO.md)**.
 
 Más detalles para crecer el proyecto sin romper el calendario: **[docs/PERSONALIZAR.md](docs/PERSONALIZAR.md)**.
 

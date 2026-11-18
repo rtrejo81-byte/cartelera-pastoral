@@ -113,7 +113,6 @@ Si dice *“Correo/teléfono o contraseña incorrectos”*:
 ---
 
 ## 7. Cambiar la contraseña temporal
-
 Cada coordinador, al entrar:
 
 1. **Ajustes → Mi contraseña**.
@@ -133,6 +132,14 @@ Así la temporal deja de servir.
 | `viewer` | Solo lectura del panel. |
 
 Todos los editores pueden editar todo. Si más adelante quieres que cada coordinador de comunidad edite **solo su comunidad**, se puede agregar esa restricción; hoy priorizamos que el equipo pueda publicar sin bloqueos.
+
+---
+
+## Fotos y almacenamiento
+
+El plan Free incluye **1 GB** para fotos, **50 MB** por archivo y **5 GB** de salida al mes. La web comprime cada foto a 1600 px antes de subirla, así que una foto típica queda en 250–600 KB: caben aproximadamente **2,000 a 4,000 fotos**.
+
+También se pueden usar **enlaces externos** (Drive, Flickr) sin consumir ese 1 GB, pero el enlace debe abrir la imagen directamente y ser público. Detalles y conversión de enlaces de Drive: [FOTOS-Y-ALMACENAMIENTO.md](FOTOS-Y-ALMACENAMIENTO.md).
 
 ---
 
