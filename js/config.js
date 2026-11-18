@@ -23,7 +23,7 @@ export const SITE = {
   name: 'Pastoral Familiar',
   shortName: 'Pastoral Familiar',
   parish: 'Parroquia Monte Tabor',
-  city: 'Ciudad Merliot, Santa Tecla',
+  city: 'Ciudad Merliot',
   country: 'El Salvador',
   heroTitle: 'Caminemos juntos como',
   heroAccent: 'familia',

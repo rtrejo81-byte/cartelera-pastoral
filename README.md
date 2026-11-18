@@ -111,7 +111,7 @@ where id = (select id from auth.users where email = 'correo@ejemplo.org');
 - **Actividades recurrentes**: desde el panel, en cada actividad, campo **Se repite** (cada semana o primer domingo de cada mes) y **Comunidad asignada**.
 - **Horario del Santísimo**: panel → **Santísimo**, una fila por comunidad y mes.
 - **Colores, tipografía y sombras**: variables al inicio de [`assets/css/base.css`](assets/css/base.css).
-- **Logo**: guarda el logo oficial en `assets/img/` y reemplaza las referencias; hoy se usa un monograma provisional.
+- **Logo**: el emblema oficial ya está integrado en `assets/img/logo-mark.png`; el archivo original quedó en `logo-oficial.jpg`. Si cambia, reemplaza `logo-mark.png` y `favicon.png`.
 - **Contenido inicial de Supabase**: opcional, [`supabase/seed.sql`](supabase/seed.sql).
 
 Más detalles para crecer el proyecto sin romper el calendario: **[docs/PERSONALIZAR.md](docs/PERSONALIZAR.md)**.
@@ -156,7 +156,7 @@ Las vistas se cargan por ruta (`#/calendario`, `#/avisos`, `#/santisimo`, …). 
 
 Estos datos quedaron como marcadores o con un valor razonable; se pueden cambiar en el panel **Ajustes** o en el contenido:
 
-- [ ] **Logo oficial en archivo**: hoy la web usa un monograma provisional. Guarda la imagen en `assets/img/` y la integramos.
+- [x] **Logo oficial**: integrado en la cabecera, el pie y el favicon.
 - [ ] **Hora de la misa parroquial** del primer domingo (por ahora 10:00 a. m.).
 - [ ] **Rotación de comunidades** asignadas a cada viernes y a cada primer domingo.
 - [ ] **Teléfono y WhatsApp** de la pastoral (se dejaron vacíos para no publicar datos falsos).

@@ -60,11 +60,13 @@ Cambia esos valores y toda la web se adapta. Para usar otra tipografía:
 1. Cambia el `<link>` de Google Fonts en `index.html`.
 2. Actualiza `--font-display` y `--font-sans`.
 
-**Logo:** la web usa hoy un monograma provisional. Cuando tengas el archivo oficial:
+**Logo:** el emblema oficial ya está integrado:
 
-1. Guárdalo en `assets/img/` (por ejemplo `logo-oficial.png`).
-2. Actualiza las referencias en `index.html`, `js/ui.js` (cabecera y pie) y `js/views/admin.js` (pantalla de acceso).
-3. Para el favicon, genera una versión cuadrada del emblema.
+- `assets/img/logo-mark.png`: marca circular para cabecera, pie y acceso.
+- `assets/img/favicon.png`: icono del navegador.
+- `assets/img/logo-oficial.jpg`: archivo original completo (por si se necesita en impresos).
+
+Si cambia el logo, reemplaza `logo-mark.png` por una versión circular y regenera el favicon a 64×64.
 
 ---
 

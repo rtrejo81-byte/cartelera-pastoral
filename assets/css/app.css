@@ -36,10 +36,11 @@
 }
 .brand:hover { color: var(--ink); }
 .brand-mark {
-  width: 42px;
-  height: 42px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  box-shadow: 0 6px 18px -8px rgba(31, 77, 66, .7);
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(23, 50, 44, .08), 0 6px 18px -8px rgba(31, 77, 66, .7);
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-name {
