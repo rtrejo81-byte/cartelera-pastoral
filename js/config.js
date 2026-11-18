@@ -14,8 +14,8 @@
  * Mientras estén vacías, la web funciona en MODO DEMO local.
  */
 export const SUPABASE = {
-  url: '',
-  anonKey: '',
+  url: 'https://fpipersxktkkctwdesgs.supabase.co',
+  anonKey: 'sb_publishable_V3ADAhkLl9qHxA8ud-aJng_aSowM0Gf',
 };
 
 /** Marca y textos base */
