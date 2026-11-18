@@ -501,6 +501,10 @@ export async function create(name, row) {
     return record;
   }
 
+  // En la nube, created_at lo pone la base de datos con su valor por defecto.
+  // Así también funciona en tablas que no tienen esa columna (por ejemplo, resources).
+  delete payload.created_at;
+
   const { data, error } = await client.from(TABLE[name]).insert(payload).select().single();
   if (error) throw new Error(friendlyDbError(error, name));
   await refresh();
