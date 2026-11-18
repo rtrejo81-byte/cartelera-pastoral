@@ -272,6 +272,7 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
   const isEdit = Boolean(record && record.id);
   const initial = record || { ...(spec.defaults || {}), ...(defaults || {}) };
   const photos = name === 'albums' && record ? Array.isArray(record.photos) ? [...record.photos] : [] : [];
+  const fields = spec.fields.filter((f) => f.type !== 'image' || store.imagesReady);
 
   const { el } = openModal({
     title: `${isEdit ? 'Editar' : 'Nuevo'} · ${spec.label}`,
@@ -279,7 +280,7 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
     wide: spec.wide,
     body: `
       <form id="record-form" class="form-grid two" novalidate>
-        ${spec.fields.map((f) => fieldHTML(f, initial)).join('')}
+        ${fields.map((f) => fieldHTML(f, initial)).join('')}
         ${spec.photos ? photosEditorHTML(photos) : ''}
       </form>`,
     footer: `
@@ -296,7 +297,7 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
   const save = async () => {
     const data = readForm(form);
 
-    for (const f of spec.fields) {
+    for (const f of fields) {
       if (f.required && (!data[f.name] || String(data[f.name]).trim() === '')) {
         showFormError(form, `El campo “${f.label}” es obligatorio.`);
         return;
@@ -312,7 +313,7 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
     }
 
     const payload = {};
-    for (const f of spec.fields) {
+    for (const f of fields) {
       let value = data[f.name];
       if (f.type === 'checkbox') value = Boolean(value);
       else if (f.type === 'number') value = value === '' ? 0 : Number(value);

@@ -35,6 +35,7 @@ const state = {
   mode: 'demo',
   cloudError: '',
   ready: false,
+  imageReady: true,
   user: null,
   profile: null,
   data: {
@@ -147,6 +148,10 @@ export function isCloudConfigured() {
   return Boolean(SUPABASE.url && SUPABASE.anonKey);
 }
 
+export function imagesReady() {
+  return state.mode === 'cloud' ? Boolean(state.imageReady) : true;
+}
+
 async function initCloud() {
   const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
   client = mod.createClient(SUPABASE.url, SUPABASE.anonKey, {
@@ -161,6 +166,18 @@ async function initCloud() {
   }
 
   await refresh();
+
+  // La columna image_url es nueva. Si aún no se ejecutó add-images.sql,
+  // ocultamos el campo de imagen en vez de romper el guardado.
+  try {
+    const [a, n] = await Promise.all([
+      client.from('activities').select('image_url').limit(1),
+      client.from('notices').select('image_url').limit(1),
+    ]);
+    state.imageReady = !a.error && !n.error;
+  } catch {
+    state.imageReady = false;
+  }
 
   client.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_OUT') {
@@ -713,6 +730,7 @@ export const store = {
   get mode() { return state.mode; },
   get cloudError() { return state.cloudError; },
   get ready() { return state.ready; },
+  get imagesReady() { return imagesReady(); },
   get loading() { return state.loading; },
   get user() { return state.user; },
   get profile() { return state.profile; },
