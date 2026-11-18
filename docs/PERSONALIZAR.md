@@ -88,16 +88,30 @@ La lógica vive en `js/recurrence.js`. Para agregar otra regla (por ejemplo, «t
 
 ---
 
-## 5. Horario del Santísimo
+## 5. Santísimo y servicios de misa
 
-Es una sección aparte porque cambia **cada mes** y no es una actividad con hora única.
+### Santísimo
+
+Es una sección aparte porque cambia **cada mes** y no es una actividad con hora única. El horario corresponde a los **domingos** del mes.
 
 1. Panel → **Santísimo** → **Nuevo horario**.
 2. Elige el mes (cualquier día de ese mes), la comunidad, la hora de inicio y la de fin.
 3. Repite una fila por comunidad.
 4. El orden define cómo se muestran en la página pública.
 
-La página `/#/santisimo` tiene navegación por mes: si un mes aún no tiene horario, muestra un mensaje en lugar de una tabla vacía. Las cinco comunidades iniciales son un ejemplo basado en el cartel de septiembre; se pueden editar o borrar.
+La página `/#/santisimo` tiene navegación por mes: si un mes aún no tiene horario, muestra un mensaje en lugar de una tabla vacía. Las cinco comunidades iniciales son las del cartel de noviembre; se pueden editar o borrar.
+
+### Servicios de misa
+
+Las misas son recurrentes, pero la comunidad que sirve cambia cada semana. Eso se administra en **Panel → Servicios**:
+
+- **Fecha** de la misa.
+- **Servicio**: misa de comunidad (viernes) o misa parroquial (domingo).
+- **Comunidad asignada**.
+
+El calendario cruza la fecha de cada ocurrencia con esta tabla y muestra la comunidad en el detalle de la actividad. Si una fecha no tiene asignación, la misa aparece igual, sin comunidad. En la página de Comunidad se listan las próximas asignaciones.
+
+> Las misas recurrentes ya traen la hora: viernes 6:00 p. m. y primer domingo 5:00 p. m. Cambia la actividad base si la parroquia ajusta el horario.
 
 ---
 

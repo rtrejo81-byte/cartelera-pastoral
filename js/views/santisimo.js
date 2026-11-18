@@ -39,7 +39,7 @@ export default function santisimoView(root, ctx) {
       eyebrow: 'Adoración',
       title: 'Horario del Santísimo',
       subtitle:
-        'Una hora de acompañamiento a Jesús Sacramentado, asignada a cada comunidad de la Pastoral Familiar. Los horarios cambian mes a mes.',
+        'Domingos del mes: una hora de acompañamiento a Jesús Sacramentado, asignada a cada comunidad de la Pastoral Familiar. Los horarios cambian mes a mes.',
       actions: `<a class="btn btn-ghost" href="#/calendario">${icon('calendar', 16)} Ver calendario</a>
                 <a class="btn btn-primary" href="#/contactos">${icon('phone', 16)} Consultar mi turno</a>`,
     })}
@@ -53,7 +53,7 @@ export default function santisimoView(root, ctx) {
                 <a class="btn-icon" href="${link(prev)}" aria-label="Mes anterior">${icon('chevron-left', 18)}</a>
                 <div class="holy-month">
                   <h2>${esc(fmtMonthYear(cursor))}</h2>
-                  <span>${hours.length ? esc(pluralize(hours.length, 'comunidad', 'comunidades')) : 'Horario pendiente'}</span>
+                  <span>${hours.length ? esc(pluralize(hours.length, 'comunidad', 'comunidades')) + ' · domingos' : 'Horario pendiente'}</span>
                 </div>
                 <a class="btn-icon" href="${link(next)}" aria-label="Mes siguiente">${icon('chevron-right', 18)}</a>
                 ${!isCurrentMonth ? `<a class="btn btn-ghost btn-sm" href="#/santisimo">Este mes</a>` : ''}
@@ -78,7 +78,7 @@ export default function santisimoView(root, ctx) {
                     </div>
                     <div class="holy-foot">
                       ${icon('info', 14)}
-                      <span>Cada comunidad cubre su hora completa. Si no puedes asistir, coordina un cambio con tu responsable.</span>
+                      <span>Cada domingo del mes se cubren estas horas. Si no puedes asistir, coordina un cambio con tu responsable.</span>
                     </div>`
                   : `<div style="padding:1.2rem">
                       ${emptyState({
@@ -110,11 +110,11 @@ export default function santisimoView(root, ctx) {
             <div class="card">
               <h3 class="card-title" style="font-size:1.05rem">¿Cómo funciona?</h3>
               <ul class="holy-steps">
-                <li><span>1</span> Cada mes se publica el horario asignado a las comunidades.</li>
+                <li><span>1</span> Cada mes se publica el horario de los domingos, asignado a las comunidades.</li>
                 <li><span>2</span> Tu comunidad cubre una hora completa de adoración.</li>
                 <li><span>3</span> Si no puedes, coordina el cambio con tu responsable.</li>
               </ul>
-              <a class="section-link mt-2" href="#/contactos">Hablar con un coordinador ${icon('arrow-right', 15)}</a>
+              <a class="section-link mt-2" href="#/comunidad">Ver servicios de misa ${icon('arrow-right', 15)}</a>
             </div>
           </aside>
         </div>

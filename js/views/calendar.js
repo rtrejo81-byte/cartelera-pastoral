@@ -216,6 +216,7 @@ export default function calendarView(root, ctx) {
               ${a.description ? `<p>${esc(a.description)}</p>` : ''}
               <div class="meta">
                 ${a.location ? `<span>${icon('map-pin', 13)} ${esc(a.location)}</span>` : ''}
+                ${a.community ? `<span>${icon('users', 13)} ${esc(a.community)}</span>` : ''}
                 ${a.responsible ? `<span>${icon('user', 13)} ${esc(a.responsible)}</span>` : ''}
               </div>
               <div class="actions">

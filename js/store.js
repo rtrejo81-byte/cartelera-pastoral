@@ -11,7 +11,7 @@
 
 import { SUPABASE } from './config.js';
 import { buildSeed, SEED_VERSION } from './seed.js';
-import { compressImage, uid, parseLocal, addDays } from './utils.js';
+import { compressImage, uid, parseLocal, addDays, ymd } from './utils.js';
 import { expandActivity } from './recurrence.js';
 
 const LS_KEY = 'pf_cartelera_demo_v1';
@@ -26,6 +26,7 @@ const TABLE = {
   albums: 'albums',
   prayers: 'prayer_requests',
   holyHours: 'holy_hours',
+  serviceAssignments: 'service_assignments',
 };
 
 const COLLECTIONS = Object.keys(TABLE);
@@ -45,6 +46,7 @@ const state = {
     albums: [],
     prayers: [],
     holyHours: [],
+    serviceAssignments: [],
   },
   settings: {},
   loading: false,
@@ -97,6 +99,7 @@ function persistDemo() {
       albums: state.data.albums,
       prayers: state.data.prayers,
       holyHours: state.data.holyHours,
+      serviceAssignments: state.data.serviceAssignments,
       settings: state.settings,
     };
     try {
@@ -215,7 +218,7 @@ async function refresh() {
   if (state.mode !== 'cloud' || !client) return;
   state.loading = true;
   try {
-    const [activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, settings] = await Promise.all([
+    const [activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, serviceAssignments, settings] = await Promise.all([
       fetchTable('activities'),
       fetchTable('notices'),
       fetchTable('birthdays'),
@@ -224,9 +227,10 @@ async function refresh() {
       fetchTable('albums'),
       fetchTable('prayers'),
       fetchTable('holyHours'),
+      fetchTable('serviceAssignments'),
       fetchSettings(),
     ]);
-    state.data = { activities, notices, birthdays, resources, contacts, albums, prayers, holyHours };
+    state.data = { activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, serviceAssignments };
     state.settings = settings || {};
     emit('change', { source: 'cloud' });
   } catch (err) {
@@ -335,15 +339,12 @@ export function pendingCount() {
 export function upcoming(limit = 5) {
   const now = new Date(Date.now() - 3 * 3600 * 1000);
   const end = addDays(now, 180);
-  return sortActivities(
-    all('activities')
-      .filter((a) => !a.status || a.status === 'approved')
-      .flatMap((a) => expandActivity(a, now, end))
-      .filter((a) => {
-        const d = parseLocal(a.starts_at);
-        return d && d >= now;
-      })
-  ).slice(0, limit);
+  return activitiesInRange(now, end)
+    .filter((a) => {
+      const d = parseLocal(a.starts_at);
+      return d && d >= now;
+    })
+    .slice(0, limit);
 }
 
 export function nextActivity() {
@@ -372,11 +373,73 @@ export function activitiesOn(date) {
   return activitiesInRange(start, end);
 }
 
+/** Asignaciones de comunidad en un rango (kind: 'viernes' | 'domingo'). */
+export function assignmentsForRange(kind, start, end) {
+  return all('serviceAssignments').filter((item) => {
+    if (kind && item.kind !== kind) return false;
+    const date = parseLocal(item.date);
+    return date && date >= start && date <= end;
+  });
+}
+
+export function assignmentMap(kind, start, end) {
+  const map = new Map();
+  for (const item of assignmentsForRange(kind, start, end)) {
+    map.set(String(item.date).slice(0, 10), item.community);
+  }
+  return map;
+}
+
+/** Próximas asignaciones de servicio, ordenadas por fecha. */
+export function upcomingServiceAssignments(limit = 6) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return all('serviceAssignments')
+    .map((item) => ({ ...item, _date: parseLocal(item.date) }))
+    .filter((item) => item._date && item._date >= today)
+    .sort((a, b) => a._date - b._date)
+    .slice(0, limit);
+}
+
+/** Comunidad asignada a una misa concreta según su fecha. */
+export function serviceCommunityFor(activity, startIso) {
+  if (!activity || activity.category !== 'misa' || !startIso) return '';
+  const kind =
+    activity.recurrence === 'weekly'
+      ? 'viernes'
+      : activity.recurrence === 'monthly_first_sunday'
+        ? 'domingo'
+        : '';
+  if (!kind) return '';
+  const date = parseLocal(startIso);
+  if (!date) return '';
+  const key = ymd(date);
+  const match = all('serviceAssignments').find(
+    (item) => item.kind === kind && String(item.date).slice(0, 10) === key
+  );
+  return match ? match.community : '';
+}
+
 export function activitiesInRange(start, end) {
   const expanded = all('activities')
     .filter((a) => !a.status || a.status === 'approved')
     .flatMap((a) => expandActivity(a, start, end));
-  return sortActivities(expanded);
+
+  const fridays = assignmentMap('viernes', start, end);
+  const sundays = assignmentMap('domingo', start, end);
+
+  const withCommunity = expanded.map((a) => {
+    if (a.category !== 'misa') return a;
+    const kind =
+      a.recurrence === 'weekly' ? 'viernes' : a.recurrence === 'monthly_first_sunday' ? 'domingo' : '';
+    if (!kind) return a;
+    const date = parseLocal(a.starts_at);
+    if (!date) return a;
+    const community = (kind === 'viernes' ? fridays : sundays).get(ymd(date));
+    return community ? { ...a, community } : a;
+  });
+
+  return sortActivities(withCommunity);
 }
 
 /** Horarios del Santísimo de un mes ("YYYY-MM"). */
@@ -630,6 +693,9 @@ export const store = {
   activitiesInRange,
   birthdaysInMonth,
   holyHoursFor,
+  assignmentsForRange,
+  upcomingServiceAssignments,
+  serviceCommunityFor,
   create,
   update,
   remove,

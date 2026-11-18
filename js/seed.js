@@ -8,7 +8,7 @@
 import { addDays, ymd, toLocalDateTime } from './utils.js';
 import { firstSundayDay } from './recurrence.js';
 
-export const SEED_VERSION = 6;
+export const SEED_VERSION = 7;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -92,8 +92,8 @@ export function buildSeed() {
       description:
         'Misa parroquial del primer domingo de cada mes. Una comunidad de la Pastoral Familiar apoya el servicio litúrgico.',
       category: 'misa',
-      starts_at: toLocalDateTime(firstSundayAt(10, 0)),
-      ends_at: toLocalDateTime(firstSundayAt(11, 0)),
+      starts_at: toLocalDateTime(firstSundayAt(17, 0)),
+      ends_at: toLocalDateTime(firstSundayAt(18, 0)),
       location: 'Templo parroquial Monte Tabor',
       responsible: 'Pastoral Familiar',
       contact: '',
@@ -534,7 +534,16 @@ export function buildSeed() {
 
   const monthStart = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-01`;
 
-  // Horario de ejemplo del Santísimo: una hora por comunidad.
+  // Rotación de comunidades para la misa de las 6:00 p. m. de los viernes.
+  const serviceAssignments = [
+    { id: 'sa_1', date: `${today.getFullYear()}-11-20`, kind: 'viernes', community: 'Comunidad San Juan Pablo II', notes: '', created_at: nowIso },
+    { id: 'sa_2', date: `${today.getFullYear()}-11-27`, kind: 'viernes', community: 'Comunidad San José', notes: '', created_at: nowIso },
+    { id: 'sa_3', date: `${today.getFullYear()}-12-04`, kind: 'viernes', community: 'Comunidad Santa Mónica', notes: '', created_at: nowIso },
+    { id: 'sa_4', date: `${today.getFullYear()}-12-11`, kind: 'viernes', community: 'Comunidad de Jóvenes', notes: '', created_at: nowIso },
+    { id: 'sa_5', date: `${today.getFullYear()}-12-18`, kind: 'viernes', community: 'Comunidad San Francisco de Asís', notes: '', created_at: nowIso },
+  ];
+
+  // Horario de ejemplo del Santísimo (domingos): una hora por comunidad.
   // Los horarios reales cambian cada mes y se editan desde el panel.
   const holyHours = [
     { id: 'hh_1', month: monthStart, community: 'Comunidad San Francisco de Asís', start_time: '07:00', end_time: '08:00', sort: 1, created_at: nowIso },
@@ -554,6 +563,7 @@ export function buildSeed() {
     albums,
     prayers,
     holyHours,
+    serviceAssignments,
     settings: {},
   };
 }

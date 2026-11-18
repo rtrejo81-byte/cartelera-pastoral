@@ -177,6 +177,8 @@ function renderTab(tab) {
       return tableTab('prayers');
     case 'santisimo':
       return tableTab('holyHours');
+    case 'servicios':
+      return tableTab('serviceAssignments');
     case 'galeria':
       return tableTab('albums');
     default:
@@ -445,6 +447,25 @@ const TABLE_DEFS = {
           String(b.month || '').localeCompare(String(a.month || '')) ||
           (a.sort ?? 0) - (b.sort ?? 0)
       ),
+  },
+  serviceAssignments: {
+    label: 'Servicios',
+    intro: 'Comunidad que sirve en cada misa de viernes y en la misa parroquial del primer domingo.',
+    icon: 'users',
+    newLabel: 'Nueva asignación',
+    head: ['Fecha', 'Servicio', 'Comunidad', 'Notas', ''],
+    rows: (s) => [
+      { html: `<span class="strong">${esc(fmtDateShort(s.date))}</span>`, cls: 'strong' },
+      {
+        html:
+          s.kind === 'domingo'
+            ? '<span class="badge badge-green">Domingo</span>'
+            : '<span class="badge badge-gold">Viernes</span>',
+      },
+      { html: esc(s.community) },
+      { html: esc(s.notes || '—') },
+    ],
+    sort: (list) => [...list].sort((a, b) => String(a.date).localeCompare(String(b.date))),
   },
 };
 

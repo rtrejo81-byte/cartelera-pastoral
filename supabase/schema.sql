@@ -167,6 +167,18 @@ create table if not exists public.holy_hours (
   created_at timestamptz not null default now()
 );
 
+-- Comunidad asignada a cada misa de viernes (o domingo) por fecha
+create table if not exists public.service_assignments (
+  id uuid primary key default gen_random_uuid(),
+  date date not null,
+  kind text not null default 'viernes'
+    check (kind in ('viernes', 'domingo')),
+  community text not null,
+  notes text default '',
+  created_at timestamptz not null default now(),
+  unique (date, kind)
+);
+
 -- Migración para proyectos creados antes de las actividades recurrentes
 alter table public.activities add column if not exists community text default '';
 alter table public.activities add column if not exists recurrence text not null default 'none';
@@ -191,6 +203,7 @@ create index if not exists resources_status_idx on public.resources (status);
 create index if not exists albums_status_idx on public.albums (status);
 create index if not exists prayers_status_idx on public.prayer_requests (status);
 create index if not exists holy_hours_month_idx on public.holy_hours (month, sort);
+create index if not exists service_assignments_date_idx on public.service_assignments (date);
 
 -- ---------- 4. updated_at automático ----------
 create or replace function public.touch_updated_at()
@@ -229,6 +242,7 @@ alter table public.contacts enable row level security;
 alter table public.albums enable row level security;
 alter table public.prayer_requests enable row level security;
 alter table public.holy_hours enable row level security;
+alter table public.service_assignments enable row level security;
 alter table public.settings enable row level security;
 
 -- Perfiles
@@ -362,6 +376,17 @@ create policy "santisimo edicion" on public.holy_hours
   using (public.is_editor())
   with check (public.is_editor());
 
+-- Servicios asignados
+drop policy if exists "servicios lectura" on public.service_assignments;
+create policy "servicios lectura" on public.service_assignments
+  for select using (true);
+
+drop policy if exists "servicios edicion" on public.service_assignments;
+create policy "servicios edicion" on public.service_assignments
+  for all to authenticated
+  using (public.is_editor())
+  with check (public.is_editor());
+
 -- ---------- 6. Contador de "Amén" ----------
 create or replace function public.increment_prayer(prayer_id uuid)
 returns void
@@ -384,7 +409,7 @@ declare
 begin
   foreach t in array array[
     'activities', 'notices', 'birthdays', 'resources',
-    'contacts', 'albums', 'prayer_requests', 'settings', 'holy_hours'
+    'contacts', 'albums', 'prayer_requests', 'settings', 'holy_hours', 'service_assignments'
   ]
   loop
     begin

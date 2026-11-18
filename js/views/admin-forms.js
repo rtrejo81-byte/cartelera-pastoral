@@ -138,6 +138,25 @@ export const FORMS = {
     ],
     defaults: { sort: 0 },
   },
+
+  serviceAssignments: {
+    label: 'Servicio asignado',
+    fields: [
+      { name: 'date', label: 'Fecha de la misa', type: 'date', required: true },
+      {
+        name: 'kind',
+        label: 'Servicio',
+        type: 'select',
+        options: [
+          { value: 'viernes', label: 'Misa de comunidad (viernes)' },
+          { value: 'domingo', label: 'Misa parroquial (domingo)' },
+        ],
+      },
+      { name: 'community', label: 'Comunidad asignada', type: 'text', required: true, placeholder: 'Ej. Comunidad San José' },
+      { name: 'notes', label: 'Notas', type: 'text', full: true },
+    ],
+    defaults: { kind: 'viernes' },
+  },
 };
 
 function valueFor(fieldDef, record) {

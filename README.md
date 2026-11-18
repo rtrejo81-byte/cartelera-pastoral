@@ -11,8 +11,9 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 ## Lo que incluye
 
 - **Calendario** con vista de mes y agenda, filtros por tipo de actividad, exportación a `.ics` (Google/Apple Calendar) e impresión.
-- **Actividades fijas recurrentes**: la misa de comunidad de cada viernes y la misa parroquial del primer domingo se repiten solas en el calendario, sin duplicarlas mes a mes.
-- **Horario del Santísimo**: una hora de adoración por comunidad, organizada mes a mes y editable desde el panel.
+- **Actividades fijas recurrentes**: la misa de comunidad de cada viernes (6:00 p. m.) y la misa parroquial del primer domingo (5:00 p. m.) se repiten solas en el calendario, sin duplicarlas mes a mes.
+- **Servicios asignados**: cada misa de viernes muestra qué comunidad se encarga ese día; se administra por fecha.
+- **Horario del Santísimo**: los domingos, una hora de adoración por comunidad, organizada mes a mes y editable desde el panel.
 - **Avisos** con prioridad, fijados arriba, fecha de vigencia y búsqueda.
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
@@ -31,6 +32,8 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 | ![Calendario mensual](docs/capturas/calendario.jpg) | ![Panel de administración](docs/capturas/panel.jpg) |
 
 ![Horario del Santísimo, una hora por comunidad](docs/capturas/santisimo.jpg)
+
+![Servicios de misa y comunidad](docs/capturas/servicios.jpg)
 
 <p align="center">
   <img src="docs/capturas/movil.jpg" alt="Vista móvil" width="300">
@@ -157,10 +160,10 @@ Las vistas se cargan por ruta (`#/calendario`, `#/avisos`, `#/santisimo`, …). 
 Estos datos quedaron como marcadores o con un valor razonable; se pueden cambiar en el panel **Ajustes** o en el contenido:
 
 - [x] **Logo oficial**: integrado en la cabecera, el pie y el favicon.
-- [ ] **Hora de la misa parroquial** del primer domingo (por ahora 10:00 a. m.).
-- [ ] **Rotación de comunidades** asignadas a cada viernes y a cada primer domingo.
+- [x] **Hora de la misa parroquial**: domingos a las 5:00 p. m. (primer domingo del mes).
+- [x] **Rotación de comunidades** de las misas de viernes: cargada para noviembre y diciembre.
 - [ ] **Teléfono y WhatsApp** de la pastoral (se dejaron vacíos para no publicar datos falsos).
-- [ ] **Horario del Santísimo** de este mes y de los siguientes (el de ejemplo usa las cinco comunidades y las horas del cartel de septiembre).
+- [ ] **Horario del Santísimo** de los próximos meses (el de noviembre ya está cargado).
 - [ ] Nombre y correo de los coordinadores reales en **Contactos**.
 
 ---

@@ -968,6 +968,41 @@
   font-weight: 700;
 }
 
+/* Servicios asignados */
+.service-list { display: grid; gap: .45rem; margin-top: 1rem; }
+.service-row {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .8rem;
+  padding: .6rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #FFFDF9;
+}
+.service-date {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--green-deep);
+}
+.service-date small {
+  display: block;
+  margin-top: .15rem;
+  font-family: var(--font-sans);
+  font-size: .6rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.service-community { font-size: .9rem; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+  .service-row { grid-template-columns: 48px minmax(0, 1fr); }
+  .service-row .badge { display: none; }
+}
+
 /* Tarjetas destacadas de Comunidad */
 .feature-card {
   position: relative;
@@ -979,6 +1014,7 @@
   color: #fff;
   text-decoration: none;
   overflow: hidden;
+  background: linear-gradient(150deg, #367A67 0%, #17463B 100%);
   box-shadow: var(--shadow);
   transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 }

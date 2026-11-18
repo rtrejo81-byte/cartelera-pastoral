@@ -95,7 +95,9 @@ export function withOccurrence(base, startIso) {
 export function openActivity(id, occurrenceStart = null) {
   const base = store.byId('activities', id);
   if (!base) return;
-  const a = occurrenceStart ? withOccurrence(base, occurrenceStart) : base;
+  let a = occurrenceStart ? withOccurrence(base, occurrenceStart) : base;
+  const assignedCommunity = store.serviceCommunityFor(base, a.starts_at);
+  if (assignedCommunity) a = { ...a, community: assignedCommunity };
   const start = parseLocal(a.starts_at);
   const past = start && isPast(a.starts_at);
   const shareText = `${a.title} · ${fmtDateLong(a.starts_at)} · ${a.location || ''}`.trim();

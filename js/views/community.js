@@ -7,7 +7,7 @@ import { store } from '../store.js';
 import { MONTHS } from '../config.js';
 import { pageHead, emptyState } from '../ui.js';
 import { birthdayCard, albumCard } from '../cards.js';
-import { esc, pluralize } from '../utils.js';
+import { esc, parseLocal, pluralize } from '../utils.js';
 
 export default function communityView(root) {
   const month = new Date().getMonth();
@@ -15,6 +15,7 @@ export default function communityView(root) {
   const albums = store.publicList('albums').slice(0, 3);
   const contacts = store.publicList('contacts');
   const prayers = store.publicList('prayers');
+  const services = store.upcomingServiceAssignments(5);
 
   root.innerHTML = `
     ${pageHead({
@@ -28,7 +29,7 @@ export default function communityView(root) {
         <div class="grid grid-3">
           ${featureCard('/cumpleanos', 'cake', 'Cumpleaños y aniversarios', 'Cada vida y cada historia de amor merece celebrarse.', `${birthdays.length} este mes`, 'gold')}
           ${featureCard('/galeria', 'image', 'Galería', 'Los retiros, convivencias y celebraciones que hemos vivido.', `${albums.length} álbumes`, 'clay')}
-          ${featureCard('/contactos', 'phone', 'Directorio', 'Las personas que coordinan cada área, con sus datos de contacto.', `${contacts.length} coordinadores`, 'green')}
+          ${featureCard('/contactos', 'phone', 'Directorio', 'Las personas que coordinan cada área, con sus datos de contacto.', `${contacts.length} coordinadores`, 'sage')}
         </div>
 
         <div class="contact-strip mt-3">
@@ -39,6 +40,33 @@ export default function communityView(root) {
           </div>
           <a class="btn btn-primary" href="#/santisimo">${icon('sun', 16)} Ver horario del mes</a>
         </div>
+
+        ${
+          services.length
+            ? `<div class="card card-pad-lg mt-3">
+                <div class="between">
+                  <div>
+                    <p class="eyebrow" style="margin-bottom:.35rem">Servicios</p>
+                    <h3 class="card-title" style="font-size:1.3rem">Misas de comunidad</h3>
+                    <p class="card-text">Viernes, 6:00 p. m. Cada comunidad se encarga del servicio litúrgico en su fecha.</p>
+                  </div>
+                  <a class="btn btn-light btn-sm" href="#/calendario">${icon('calendar', 15)} Ver calendario</a>
+                </div>
+                <div class="service-list">
+                  ${services
+                    .map((s) => {
+                      const d = parseLocal(s.date);
+                      return `<div class="service-row">
+                        <span class="service-date">${d.getDate()}<small>${esc(d.toLocaleDateString('es', { month: 'short' }).replace('.', ''))}</small></span>
+                        <span class="service-community">${esc(s.community)}</span>
+                        <span class="badge ${s.kind === 'domingo' ? 'badge-green' : 'badge-gold'}">${s.kind === 'domingo' ? 'Domingo' : 'Viernes'}</span>
+                      </div>`;
+                    })
+                    .join('')}
+                </div>
+              </div>`
+            : ''
+        }
       </div>
     </section>
 
