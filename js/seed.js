@@ -5,9 +5,10 @@
    Puedes editarlos o borrarlos desde el panel de administración.
    ========================================================= */
 
-import { addDays, ymd } from './utils.js';
+import { addDays, ymd, toLocalDateTime } from './utils.js';
+import { firstSundayDay } from './recurrence.js';
 
-export const SEED_VERSION = 4;
+export const SEED_VERSION = 6;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -16,6 +17,35 @@ function at(dayOffset, hour = 19, minute = 0) {
   const d = addDays(new Date(), dayOffset);
   d.setHours(hour, minute, 0, 0);
   return `${ymd(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+/** Próximo día de la semana indicado (0 = domingo … 5 = viernes). */
+function nextWeekday(weekday, hour, minute = 0) {
+  const now = new Date();
+  const d = new Date(now);
+  d.setHours(hour, minute, 0, 0);
+  let diff = (weekday - d.getDay() + 7) % 7;
+  if (diff === 0 && d.getTime() < now.getTime()) diff = 7;
+  return addDays(d, diff);
+}
+
+/** Primer domingo del mes actual o del siguiente si ya pasó. */
+function firstSundayAt(hour, minute = 0) {
+  const now = new Date();
+  let target = new Date(now.getFullYear(), now.getMonth(), firstSundayDay(now.getFullYear(), now.getMonth()), hour, minute, 0, 0);
+  if (target < now) {
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    target = new Date(
+      nextMonth.getFullYear(),
+      nextMonth.getMonth(),
+      firstSundayDay(nextMonth.getFullYear(), nextMonth.getMonth()),
+      hour,
+      minute,
+      0,
+      0
+    );
+  }
+  return target;
 }
 
 /** Fecha de cumpleaños dentro del mes actual (+meses). */
@@ -36,6 +66,46 @@ export function buildSeed() {
   const nextMonth = (thisMonth + 1) % 12;
 
   const activities = [
+    {
+      id: 'act_friday',
+      title: 'Misa de comunidad',
+      description:
+        'Misa de las 6:00 p. m. de cada viernes. Una comunidad de la Pastoral Familiar se encarga del servicio litúrgico; consulta con tu comunidad la fecha que le corresponde.',
+      category: 'misa',
+      starts_at: toLocalDateTime(nextWeekday(5, 18, 0)),
+      ends_at: toLocalDateTime(nextWeekday(5, 19, 0)),
+      location: 'Templo parroquial Monte Tabor',
+      responsible: 'Comunidades de la Pastoral Familiar',
+      contact: '',
+      capacity: 0,
+      community: '',
+      recurrence: 'weekly',
+      recurrence_until: '',
+      status: 'approved',
+      submitted_by: '',
+      created_at: nowIso,
+      updated_at: nowIso,
+    },
+    {
+      id: 'act_sunday',
+      title: 'Misa parroquial',
+      description:
+        'Misa parroquial del primer domingo de cada mes. Una comunidad de la Pastoral Familiar apoya el servicio litúrgico.',
+      category: 'misa',
+      starts_at: toLocalDateTime(firstSundayAt(10, 0)),
+      ends_at: toLocalDateTime(firstSundayAt(11, 0)),
+      location: 'Templo parroquial Monte Tabor',
+      responsible: 'Pastoral Familiar',
+      contact: '',
+      capacity: 0,
+      community: '',
+      recurrence: 'monthly_first_sunday',
+      recurrence_until: '',
+      status: 'approved',
+      submitted_by: '',
+      created_at: nowIso,
+      updated_at: nowIso,
+    },
     {
       id: 'act_1',
       title: 'Reunión de coordinadores',
@@ -462,6 +532,18 @@ export function buildSeed() {
     },
   ];
 
+  const monthStart = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-01`;
+
+  // Horario de ejemplo del Santísimo: una hora por comunidad.
+  // Los horarios reales cambian cada mes y se editan desde el panel.
+  const holyHours = [
+    { id: 'hh_1', month: monthStart, community: 'Comunidad San Francisco de Asís', start_time: '07:00', end_time: '08:00', sort: 1, created_at: nowIso },
+    { id: 'hh_2', month: monthStart, community: 'Comunidad de Jóvenes', start_time: '08:00', end_time: '09:00', sort: 2, created_at: nowIso },
+    { id: 'hh_3', month: monthStart, community: 'Comunidad San Juan Pablo II', start_time: '09:00', end_time: '10:00', sort: 3, created_at: nowIso },
+    { id: 'hh_4', month: monthStart, community: 'Comunidad Santa Mónica', start_time: '10:00', end_time: '11:00', sort: 4, created_at: nowIso },
+    { id: 'hh_5', month: monthStart, community: 'Comunidad San José', start_time: '11:00', end_time: '12:00', sort: 5, created_at: nowIso },
+  ];
+
   return {
     seedVersion: SEED_VERSION,
     activities,
@@ -471,6 +553,7 @@ export function buildSeed() {
     contacts,
     albums,
     prayers,
+    holyHours,
     settings: {},
   };
 }

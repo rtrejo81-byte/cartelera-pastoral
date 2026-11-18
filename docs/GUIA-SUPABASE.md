@@ -28,12 +28,14 @@ Tiempo estimado: 20–30 minutos.
 
 Debe aparecer **“Success. No rows returned”**. Ese único archivo crea:
 
-- Las tablas: actividades, avisos, cumpleaños, recursos, contactos, álbumes, oración, ajustes y perfiles.
+- Las tablas: actividades, avisos, cumpleaños, recursos, contactos, álbumes, oración, **horario del Santísimo**, ajustes y perfiles.
 - Las reglas de seguridad (RLS): el público solo ve lo aprobado; solo los coordinadores escriben.
 - Los perfiles automáticos al crear usuarios.
 - El contador de “Amén”.
 - La sincronización en vivo (Realtime).
 - El espacio de imágenes (`media`) en Storage.
+
+> **¿Ya tenías el proyecto instalado?** Vuelve a ejecutar `schema.sql` completo. Es idempotente y agrega lo nuevo: las columnas `recurrence`, `recurrence_until` y `community` en actividades, y la tabla `holy_hours` para el Santísimo.
 
 ### Contenido inicial (opcional)
 
@@ -146,6 +148,8 @@ Sin el bucket público, las fotos se suben pero no se ven.
 4. Abre la web en una ventana de incógnito o en tu teléfono: la actividad debe aparecer.
 5. Envía una propuesta desde “Proponer actividad” (en incógnito) y apruébala desde el panel.
 6. Sube una foto a un álbum y comprueba que se ve en la galería.
+7. Revisa que la **misa de comunidad** aparezca todos los viernes y la **misa parroquial** el primer domingo del mes.
+8. Agrega un horario en **Panel → Santísimo** y verifícalo en `/#/santisimo`.
 
 Si todo eso funciona, la cartelera ya es colaborativa.
 

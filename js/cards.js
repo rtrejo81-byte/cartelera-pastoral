@@ -10,8 +10,9 @@ import {
 import {
   esc, parseLocal, fmtTime, fmtDateLong, fmtDateMedium, fmtDateShort,
   relativeLabel, truncate, initials, googleCalendarUrl, buildICS, downloadFile,
-  whatsappUrl, telUrl, isPast, pluralize,
+  whatsappUrl, telUrl, isPast, pluralize, toLocalDateTime, ymd,
 } from './utils.js';
+import { recurrenceLabel, isRecurring } from './recurrence.js';
 import { PRIORITIES } from './config.js';
 
 export function toneClass(tone = 'sage') {
@@ -26,7 +27,7 @@ export function activityCard(a, { hideDate = false, past = false } = {}) {
   const cat = categoryMeta(a.category);
   const time = a.ends_at ? `${fmtTime(a.starts_at)} – ${fmtTime(a.ends_at)}` : fmtTime(a.starts_at);
   return `
-    <button type="button" class="activity-card ${past || isPast(a.starts_at) ? 'is-past' : ''}" data-activity="${esc(a.id)}" style="--ev:${cat.color}">
+    <button type="button" class="activity-card ${past || isPast(a.starts_at) ? 'is-past' : ''}" data-activity="${esc(a.id)}" data-occurrence="${esc(a.starts_at)}" style="--ev:${cat.color}">
       ${hideDate ? '' : `<span class="date-badge" style="background:${cat.bg};color:${cat.color}">
         <span class="d">${start.getDate()}</span>
         <span class="m">${start.toLocaleDateString('es', { month: 'short' }).replace('.', '')}</span>
@@ -50,11 +51,13 @@ export function activityDetailHTML(a) {
   const start = parseLocal(a.starts_at);
   const end = parseLocal(a.ends_at);
   const seats = Number(a.capacity) > 0 ? `${a.capacity} personas` : '';
+  const recurring = isRecurring(a.recurrence);
   return `
     <div class="event-detail">
       <div class="event-kicker">
         ${categoryBadge(a.category)}
         ${a.status === 'pending' ? '<span class="badge badge-gold">Propuesta pendiente</span>' : ''}
+        ${recurring ? `<span class="badge badge-gold">${icon('repeat', 12)} ${esc(recurrenceLabel(a.recurrence))}</span>` : ''}
         <span class="badge badge-outline">${esc(relativeLabel(a.starts_at))}</span>
       </div>
       <h2>${esc(a.title)}</h2>
@@ -62,18 +65,37 @@ export function activityDetailHTML(a) {
         <div class="event-fact">${icon('calendar', 16)}<div><b>Fecha</b>${esc(fmtDateLong(a.starts_at))}</div></div>
         <div class="event-fact">${icon('clock', 16)}<div><b>Hora</b>${esc(fmtTime(a.starts_at))}${end ? ` a ${esc(fmtTime(a.ends_at))}` : ''}</div></div>
         ${a.location ? `<div class="event-fact">${icon('map-pin', 16)}<div><b>Lugar</b>${esc(a.location)}</div></div>` : ''}
+        ${a.community ? `<div class="event-fact">${icon('users', 16)}<div><b>Comunidad asignada</b>${esc(a.community)}</div></div>` : ''}
         ${a.responsible ? `<div class="event-fact">${icon('user', 16)}<div><b>Responsable</b>${esc(a.responsible)}</div></div>` : ''}
         ${seats ? `<div class="event-fact">${icon('users', 16)}<div><b>Cupo</b>${esc(seats)}</div></div>` : ''}
         ${a.contact ? `<div class="event-fact">${icon('phone', 16)}<div><b>Informes</b>${esc(a.contact)}</div></div>` : ''}
       </div>
       ${a.description ? `<p class="event-desc">${esc(a.description)}</p>` : ''}
+      ${recurring ? `<div class="inline-note mt-2">${icon('repeat', 16)}<span>Esta actividad se repite: <b>${esc(recurrenceLabel(a.recurrence))}</b>. Estás viendo la fecha del ${esc(fmtDateMedium(a.starts_at))}.</span></div>` : ''}
       ${a.status === 'pending' ? `<div class="inline-note mt-2">${icon('info', 16)}<span>Esta actividad fue propuesta por ${esc(a.submitted_by || 'un miembro de la comunidad')} y aún no aparece en el calendario público.</span></div>` : ''}
     </div>`;
 }
 
-export function openActivity(id) {
-  const a = store.byId('activities', id);
-  if (!a) return;
+/** Ajusta una actividad base a una fecha concreta de su serie. */
+export function withOccurrence(base, startIso) {
+  const date = parseLocal(startIso);
+  if (!date) return base;
+  const baseStart = parseLocal(base.starts_at);
+  const baseEnd = parseLocal(base.ends_at);
+  const duration = baseStart && baseEnd ? Math.max(0, baseEnd.getTime() - baseStart.getTime()) : 90 * 60000;
+  return {
+    ...base,
+    occurrence_of: base.id,
+    occurrence_date: ymd(date),
+    starts_at: toLocalDateTime(date),
+    ends_at: base.ends_at ? toLocalDateTime(new Date(date.getTime() + duration)) : null,
+  };
+}
+
+export function openActivity(id, occurrenceStart = null) {
+  const base = store.byId('activities', id);
+  if (!base) return;
+  const a = occurrenceStart ? withOccurrence(base, occurrenceStart) : base;
   const start = parseLocal(a.starts_at);
   const past = start && isPast(a.starts_at);
   const shareText = `${a.title} · ${fmtDateLong(a.starts_at)} · ${a.location || ''}`.trim();

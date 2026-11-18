@@ -27,6 +27,8 @@ const PATHS = {
   'chevron-left': '<path d="m15 6-6 6 6 6"/>',
   'chevron-down': '<path d="m6 9 6 6 6-6"/>',
   'arrow-up-right': '<path d="M7 17 17 7M9 7h8v8"/>',
+  repeat: '<path d="m17 2 4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>',
   pin: '<path d="M12 17v5"/><path d="M9 10.8V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6.8l2 3.2H7l2-3.2Z"/>',

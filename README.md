@@ -1,6 +1,6 @@
 # Cartelera Pastoral Familiar
 
-Sitio web de la Pastoral Familiar: **calendario de actividades**, avisos, cumpleaños, recursos, galería, contactos y un espacio de oración. Varios coordinadores pueden publicar desde su teléfono y los cambios aparecen en la web de todos.
+Sitio web de la **Pastoral Familiar de la Parroquia Monte Tabor**, Ciudad Merliot (Santa Tecla): **calendario de actividades**, avisos, cumpleaños, recursos, galería, contactos, oración y el horario mensual del Santísimo. Varios coordinadores pueden publicar desde su teléfono y los cambios aparecen en la web de todos.
 
 Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencias de desarrollo. Se publica tal cual en **GitHub Pages** y, cuando quieres trabajo en equipo, se conecta a **Supabase** (gratis).
 
@@ -11,6 +11,8 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 ## Lo que incluye
 
 - **Calendario** con vista de mes y agenda, filtros por tipo de actividad, exportación a `.ics` (Google/Apple Calendar) e impresión.
+- **Actividades fijas recurrentes**: la misa de comunidad de cada viernes y la misa parroquial del primer domingo se repiten solas en el calendario, sin duplicarlas mes a mes.
+- **Horario del Santísimo**: una hora de adoración por comunidad, organizada mes a mes y editable desde el panel.
 - **Avisos** con prioridad, fijados arriba, fecha de vigencia y búsqueda.
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
@@ -27,6 +29,8 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 | Calendario | Panel de coordinadores |
 | --- | --- |
 | ![Calendario mensual](docs/capturas/calendario.jpg) | ![Panel de administración](docs/capturas/panel.jpg) |
+
+![Horario del Santísimo, una hora por comunidad](docs/capturas/santisimo.jpg)
 
 <p align="center">
   <img src="docs/capturas/movil.jpg" alt="Vista móvil" width="300">
@@ -104,8 +108,10 @@ where id = (select id from auth.users where email = 'correo@ejemplo.org');
 - **Textos, datos de contacto, redes y secciones visibles**: desde el panel, pestaña **Ajustes**. No hace falta tocar código.
 - **Valores por defecto** (nombre, parroquia, frase de portada): [`js/config.js`](js/config.js).
 - **Tipos de actividad y colores**: arreglo `CATEGORIES` en `js/config.js`.
+- **Actividades recurrentes**: desde el panel, en cada actividad, campo **Se repite** (cada semana o primer domingo de cada mes) y **Comunidad asignada**.
+- **Horario del Santísimo**: panel → **Santísimo**, una fila por comunidad y mes.
 - **Colores, tipografía y sombras**: variables al inicio de [`assets/css/base.css`](assets/css/base.css).
-- **Logo**: reemplaza `assets/img/logo.svg` y `assets/img/favicon.svg`.
+- **Logo**: guarda el logo oficial en `assets/img/` y reemplaza las referencias; hoy se usa un monograma provisional.
 - **Contenido inicial de Supabase**: opcional, [`supabase/seed.sql`](supabase/seed.sql).
 
 Más detalles para crecer el proyecto sin romper el calendario: **[docs/PERSONALIZAR.md](docs/PERSONALIZAR.md)**.
@@ -128,6 +134,7 @@ cartelera-pastoral/
 │   ├── config.js              Configuración, categorías, secciones, Supabase
 │   ├── store.js               Datos: modo demo y Supabase
 │   ├── seed.js                Datos de ejemplo
+│   ├── recurrence.js          Reglas de repetición (semanal / primer domingo)
 │   ├── ui.js                  Cabecera, pie, modales, toasts
 │   ├── cards.js               Tarjetas y detalles reutilizables
 │   ├── utils.js               Fechas, formatos, .ics, imágenes
@@ -141,7 +148,20 @@ cartelera-pastoral/
 └── docs/                      Guías de despliegue, Supabase y personalización
 ```
 
-Las vistas se cargan por ruta (`#/calendario`, `#/avisos`, …). Agregar una sección nueva no toca las demás.
+Las vistas se cargan por ruta (`#/calendario`, `#/avisos`, `#/santisimo`, …). Agregar una sección nueva no toca las demás.
+
+---
+
+## Datos por confirmar
+
+Estos datos quedaron como marcadores o con un valor razonable; se pueden cambiar en el panel **Ajustes** o en el contenido:
+
+- [ ] **Logo oficial en archivo**: hoy la web usa un monograma provisional. Guarda la imagen en `assets/img/` y la integramos.
+- [ ] **Hora de la misa parroquial** del primer domingo (por ahora 10:00 a. m.).
+- [ ] **Rotación de comunidades** asignadas a cada viernes y a cada primer domingo.
+- [ ] **Teléfono y WhatsApp** de la pastoral (se dejaron vacíos para no publicar datos falsos).
+- [ ] **Horario del Santísimo** de este mes y de los siguientes (el de ejemplo usa las cinco comunidades y las horas del cartel de septiembre).
+- [ ] Nombre y correo de los coordinadores reales en **Contactos**.
 
 ---
 

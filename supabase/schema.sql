@@ -62,6 +62,10 @@ create table if not exists public.activities (
   responsible text default '',
   contact text default '',
   capacity integer default 0,
+  community text default '',
+  recurrence text not null default 'none'
+    check (recurrence in ('none', 'weekly', 'monthly_first_sunday')),
+  recurrence_until date,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'rejected', 'archived')),
   submitted_by text default '',
@@ -152,6 +156,31 @@ create table if not exists public.settings (
   value jsonb not null default '{}'::jsonb
 );
 
+-- Horario mensual del Santísimo: una hora por comunidad
+create table if not exists public.holy_hours (
+  id uuid primary key default gen_random_uuid(),
+  month date not null,
+  community text not null,
+  start_time time not null,
+  end_time time not null,
+  sort integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+-- Migración para proyectos creados antes de las actividades recurrentes
+alter table public.activities add column if not exists community text default '';
+alter table public.activities add column if not exists recurrence text not null default 'none';
+alter table public.activities add column if not exists recurrence_until date;
+
+do $$
+begin
+  alter table public.activities
+    add constraint activities_recurrence_check
+    check (recurrence in ('none', 'weekly', 'monthly_first_sunday'));
+exception
+  when duplicate_object then null;
+end $$;
+
 -- ---------- 3. Índices ----------
 create index if not exists activities_starts_idx on public.activities (starts_at);
 create index if not exists activities_status_idx on public.activities (status);
@@ -161,6 +190,7 @@ create index if not exists birthdays_date_idx on public.birthdays (date);
 create index if not exists resources_status_idx on public.resources (status);
 create index if not exists albums_status_idx on public.albums (status);
 create index if not exists prayers_status_idx on public.prayer_requests (status);
+create index if not exists holy_hours_month_idx on public.holy_hours (month, sort);
 
 -- ---------- 4. updated_at automático ----------
 create or replace function public.touch_updated_at()
@@ -198,6 +228,7 @@ alter table public.resources enable row level security;
 alter table public.contacts enable row level security;
 alter table public.albums enable row level security;
 alter table public.prayer_requests enable row level security;
+alter table public.holy_hours enable row level security;
 alter table public.settings enable row level security;
 
 -- Perfiles
@@ -320,6 +351,17 @@ create policy "ajustes edicion" on public.settings
   using (public.is_editor())
   with check (public.is_editor());
 
+-- Santísimo
+drop policy if exists "santisimo lectura" on public.holy_hours;
+create policy "santisimo lectura" on public.holy_hours
+  for select using (true);
+
+drop policy if exists "santisimo edicion" on public.holy_hours;
+create policy "santisimo edicion" on public.holy_hours
+  for all to authenticated
+  using (public.is_editor())
+  with check (public.is_editor());
+
 -- ---------- 6. Contador de "Amén" ----------
 create or replace function public.increment_prayer(prayer_id uuid)
 returns void
@@ -342,7 +384,7 @@ declare
 begin
   foreach t in array array[
     'activities', 'notices', 'birthdays', 'resources',
-    'contacts', 'albums', 'prayer_requests', 'settings'
+    'contacts', 'albums', 'prayer_requests', 'settings', 'holy_hours'
   ]
   loop
     begin

@@ -147,7 +147,7 @@ export default function calendarView(root, ctx) {
                 ${visible
                   .map((a) => {
                     const cat = categoryMeta(a.category);
-                    return `<button type="button" class="cal-event" data-activity="${esc(a.id)}" title="${esc(a.title)} · ${esc(fmtTime(a.starts_at))}" style="--ev-bg:${cat.bg};--ev-fg:${cat.color}">
+                    return `<button type="button" class="cal-event" data-activity="${esc(a.id)}" data-occurrence="${esc(a.starts_at)}" title="${esc(a.title)} · ${esc(fmtTime(a.starts_at))}" style="--ev-bg:${cat.bg};--ev-fg:${cat.color}">
                       <span class="n">${esc(a.title)}</span>
                     </button>`;
                   })
@@ -185,7 +185,7 @@ export default function calendarView(root, ctx) {
           .get(key)
           .map((a) => {
             const cat = categoryMeta(a.category);
-            return `<button type="button" class="agenda-item" data-activity="${esc(a.id)}" style="--ev-dot:${cat.color}">
+            return `<button type="button" class="agenda-item" data-activity="${esc(a.id)}" data-occurrence="${esc(a.starts_at)}" style="--ev-dot:${cat.color}">
               <span class="agenda-time">${esc(compactTime(a.starts_at))}</span>
               <span class="agenda-main">
                 <h3>${esc(a.title)}</h3>
@@ -219,7 +219,7 @@ export default function calendarView(root, ctx) {
                 ${a.responsible ? `<span>${icon('user', 13)} ${esc(a.responsible)}</span>` : ''}
               </div>
               <div class="actions">
-                <button type="button" class="btn btn-light btn-sm" data-day-activity="${esc(a.id)}">Ver detalle ${icon('arrow-right', 14)}</button>
+                <button type="button" class="btn btn-light btn-sm" data-day-activity="${esc(a.id)}" data-day-occurrence="${esc(a.starts_at)}">Ver detalle ${icon('arrow-right', 14)}</button>
                 <a class="btn btn-quiet btn-sm" href="${googleLink(a)}" target="_blank" rel="noopener">${icon('calendar', 14)} Añadir</a>
               </div>
             </div>`;
@@ -242,8 +242,9 @@ export default function calendarView(root, ctx) {
     el.querySelectorAll('[data-day-activity]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.dayActivity;
+        const occurrence = btn.dataset.dayOccurrence || null;
         closeModal();
-        setTimeout(() => openActivity(id), 160);
+        setTimeout(() => openActivity(id, occurrence), 160);
       });
     });
 

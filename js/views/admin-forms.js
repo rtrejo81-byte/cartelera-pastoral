@@ -8,6 +8,7 @@ import { store } from '../store.js';
 import {
   CATEGORIES, PRIORITIES, RESOURCE_KINDS, BIRTHDAY_KINDS, STATUS,
 } from '../config.js';
+import { RECURRENCES } from '../recurrence.js';
 import { openModal, closeModal, field, readForm, showFormError, setBusy, toast } from '../ui.js';
 import { esc, toDateInput, toDateTimeInput, uid } from '../utils.js';
 
@@ -33,12 +34,15 @@ export const FORMS = {
       { name: 'starts_at', label: 'Fecha y hora de inicio', type: 'datetime-local', required: true },
       { name: 'ends_at', label: 'Fecha y hora de fin', type: 'datetime-local' },
       { name: 'location', label: 'Lugar', type: 'text' },
+      { name: 'community', label: 'Comunidad asignada', type: 'text', placeholder: 'Ej. Comunidad San José' },
       { name: 'responsible', label: 'Responsable', type: 'text' },
       { name: 'contact', label: 'Teléfono de informes', type: 'text' },
       { name: 'capacity', label: 'Cupo (0 = sin límite)', type: 'number', min: '0' },
+      { name: 'recurrence', label: 'Se repite', type: 'select', options: RECURRENCES.map((r) => ({ value: r.id, label: r.label })) },
+      { name: 'recurrence_until', label: 'Repetir hasta', type: 'date', hint: 'Opcional. Sin fecha, se repite de forma indefinida.' },
       { name: 'description', label: 'Descripción', type: 'textarea', full: true },
     ],
-    defaults: { category: 'familiar', status: 'approved', capacity: 0 },
+    defaults: { category: 'familiar', status: 'approved', capacity: 0, recurrence: 'none' },
   },
 
   notices: {
@@ -122,12 +126,25 @@ export const FORMS = {
     defaults: { tone: 'sage', status: 'approved' },
     photos: true,
   },
+
+  holyHours: {
+    label: 'Horario del Santísimo',
+    fields: [
+      { name: 'month', label: 'Mes', type: 'date', required: true, hint: 'Elige el día 1 del mes; se guarda el mes completo.' },
+      { name: 'community', label: 'Comunidad', type: 'text', required: true, placeholder: 'Ej. Comunidad San José' },
+      { name: 'start_time', label: 'Hora de inicio', type: 'time', required: true },
+      { name: 'end_time', label: 'Hora de fin', type: 'time', required: true },
+      { name: 'sort', label: 'Orden', type: 'number', min: '0' },
+    ],
+    defaults: { sort: 0 },
+  },
 };
 
 function valueFor(fieldDef, record) {
   const raw = record ? record[fieldDef.name] : fieldDef.defaultValue ?? undefined;
   if (fieldDef.type === 'datetime-local') return toDateTimeInput(raw);
   if (fieldDef.type === 'date') return toDateInput(raw);
+  if (fieldDef.type === 'time') return String(raw || '').slice(0, 5);
   if (fieldDef.type === 'checkbox') return Boolean(raw);
   if (raw === null || raw === undefined) return '';
   return raw;
@@ -201,6 +218,7 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
       if (f.type === 'checkbox') value = Boolean(value);
       else if (f.type === 'number') value = value === '' ? 0 : Number(value);
       else if (f.type === 'datetime-local' || f.type === 'date') value = value || null;
+      if (name === 'holyHours' && f.name === 'month' && value) value = `${String(value).slice(0, 7)}-01`;
       payload[f.name] = value;
     }
 

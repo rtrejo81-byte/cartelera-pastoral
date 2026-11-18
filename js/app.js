@@ -16,6 +16,7 @@ import communityView from './views/community.js';
 import resourcesView from './views/resources.js';
 import birthdaysView from './views/birthdays.js';
 import galleryView from './views/gallery.js';
+import santisimoView from './views/santisimo.js';
 import contactsView from './views/contacts.js';
 import prayerView from './views/prayer.js';
 import proposeView from './views/propose.js';
@@ -29,6 +30,7 @@ const ROUTES = {
   '/recursos': resourcesView,
   '/cumpleanos': birthdaysView,
   '/galeria': galleryView,
+  '/santisimo': santisimoView,
   '/contactos': contactsView,
   '/oracion': prayerView,
   '/proponer': proposeView,
@@ -43,6 +45,7 @@ const TITLES = {
   '/recursos': 'Recursos',
   '/cumpleanos': 'Cumpleaños',
   '/galeria': 'Galería',
+  '/santisimo': 'Santísimo',
   '/contactos': 'Contactos',
   '/oracion': 'Oración',
   '/proponer': 'Proponer una actividad',
@@ -153,7 +156,7 @@ async function start() {
   qs('#main').addEventListener('click', (event) => {
     const activity = event.target.closest('[data-activity]');
     if (activity) {
-      openActivity(activity.dataset.activity);
+      openActivity(activity.dataset.activity, activity.dataset.occurrence || null);
       return;
     }
     const notice = event.target.closest('[data-notice]');

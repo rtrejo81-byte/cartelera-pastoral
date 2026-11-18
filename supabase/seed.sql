@@ -6,27 +6,62 @@
 -- ============================================================
 
 do $$
+declare
+  next_friday timestamp;
+  next_sunday timestamp;
 begin
+  next_friday := date_trunc('day', now())
+    + (((5 - extract(dow from now())::int) + 7) % 7) * interval '1 day'
+    + interval '18 hours';
+  if next_friday < now() then
+    next_friday := next_friday + interval '7 days';
+  end if;
+
+  next_sunday := date_trunc('month', now())
+    + (((7 - extract(dow from date_trunc('month', now()))::int) % 7) * interval '1 day')
+    + interval '10 hours';
+  if next_sunday < now() then
+    next_sunday := date_trunc('month', now() + interval '1 month')
+      + (((7 - extract(dow from date_trunc('month', now() + interval '1 month'))::int) % 7) * interval '1 day')
+      + interval '10 hours';
+  end if;
+
   if not exists (select 1 from public.activities) then
     insert into public.activities
-      (title, description, category, starts_at, ends_at, location, responsible, contact, capacity, status)
+      (title, description, category, starts_at, ends_at, location, responsible, contact, capacity, community, recurrence, status)
     values
+      ('Misa de comunidad',
+       'Misa de las 6:00 p. m. de cada viernes. Una comunidad de la Pastoral Familiar se encarga del servicio litúrgico.',
+       'misa', next_friday, next_friday + interval '1 hour',
+       'Templo parroquial Monte Tabor', 'Comunidades de la Pastoral Familiar', '', 0, '', 'weekly', 'approved'),
+      ('Misa parroquial',
+       'Misa parroquial del primer domingo de cada mes. Una comunidad de la Pastoral Familiar apoya el servicio litúrgico.',
+       'misa', next_sunday, next_sunday + interval '1 hour',
+       'Templo parroquial Monte Tabor', 'Pastoral Familiar', '', 0, '', 'monthly_first_sunday', 'approved'),
       ('Reunión de coordinadores',
        'Revisión de la calendarización y organización del próximo retiro.',
        'reunion', (now() + interval '3 days')::timestamp, (now() + interval '3 days' + interval '90 minutes')::timestamp,
-       'Casa parroquial · Salón 2', 'Equipo de coordinación', '7000-0001', 20, 'approved'),
+       'Casa parroquial · Salón 2', 'Equipo de coordinación', '7000-0001', 20, '', 'none', 'approved'),
       ('Taller: Los 5 lenguajes del amor',
        'Un espacio para descubrir cómo expresamos y recibimos amor en la familia.',
        'formacion', (now() + interval '7 days')::timestamp, (now() + interval '7 days' + interval '2 hours')::timestamp,
-       'Salón parroquial', 'Matrimonio Hernández', '7000-0002', 40, 'approved'),
+       'Salón parroquial', 'Matrimonio Hernández', '7000-0002', 40, '', 'none', 'approved'),
       ('Rosario en familia',
        'Oramos juntos como Pastoral Familiar. Al final compartimos un refrigerio.',
        'familiar', (now() + interval '10 days')::timestamp, (now() + interval '10 days' + interval '1 hour')::timestamp,
-       'Capilla de la Virgen', 'Comisión de espiritualidad', '', 0, 'approved'),
+       'Capilla de la Virgen', 'Comisión de espiritualidad', '', 0, '', 'none', 'approved'),
       ('Retiro Familiar',
        'Un día completo para preparar el corazón en familia: reflexiones, dinámicas y misa.',
        'retiro', (now() + interval '18 days')::timestamp, (now() + interval '18 days' + interval '9 hours')::timestamp,
-       'Casa de retiros El Carmelo', 'Pastoral Familiar', '7000-0003', 80, 'approved');
+       'Casa de retiros El Carmelo', 'Pastoral Familiar', '7000-0003', 80, '', 'none', 'approved');
+
+    insert into public.holy_hours (month, community, start_time, end_time, sort)
+    values
+      (date_trunc('month', now())::date, 'Comunidad San Francisco de Asís', '07:00', '08:00', 1),
+      (date_trunc('month', now())::date, 'Comunidad de Jóvenes', '08:00', '09:00', 2),
+      (date_trunc('month', now())::date, 'Comunidad San Juan Pablo II', '09:00', '10:00', 3),
+      (date_trunc('month', now())::date, 'Comunidad Santa Mónica', '10:00', '11:00', 4),
+      (date_trunc('month', now())::date, 'Comunidad San José', '11:00', '12:00', 5);
 
     insert into public.notices (title, body, priority, pinned, status, author, published_at, expires_at)
     values

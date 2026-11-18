@@ -11,7 +11,8 @@
 
 import { SUPABASE } from './config.js';
 import { buildSeed, SEED_VERSION } from './seed.js';
-import { compressImage, uid, parseLocal } from './utils.js';
+import { compressImage, uid, parseLocal, addDays } from './utils.js';
+import { expandActivity } from './recurrence.js';
 
 const LS_KEY = 'pf_cartelera_demo_v1';
 const SS_KEY = 'pf_cartelera_demo_session';
@@ -24,6 +25,7 @@ const TABLE = {
   contacts: 'contacts',
   albums: 'albums',
   prayers: 'prayer_requests',
+  holyHours: 'holy_hours',
 };
 
 const COLLECTIONS = Object.keys(TABLE);
@@ -42,6 +44,7 @@ const state = {
     contacts: [],
     albums: [],
     prayers: [],
+    holyHours: [],
   },
   settings: {},
   loading: false,
@@ -93,6 +96,7 @@ function persistDemo() {
       contacts: state.data.contacts,
       albums: state.data.albums,
       prayers: state.data.prayers,
+      holyHours: state.data.holyHours,
       settings: state.settings,
     };
     try {
@@ -211,7 +215,7 @@ async function refresh() {
   if (state.mode !== 'cloud' || !client) return;
   state.loading = true;
   try {
-    const [activities, notices, birthdays, resources, contacts, albums, prayers, settings] = await Promise.all([
+    const [activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, settings] = await Promise.all([
       fetchTable('activities'),
       fetchTable('notices'),
       fetchTable('birthdays'),
@@ -219,9 +223,10 @@ async function refresh() {
       fetchTable('contacts'),
       fetchTable('albums'),
       fetchTable('prayers'),
+      fetchTable('holyHours'),
       fetchSettings(),
     ]);
-    state.data = { activities, notices, birthdays, resources, contacts, albums, prayers };
+    state.data = { activities, notices, birthdays, resources, contacts, albums, prayers, holyHours };
     state.settings = settings || {};
     emit('change', { source: 'cloud' });
   } catch (err) {
@@ -326,40 +331,63 @@ export function pendingCount() {
   return count('activities') + count('notices') + count('prayers');
 }
 
-/** Actividades próximas (primeras `limit`, incluye hoy). */
+/** Actividades próximas (incluye las fechas recurrentes), primeras `limit`. */
 export function upcoming(limit = 5) {
-  const now = Date.now() - 3 * 3600 * 1000;
-  return sortActivities(all('activities').filter((a) => {
-    if (a.status && a.status !== 'approved') return false;
-    const d = parseLocal(a.starts_at);
-    return d && d.getTime() >= now;
-  })).slice(0, limit);
+  const now = new Date(Date.now() - 3 * 3600 * 1000);
+  const end = addDays(now, 180);
+  return sortActivities(
+    all('activities')
+      .filter((a) => !a.status || a.status === 'approved')
+      .flatMap((a) => expandActivity(a, now, end))
+      .filter((a) => {
+        const d = parseLocal(a.starts_at);
+        return d && d >= now;
+      })
+  ).slice(0, limit);
 }
 
 export function nextActivity() {
   return upcoming(1)[0] || null;
 }
 
+/** Próximas fechas sin repetir la misma actividad recurrente. */
+export function upcomingUnique(limit = 5) {
+  const seen = new Set();
+  const out = [];
+  for (const item of upcoming(200)) {
+    const key = item.occurrence_of || item.id;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(item);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
 export function activitiesOn(date) {
   const iso = date instanceof Date ? date : parseLocal(date);
   if (!iso) return [];
-  return sortActivities(
-    all('activities').filter((a) => {
-      if (a.status && a.status !== 'approved') return false;
-      const d = parseLocal(a.starts_at);
-      return d && d.getFullYear() === iso.getFullYear() && d.getMonth() === iso.getMonth() && d.getDate() === iso.getDate();
-    })
-  );
+  const start = new Date(iso.getFullYear(), iso.getMonth(), iso.getDate(), 0, 0, 0);
+  const end = new Date(iso.getFullYear(), iso.getMonth(), iso.getDate(), 23, 59, 59);
+  return activitiesInRange(start, end);
 }
 
 export function activitiesInRange(start, end) {
-  return sortActivities(
-    all('activities').filter((a) => {
-      if (a.status && a.status !== 'approved') return false;
-      const d = parseLocal(a.starts_at);
-      return d && d >= start && d <= end;
-    })
-  );
+  const expanded = all('activities')
+    .filter((a) => !a.status || a.status === 'approved')
+    .flatMap((a) => expandActivity(a, start, end));
+  return sortActivities(expanded);
+}
+
+/** Horarios del Santísimo de un mes ("YYYY-MM"). */
+export function holyHoursFor(monthKey) {
+  return all('holyHours')
+    .filter((item) => String(item.month || '').slice(0, 7) === monthKey)
+    .sort(
+      (a, b) =>
+        (a.sort ?? 0) - (b.sort ?? 0) ||
+        String(a.start_time || '').localeCompare(String(b.start_time || ''))
+    );
 }
 
 /** Cumpleaños del mes actual (o del mes indicado 0-11). */
@@ -575,7 +603,7 @@ export async function resetDemo() {
   if (state.mode !== 'demo') throw new Error('Solo disponible en modo demo.');
   localStorage.removeItem(LS_KEY);
   const seed = buildSeed();
-  for (const name of COLLECTIONS) state.data[name] = seed[name];
+  for (const name of COLLECTIONS) state.data[name] = seed[name] || [];
   state.settings = seed.settings || {};
   persistDemo();
   emit('change', { source: 'demo', reset: true });
@@ -597,9 +625,11 @@ export const store = {
   pendingCount,
   upcoming,
   nextActivity,
+  upcomingUnique,
   activitiesOn,
   activitiesInRange,
   birthdaysInMonth,
+  holyHoursFor,
   create,
   update,
   remove,

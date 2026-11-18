@@ -10,8 +10,9 @@ import {
   toast, confirmDialog, statusBadge, categoryBadge, site, setBusy,
 } from '../ui.js';
 import {
-  esc, fmtDateShort, fmtTime, pluralize, truncate, relativeLabel, parseLocal,
+  esc, fmtDateShort, fmtTime, fmtMonthYear, fmtClockRange, pluralize, truncate, relativeLabel, parseLocal,
 } from '../utils.js';
+import { recurrenceLabel, isRecurring } from '../recurrence.js';
 
 export default function adminView(root, ctx) {
   if (!store.isAuthenticated()) {
@@ -174,6 +175,8 @@ function renderTab(tab) {
       return tableTab('contacts');
     case 'oracion':
       return tableTab('prayers');
+    case 'santisimo':
+      return tableTab('holyHours');
     case 'galeria':
       return tableTab('albums');
     default:
@@ -188,7 +191,7 @@ function resumenTab() {
   const pendingPrayers = store.all('prayers').filter((i) => i.status === 'pending');
   const pendingAlbums = store.all('albums').filter((i) => i.status === 'pending');
   const pendingTotal = pendingActivities.length + pendingNotices.length + pendingPrayers.length + pendingAlbums.length;
-  const upcoming = store.upcoming(5);
+  const upcoming = store.upcomingUnique(5);
   const notices = store.publicList('notices').length;
   const prayers = store.publicList('prayers').length;
 
@@ -213,7 +216,7 @@ function resumenTab() {
 
     <div class="stat-grid">
       ${statCard('alert', pendingTotal, 'Por revisar', 'clay')}
-      ${statCard('calendar', store.upcoming(99).length, 'Actividades próximas', 'green')}
+      ${statCard('calendar', store.upcoming(99).length, 'Fechas próximas', 'green')}
       ${statCard('megaphone', notices, 'Avisos activos', 'gold')}
       ${statCard('heart', prayers, 'Intenciones públicas', 'ink')}
     </div>
@@ -320,7 +323,14 @@ const TABLE_DEFS = {
     newLabel: 'Nueva actividad',
     head: ['Actividad', 'Fecha', 'Tipo', 'Estado', ''],
     rows: (a) => [
-      { html: `<span class="strong">${esc(a.title)}<small>${esc(truncate(a.description || '', 70))}</small></span>`, cls: 'strong' },
+      {
+        html: `<span class="strong">${esc(a.title)}<small>${esc(truncate(a.description || '', 70))}${a.community ? ' · ' + esc(a.community) : ''}</small>${
+          isRecurring(a.recurrence)
+            ? `<span class="badge badge-gold" style="margin-top:.3rem">${icon('repeat', 11)} ${esc(recurrenceLabel(a.recurrence))}</span>`
+            : ''
+        }</span>`,
+        cls: 'strong',
+      },
       { html: `${esc(fmtDateShort(a.starts_at))}<br><small class="text-muted">${esc(fmtTime(a.starts_at))}</small>` },
       { html: categoryBadge(a.category) },
       { html: statusBadge(a.status) },
@@ -416,6 +426,25 @@ const TABLE_DEFS = {
       { html: statusBadge(a.status) },
     ],
     sort: (list) => [...list].sort((a, b) => (parseLocal(b.date)?.getTime() || 0) - (parseLocal(a.date)?.getTime() || 0)),
+  },
+  holyHours: {
+    label: 'Santísimo',
+    intro: 'Horario mensual de adoración: una hora de acompañamiento por comunidad.',
+    icon: 'sun',
+    newLabel: 'Nuevo horario',
+    head: ['Mes', 'Comunidad', 'Horario', 'Orden', ''],
+    rows: (h) => [
+      { html: `<span class="strong">${esc(fmtMonthYear(parseLocal(h.month) || new Date()))}</span>`, cls: 'strong' },
+      { html: esc(h.community) },
+      { html: esc(fmtClockRange(h.start_time, h.end_time)) },
+      { html: esc(String(h.sort ?? 0)) },
+    ],
+    sort: (list) =>
+      [...list].sort(
+        (a, b) =>
+          String(b.month || '').localeCompare(String(a.month || '')) ||
+          (a.sort ?? 0) - (b.sort ?? 0)
+      ),
   },
 };
 

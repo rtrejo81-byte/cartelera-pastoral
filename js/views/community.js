@@ -30,6 +30,15 @@ export default function communityView(root) {
           ${featureCard('/galeria', 'image', 'Galería', 'Los retiros, convivencias y celebraciones que hemos vivido.', `${albums.length} álbumes`, 'clay')}
           ${featureCard('/contactos', 'phone', 'Directorio', 'Las personas que coordinan cada área, con sus datos de contacto.', `${contacts.length} coordinadores`, 'green')}
         </div>
+
+        <div class="contact-strip mt-3">
+          <div>
+            <p class="eyebrow" style="margin-bottom:.35rem">Adoración</p>
+            <h3>Horario del Santísimo</h3>
+            <p>Una hora de acompañamiento a Jesús Sacramentado, asignada a cada comunidad. El horario se renueva mes a mes.</p>
+          </div>
+          <a class="btn btn-primary" href="#/santisimo">${icon('sun', 16)} Ver horario del mes</a>
+        </div>
       </div>
     </section>
 

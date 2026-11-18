@@ -12,11 +12,16 @@ import { activityCard, noticeCard, birthdayCard } from '../cards.js';
 export default function homeView(root) {
   const s = site();
   const next = store.nextActivity();
-  const upcoming = store.upcoming(4);
+  const upcoming = store.upcomingUnique(4);
   const notices = store.publicList('notices').slice(0, 2);
   const month = new Date().getMonth();
   const birthdays = store.birthdaysInMonth(month).slice(0, 4);
   const contacts = store.publicList('contacts');
+  const now = new Date();
+  const monthCount = store.activitiesInRange(
+    new Date(now.getFullYear(), now.getMonth(), 1),
+    new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+  ).length;
 
   const nextCard = next
     ? `
@@ -49,7 +54,7 @@ export default function homeView(root) {
             <a class="btn btn-ghost btn-lg" href="#/proponer">${icon('plus', 18)} Proponer actividad</a>
           </div>
           <div class="hero-meta">
-            <div class="hero-stat"><b>${store.upcoming(99).length}</b><span>Actividades próximas</span></div>
+            <div class="hero-stat"><b>${monthCount}</b><span>Actividades este mes</span></div>
             <div class="hero-stat"><b>${contacts.length}</b><span>Coordinadores</span></div>
             <div class="hero-stat"><b>${store.publicList('birthdays').length}</b><span>Celebraciones del año</span></div>
           </div>
@@ -69,7 +74,7 @@ export default function homeView(root) {
         ${quickLink('/comunidad', 'users', 'Comunidad', 'Celebramos')}
         ${quickLink('/recursos', 'book', 'Recursos', 'Materiales')}
         ${quickLink('/galeria', 'image', 'Galería', 'Momentos')}
-        ${quickLink('/oracion', 'heart', 'Oración', 'Oramos juntos')}
+        ${quickLink('/santisimo', 'sun', 'Santísimo', 'Adoración')}
       </div>
     </section>
 

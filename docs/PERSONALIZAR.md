@@ -26,7 +26,7 @@ Si quieres cambiar lo que aparece la primera vez (antes de que alguien guarde aj
 ```js
 export const SITE = {
   name: 'Pastoral Familiar',
-  parish: 'Parroquia San José',
+  parish: 'Parroquia Monte Tabor',
   heroTitle: 'Caminemos juntos como',
   heroAccent: 'familia',
   heroText: 'Un solo lugar para encontrarnos…',
@@ -60,11 +60,46 @@ Cambia esos valores y toda la web se adapta. Para usar otra tipografía:
 1. Cambia el `<link>` de Google Fonts en `index.html`.
 2. Actualiza `--font-display` y `--font-sans`.
 
-Para el logo, reemplaza `assets/img/logo.svg` y `assets/img/favicon.svg` manteniendo los nombres.
+**Logo:** la web usa hoy un monograma provisional. Cuando tengas el archivo oficial:
+
+1. Guárdalo en `assets/img/` (por ejemplo `logo-oficial.png`).
+2. Actualiza las referencias en `index.html`, `js/ui.js` (cabecera y pie) y `js/views/admin.js` (pantalla de acceso).
+3. Para el favicon, genera una versión cuadrada del emblema.
 
 ---
 
-## 4. Agregar un tipo de actividad
+## 4. Actividades fijas que se repiten
+
+La misa de comunidad de cada viernes y la misa parroquial del primer domingo no se crean una por una: son **reglas** que el calendario expande automáticamente.
+
+En el panel → **Actividades**, al crear o editar una actividad:
+
+- **Se repite**: `No se repite`, `Cada semana` o `Primer domingo de cada mes`.
+- **Repetir hasta**: opcional. Sin fecha, la regla sigue indefinidamente.
+- **Comunidad asignada**: para dejar claro qué comunidad sirve esa celebración.
+
+La fecha y hora de la actividad son el **punto de partida** de la serie: de ahí se calculan las siguientes ocurrencias. En el calendario, cada ocurrencia conserva la misma información y se abre con la fecha correcta. No se duplican filas en la base de datos.
+
+> Si cambias la hora de la misa, edita la actividad base y todas las ocurrencias futuras cambiarán. Las fechas pasadas no se reescriben.
+
+La lógica vive en `js/recurrence.js`. Para agregar otra regla (por ejemplo, «todos los sábados»), añade una opción a `RECURRENCES` y un caso en `expandActivity`.
+
+---
+
+## 5. Horario del Santísimo
+
+Es una sección aparte porque cambia **cada mes** y no es una actividad con hora única.
+
+1. Panel → **Santísimo** → **Nuevo horario**.
+2. Elige el mes (cualquier día de ese mes), la comunidad, la hora de inicio y la de fin.
+3. Repite una fila por comunidad.
+4. El orden define cómo se muestran en la página pública.
+
+La página `/#/santisimo` tiene navegación por mes: si un mes aún no tiene horario, muestra un mensaje en lugar de una tabla vacía. Las cinco comunidades iniciales son un ejemplo basado en el cartel de septiembre; se pueden editar o borrar.
+
+---
+
+## 6. Agregar un tipo de actividad
 
 En `js/config.js`, agrega un objeto a `CATEGORIES`:
 
@@ -86,9 +121,9 @@ No hay que tocar CSS ni base de datos.
 
 ---
 
-## 5. Agregar un campo a las actividades
+## 7. Agregar un campo a las actividades
 
-Ejemplo: un campo “¿Requiere inscripción?”.
+Ejemplo: un campo «¿Requiere inscripción?».
 
 **Paso 1. Base de datos** (solo si usas Supabase), en SQL Editor:
 
@@ -115,9 +150,9 @@ El guardado es automático: `openRecordForm` lee todos los campos del formulario
 
 ---
 
-## 6. Agregar una sección nueva
+## 8. Agregar una sección nueva
 
-Ejemplo: una página “Nosotros”.
+Ejemplo: una página «Nosotros».
 
 **Paso 1.** Crea `js/views/nosotros.js`:
 
@@ -161,23 +196,23 @@ const TITLES = {
 { id: 'nosotros', path: '/nosotros', label: 'Nosotros', icon: 'users', nav: true },
 ```
 
-Ya aparece en el menú, en el menú móvil y en el pie. Si usas iconos existentes (`calendar`, `megaphone`, `heart`, `book`, `image`, `phone`, `users`…), no necesitas nada más. Para un icono nuevo, agrégalo al objeto `PATHS` de `js/icons.js`.
+Ya aparece en el menú, en el menú móvil y en el pie. Si usas iconos existentes (`calendar`, `megaphone`, `heart`, `book`, `image`, `phone`, `users`, `sun`…), no necesitas nada más. Para un icono nuevo, agrégalo al objeto `PATHS` de `js/icons.js`.
 
 ---
 
-## 7. Contenido de ejemplo
+## 9. Contenido de ejemplo
 
 El modo demo arranca con datos de `js/seed.js`. Si cambias la estructura de los datos, sube `SEED_VERSION` para que los navegadores vuelvan a sembrar:
 
 ```js
-export const SEED_VERSION = 5;
+export const SEED_VERSION = 7;
 ```
 
 En Supabase, el contenido de ejemplo es opcional: `supabase/seed.sql`.
 
 ---
 
-## 8. Galería de fotos
+## 10. Galería de fotos
 
 Desde el panel → **Galería**:
 
@@ -192,7 +227,7 @@ Si quieres usar fotos alojadas en otro lugar (Drive, Flickr, etc.), pega el enla
 
 ---
 
-## 9. Imprimir la cartelera
+## 11. Imprimir la cartelera
 
 En `/#/calendario` pulsa **Imprimir**. El CSS de impresión (`assets/css/calendar.css`) oculta menús, botones y pie, y deja el calendario en blanco y negro para fotocopiar.
 
@@ -200,26 +235,27 @@ También puedes descargar el mes en `.ics` y compartirlo por WhatsApp: se abre e
 
 ---
 
-## 10. Buenas prácticas
+## 12. Buenas prácticas
 
 - **Prueba primero en modo demo** (sin Supabase) y luego conecta la nube.
 - **No cambies los nombres de los campos** de `store.js` sin actualizar la base de datos: son el contrato entre la web y Supabase.
 - **No pongas la clave `service_role`** en el frontend. Solo la `anon`.
 - **Haz respaldos** antes de cambios grandes: en Supabase, Database → Backups; en demo, exporta el contenido de `localStorage` desde la consola si te importa.
 - **Mantén las secciones separadas**: si una sección nueva falla, el calendario debe seguir funcionando. La app ya muestra un mensaje de error solo en la sección afectada.
-- **Prueba en el teléfono**: el 70 % de las visitas de una pastoral serán desde WhatsApp.
+- **Prueba en el teléfono**: la mayoría de las visitas de una pastoral llegarán desde WhatsApp.
 
 ---
 
-## 11. Mapa mental del código
+## 13. Mapa mental del código
 
 ```
-config.js   → qué existe (secciones, categorías, textos)
-store.js    → de dónde vienen los datos (demo o Supabase)
-ui.js       → piezas visuales comunes (cabecera, modales, campos)
-cards.js    → cómo se ve una actividad, aviso, contacto…
-views/*.js  → una pantalla = un archivo
-app.js      → qué archivo se muestra según la ruta
+config.js     → qué existe (secciones, categorías, textos)
+store.js      → de dónde vienen los datos (demo o Supabase)
+recurrence.js → cómo se repiten las actividades fijas
+ui.js         → piezas visuales comunes (cabecera, modales, campos)
+cards.js      → cómo se ve una actividad, aviso, contacto…
+views/*.js    → una pantalla = un archivo
+app.js        → qué archivo se muestra según la ruta
 ```
 
 Si respetas esa separación, puedes agregar secciones durante años sin tocar el calendario.

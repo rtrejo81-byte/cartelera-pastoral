@@ -54,7 +54,9 @@ export default function proposeView(root, ctx) {
               <div class="info-item"><span class="ico">3</span><div><b>Aparece en el calendario</b><br>Se publica y todos pueden verla, agregarla a su teléfono y compartirla.</div></div>
             </div>
             <hr>
-            <p class="field-hint" style="margin:0">¿Prefieres proponerla en persona? Escríbele a ${esc(s.email)} o visítanos. ${esc(s.meetingSchedule)}</p>
+            <p class="field-hint" style="margin:0">¿Prefieres proponerla en persona? ${
+              s.email ? `Escríbele a ${esc(s.email)}` : 'Habla con un coordinador'
+            } o visítanos. ${esc(s.meetingSchedule)}</p>
             <a class="btn btn-light btn-sm mt-2" href="#/contactos">${icon('phone', 15)} Ver contactos</a>
           </aside>
         </div>

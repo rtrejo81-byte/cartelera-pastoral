@@ -166,6 +166,31 @@ export function toTimeInput(value) {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
+/** Fecha y hora local en formato "YYYY-MM-DDTHH:mm". */
+export function toLocalDateTime(value) {
+  const d = value instanceof Date ? value : parseLocal(value);
+  if (!d) return '';
+  return `${ymd(d)}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+/** Formatea una hora suelta "07:00" o "07:00:00" como "7:00 a. m.". */
+export function fmtClock(value) {
+  const match = String(value || '').match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return '';
+  const h24 = Number(match[1]);
+  const mm = match[2];
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${mm} ${h24 < 12 ? 'a. m.' : 'p. m.'}`;
+}
+
+export function fmtClockRange(start, end) {
+  const a = fmtClock(start);
+  const b = fmtClock(end);
+  if (!a) return b;
+  if (!b) return a;
+  return `${a} – ${b}`;
+}
+
 export function fmtTime(value) {
   const d = parseLocal(value);
   if (!d) return '';
@@ -311,9 +336,10 @@ export function buildICS(activities, calendarName = 'Pastoral Familiar') {
     const start = parseLocal(a.starts_at);
     if (!start) continue;
     const end = parseLocal(a.ends_at) || new Date(start.getTime() + 90 * 60000);
+    const uidBase = a.occurrence_date ? `${a.id}-${a.occurrence_date}` : a.id;
     lines.push(
       'BEGIN:VEVENT',
-      `UID:${a.id}@pastoral-familiar`,
+      `UID:${uidBase}@pastoral-familiar`,
       `DTSTAMP:${stamp}`,
       `DTSTART;TZID=${TIMEZONE}:${icsDate(a.starts_at)}`,
       `DTEND;TZID=${TIMEZONE}:${icsDate(end)}`,
