@@ -18,7 +18,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
 - **Galería** de álbumes con visor de fotos.
-- **Directorio de contactos** con llamada, WhatsApp y correo.
+- **Equipo y comunidades**: los cinco ejes de la pastoral y las cinco comunidades, con sus coordinadores y datos de contacto.
 - **Oración**: envío de intenciones (públicas o solo para el equipo) y botón “Amén”.
 - **Propuesta pública de actividades**: cualquier miembro envía una idea y un coordinador la aprueba.
 - **Panel de administración** con acceso, bandeja de aprobación, alta/edición/baja de todo el contenido y ajustes del sitio.
@@ -34,6 +34,8 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 ![Horario del Santísimo, una hora por comunidad](docs/capturas/santisimo.jpg)
 
 ![Servicios de misa y comunidad](docs/capturas/servicios.jpg)
+
+![Equipo y comunidades de la pastoral](docs/capturas/equipo.jpg)
 
 <p align="center">
   <img src="docs/capturas/movil.jpg" alt="Vista móvil" width="300">
@@ -69,6 +71,10 @@ Alternativas: extensión **Live Server** de VS Code, o cualquier servidor estát
 5. En uno o dos minutos la web estará en `https://TU-USUARIO.github.io/cartelera-pastoral/`.
 
 Guía detallada, con comandos y solución de problemas: **[docs/GUIA-DESPLIEGUE.md](docs/GUIA-DESPLIEGUE.md)**.
+
+### Revisión con el equipo
+
+Antes de abrir la edición a todos los coordinadores, comparte la URL y usa la **[guía de revisión](docs/REVISION.md)**: incluye la lista de qué revisar, cómo mandar observaciones y qué datos faltan.
 
 ---
 

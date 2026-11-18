@@ -8,6 +8,11 @@ import { pageHead, emptyState, site } from '../ui.js';
 import { personCard } from '../cards.js';
 import { esc, pluralize, whatsappUrl } from '../utils.js';
 
+const AREA_INFO = {
+  'Equipo general': 'Coordina los ejes que sostienen la pastoral.',
+  Comunidades: 'Cada comunidad tiene su coordinador y su hora de servicio.',
+};
+
 export default function contactsView(root) {
   const list = store.publicList('contacts');
   const s = site();
@@ -25,9 +30,10 @@ export default function contactsView(root) {
   root.innerHTML = `
     ${pageHead({
       eyebrow: 'Directorio',
-      title: 'Contactos de la pastoral',
-      subtitle: 'Las personas que coordinan cada área. Escríbeles con confianza para dudas, inscripciones o para sumarte a un servicio.',
-      actions: `${s.whatsapp ? `<a class="btn btn-primary" href="${whatsappUrl(s.whatsapp, 'Hola, escribo desde la web de la Pastoral Familiar.')}" target="_blank" rel="noopener">${icon('whatsapp', 16)} Escribir al equipo</a>` : ''}`,
+      title: 'Equipo y comunidades',
+      subtitle:
+        'La Pastoral Familiar se organiza en cinco ejes y cinco comunidades. Aquí encontrarás a quién dirigirte en cada área.',
+      actions: `${s.whatsapp ? `<a class="btn btn-primary" href="${whatsappUrl(s.whatsapp, 'Hola, escribo desde la web de la Pastoral Familiar.')}" target="_blank" rel="noopener">${icon('whatsapp', 16)} Escribir al equipo</a>` : `<a class="btn btn-ghost" href="#/proponer">${icon('plus', 16)} Proponer actividad</a>`}`,
     })}
 
     <section class="section-tight">
@@ -39,8 +45,11 @@ export default function contactsView(root) {
                   .map(
                     (area) => `<section>
                       <div class="between" style="margin-bottom:.9rem">
-                        <h2 class="section-title" style="font-size:1.35rem">${esc(area.name)}</h2>
-                        <span class="text-sm text-muted">${esc(pluralize(area.items.length, 'persona', 'personas'))}</span>
+                        <div>
+                          <h2 class="section-title" style="font-size:1.35rem">${esc(area.name)}</h2>
+                          ${AREA_INFO[area.name] ? `<p class="section-sub" style="margin-top:.25rem">${esc(AREA_INFO[area.name])}</p>` : ''}
+                        </div>
+                        <span class="text-sm text-muted">${esc(pluralize(area.items.length, 'puesto', 'puestos'))}</span>
                       </div>
                       <div class="grid grid-3">${area.items.map(personCard).join('')}</div>
                     </section>`
@@ -57,11 +66,11 @@ export default function contactsView(root) {
         <div class="contact-strip mt-4">
           <div>
             <h3>¿Quieres sumarte a un servicio?</h3>
-            <p>Hay lugar para ti en la comisión de convivencia, formación, servicio o comunicación. Escríbenos y te contamos cómo participar.</p>
+            <p>Hay lugar para ti en los ejes de matrimonios, jóvenes, encuentro y convivencia, tema fijo, o en tu comunidad. Escríbenos y te contamos cómo participar.</p>
           </div>
           <div class="cluster">
             ${s.email ? `<a class="btn btn-light" href="mailto:${esc(s.email)}">${icon('mail', 16)} ${esc(s.email)}</a>` : ''}
-            <a class="btn btn-primary" href="#/proponer">${icon('plus', 16)} Proponer actividad</a>
+            ${s.whatsapp ? `<a class="btn btn-primary" href="${whatsappUrl(s.whatsapp, 'Hola, quiero sumarme a un servicio de la Pastoral Familiar.')}" target="_blank" rel="noopener">${icon('whatsapp', 16)} Escribir al equipo</a>` : `<a class="btn btn-primary" href="#/proponer">${icon('plus', 16)} Proponer actividad</a>`}
           </div>
         </div>
       </div>

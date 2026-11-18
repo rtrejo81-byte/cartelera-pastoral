@@ -8,7 +8,7 @@
 import { addDays, ymd, toLocalDateTime } from './utils.js';
 import { firstSundayDay } from './recurrence.js';
 
-export const SEED_VERSION = 7;
+export const SEED_VERSION = 8;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -421,12 +421,18 @@ export function buildSeed() {
   ];
 
   const contacts = [
-    { id: 'con_1', name: 'José Antonio Rivera', role: 'Coordinador general', area: 'Coordinación', phone: '7000-0011', email: 'coordinacion@pastoralfamiliar.org', whatsapp: '50370000011', notes: 'Disponible de martes a viernes por la tarde.', sort: 1 },
-    { id: 'con_2', name: 'María Elena de Hernández', role: 'Coordinadora de formación', area: 'Formación', phone: '7000-0010', email: 'formacion@pastoralfamiliar.org', whatsapp: '50370000010', notes: '', sort: 2 },
-    { id: 'con_3', name: 'Ana Lucía Martínez', role: 'Secretaria', area: 'Secretaría', phone: '7000-0013', email: 'secretaria@pastoralfamiliar.org', whatsapp: '50370000013', notes: 'Encargada de inscripciones y listas de asistencia.', sort: 3 },
-    { id: 'con_4', name: 'Luis Fernando Rivera', role: 'Tesorero', area: 'Administración', phone: '7000-0014', email: 'tesoreria@pastoralfamiliar.org', whatsapp: '50370000014', notes: '', sort: 4 },
-    { id: 'con_5', name: 'Sofía Martínez', role: 'Enlace juvenil', area: 'Juventud', phone: '7000-0015', email: '', whatsapp: '50370000015', notes: 'Apoya la comunicación con los jóvenes de la pastoral.', sort: 5 },
-    { id: 'con_6', name: 'Padre Miguel Ángel', role: 'Asesor espiritual', area: 'Parroquia', phone: '7000-0000', email: 'parroquia@ejemplo.org', whatsapp: '', notes: 'Atención en la oficina parroquial.', sort: 6 },
+    // Equipo general: coordinación y ejes
+    { id: 'con_team_1', name: 'Coordinación General', role: 'Coordinador general', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Coordina al equipo y acompaña los ejes. Nombre y contacto por confirmar.', sort: 1 },
+    { id: 'con_team_2', name: 'Eje de Matrimonios', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Acompaña a los matrimonios y su formación.', sort: 2 },
+    { id: 'con_team_3', name: 'Eje de Jóvenes', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Acompaña a los jóvenes de la pastoral.', sort: 3 },
+    { id: 'con_team_4', name: 'Eje de Encuentro y Convivencia', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Organiza encuentros y convivencias.', sort: 4 },
+    { id: 'con_team_5', name: 'Eje de Tema Fijo', role: 'Coordinador del eje', area: 'Equipo general', phone: '', email: '', whatsapp: '', notes: 'Prepara los temas de formación.', sort: 5 },
+    // Comunidades
+    { id: 'con_com_1', name: 'Comunidad Santa Mónica', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 10 },
+    { id: 'con_com_2', name: 'Comunidad San Juan Pablo II', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 11 },
+    { id: 'con_com_3', name: 'Comunidad San José', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 12 },
+    { id: 'con_com_4', name: 'Comunidad San Francisco de Asís', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 13 },
+    { id: 'con_com_5', name: 'Comunidad de Jóvenes', role: 'Coordinador de comunidad', area: 'Comunidades', phone: '', email: '', whatsapp: '', notes: 'Coordinador por confirmar.', sort: 14 },
   ];
 
   const albums = [

@@ -93,9 +93,16 @@ begin
 
     insert into public.contacts (name, role, area, phone, whatsapp, email, notes, sort)
     values
-      ('José Antonio Rivera', 'Coordinador general', 'Coordinación', '7000-0011', '50370000011', 'coordinacion@ejemplo.org', '', 1),
-      ('María Elena de Hernández', 'Coordinadora de formación', 'Formación', '7000-0010', '50370000010', 'formacion@ejemplo.org', '', 2),
-      ('Ana Lucía Martínez', 'Secretaria', 'Secretaría', '7000-0013', '50370000013', 'secretaria@ejemplo.org', 'Inscripciones y listas de asistencia.', 3);
+      ('Coordinación General', 'Coordinador general', 'Equipo general', '', '', '', 'Coordina al equipo y acompaña los ejes. Nombre y contacto por confirmar.', 1),
+      ('Eje de Matrimonios', 'Coordinador del eje', 'Equipo general', '', '', '', 'Acompaña a los matrimonios y su formación.', 2),
+      ('Eje de Jóvenes', 'Coordinador del eje', 'Equipo general', '', '', '', 'Acompaña a los jóvenes de la pastoral.', 3),
+      ('Eje de Encuentro y Convivencia', 'Coordinador del eje', 'Equipo general', '', '', '', 'Organiza encuentros y convivencias.', 4),
+      ('Eje de Tema Fijo', 'Coordinador del eje', 'Equipo general', '', '', '', 'Prepara los temas de formación.', 5),
+      ('Comunidad Santa Mónica', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 10),
+      ('Comunidad San Juan Pablo II', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 11),
+      ('Comunidad San José', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 12),
+      ('Comunidad San Francisco de Asís', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 13),
+      ('Comunidad de Jóvenes', 'Coordinador de comunidad', 'Comunidades', '', '', '', 'Coordinador por confirmar.', 14);
 
     insert into public.resources (title, description, category, kind, url, status)
     values

@@ -220,18 +220,24 @@ export function resourceCard(r) {
 
 /* ---------------- Contactos ---------------- */
 export function personCard(c) {
+  const isCommunity = /comunidad/i.test(c.area || '');
+  const hasContact = Boolean(c.phone || c.whatsapp || c.email);
   return `
     <article class="person-card">
-      <span class="avatar">${esc(initials(c.name))}</span>
+      <span class="avatar ${isCommunity ? 'is-community' : ''}">${isCommunity ? icon('home', 24) : esc(initials(c.name))}</span>
       <div>
         <h3 class="person-name">${esc(c.name)}</h3>
         <p class="person-role">${esc(c.role || 'Coordinador')}</p>
         ${c.notes ? `<p class="text-sm text-muted" style="margin-top:.35rem">${esc(c.notes)}</p>` : ''}
       </div>
       <div class="person-actions">
-        ${c.phone ? `<a class="btn-icon" href="${telUrl(c.phone)}" aria-label="Llamar a ${esc(c.name)}" title="${esc(c.phone)}">${icon('phone', 16)}</a>` : ''}
-        ${c.whatsapp ? `<a class="btn-icon" href="${whatsappUrl(c.whatsapp)}" target="_blank" rel="noopener" aria-label="WhatsApp de ${esc(c.name)}">${icon('whatsapp', 16)}</a>` : ''}
-        ${c.email ? `<a class="btn-icon" href="mailto:${esc(c.email)}" aria-label="Correo de ${esc(c.name)}">${icon('mail', 16)}</a>` : ''}
+        ${
+          hasContact
+            ? `${c.phone ? `<a class="btn-icon" href="${telUrl(c.phone)}" aria-label="Llamar a ${esc(c.name)}" title="${esc(c.phone)}">${icon('phone', 16)}</a>` : ''}
+               ${c.whatsapp ? `<a class="btn-icon" href="${whatsappUrl(c.whatsapp)}" target="_blank" rel="noopener" aria-label="WhatsApp de ${esc(c.name)}">${icon('whatsapp', 16)}</a>` : ''}
+               ${c.email ? `<a class="btn-icon" href="mailto:${esc(c.email)}" aria-label="Correo de ${esc(c.name)}">${icon('mail', 16)}</a>` : ''}`
+            : `<span class="badge badge-outline">Contacto por confirmar</span>`
+        }
       </div>
     </article>`;
 }
