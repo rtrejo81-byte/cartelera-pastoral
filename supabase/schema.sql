@@ -448,6 +448,16 @@ create policy "media borrado editores" on storage.objects
   for delete to authenticated
   using (bucket_id = 'media' and public.is_editor());
 
+-- ---------- 9. Permisos de API ----------
+-- RLS sigue siendo la que decide qué filas ve o escribe cada quien.
+-- Estos grants aseguran que la API funcione aunque el proyecto no
+-- tenga activada la opción "Grant API access to new tables".
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on all tables in schema public to anon, authenticated;
+grant usage, select on all sequences in schema public to anon, authenticated;
+alter default privileges in schema public
+  grant select, insert, update, delete on tables to anon, authenticated;
+
 -- ============================================================
 --  DESPUÉS DE EJECUTAR
 --  1. Authentication → Users → Add user (crea a cada coordinador)
