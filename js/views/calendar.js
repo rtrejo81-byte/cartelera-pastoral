@@ -11,7 +11,7 @@ import {
   endOfMonth, addMonths, sameDay, today, ymd, buildICS, downloadFile,
   pluralize,
 } from '../utils.js';
-import { openActivity } from '../cards.js';
+import { openActivity, zoomableImage } from '../cards.js';
 import { openRecordForm } from './admin-forms.js';
 
 function monthFromParam(value) {
@@ -241,7 +241,7 @@ export default function calendarView(root, ctx) {
                 <span class="badge badge-outline">${esc(fmtTime(a.starts_at))}${a.ends_at ? ' – ' + esc(fmtTime(a.ends_at)) : ''}</span>
               </div>
               <h3>${esc(a.title)}</h3>
-              ${a.image_url ? `<img class="day-thumb" src="${esc(a.image_url)}" alt="${esc(a.title)}" loading="lazy">` : ''}
+              ${zoomableImage(a.image_url, a.title, 'day-thumb')}
               ${a.description ? `<p>${esc(a.description)}</p>` : ''}
               <div class="meta">
                 ${a.location ? `<span>${icon('map-pin', 13)} ${esc(a.location)}</span>` : ''}

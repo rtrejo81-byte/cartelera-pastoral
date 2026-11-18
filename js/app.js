@@ -7,7 +7,7 @@ import { currentRoute, normalizePath } from './router.js';
 import { renderHeader, renderFooter, toast, site, closeModal } from './ui.js';
 import { icon } from './icons.js';
 import { qs, debounce } from './utils.js';
-import { openActivity, openNotice, openAlbum } from './cards.js';
+import { openActivity, openNotice, openAlbum, openImageLightbox } from './cards.js';
 
 import homeView from './views/home.js';
 import calendarView from './views/calendar.js';
@@ -171,6 +171,15 @@ async function start() {
     if (album) {
       openAlbum(album.dataset.album);
     }
+  });
+
+  // Las imágenes de actividades y avisos se abren en grande.
+  document.addEventListener('click', (event) => {
+    const image = event.target.closest('[data-image-open]');
+    if (!image) return;
+    event.preventDefault();
+    event.stopPropagation();
+    openImageLightbox(image.dataset.imageOpen, image.querySelector('img')?.alt || '');
   });
 
   onChange((type, detail) => {

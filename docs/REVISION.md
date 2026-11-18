@@ -26,7 +26,8 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] La **misa de comunidad** aparece todos los viernes a las 6:00 p. m.
 - [ ] La **misa parroquial** aparece el primer domingo de cada mes a las 5:00 p. m.
 - [ ] Al abrir una misa de viernes, se ve la **comunidad asignada**.
-- [ ] Una actividad con imagen muestra la foto en su ficha y en la agenda del día.
+- [ ] Una actividad con imagen muestra la foto completa en su ficha y en la agenda del día.
+- [ ] Al tocar la imagen se abre en grande, sin recortes.
 - [ ] Un aviso con imagen muestra la foto en la tarjeta y al abrirlo.
 - [ ] La fila **Comunidad** filtra las actividades (por ejemplo, Santa Mónica).
 - [ ] Los filtros por tipo de actividad funcionan.

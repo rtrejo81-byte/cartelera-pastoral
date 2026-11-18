@@ -277,9 +277,11 @@
 .event-detail .event-kicker { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: .8rem; }
 .event-detail h2 { font-size: 1.5rem; line-height: 1.2; }
 .event-detail .event-image {
+  display: block;
   width: 100%;
-  max-height: 340px;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
   border-radius: 14px;
   border: 1px solid var(--line);
   background: var(--cream-2);
@@ -287,12 +289,26 @@
 }
 .day-thumb {
   width: 100%;
-  max-height: 150px;
-  object-fit: cover;
+  height: auto;
+  max-height: 220px;
+  object-fit: contain;
   border-radius: 10px;
   border: 1px solid var(--line);
   background: var(--cream-2);
   margin: .45rem 0 .2rem;
+}
+.image-zoom {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+.image-zoom:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 14px;
 }
 .event-facts {
   display: grid;

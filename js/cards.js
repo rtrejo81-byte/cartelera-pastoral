@@ -46,6 +46,13 @@ export function activityCard(a, { hideDate = false, past = false } = {}) {
     </button>`;
 }
 
+export function zoomableImage(url, alt, className = '') {
+  if (!url) return '';
+  return `<button type="button" class="image-zoom" data-image-open="${esc(url)}" aria-label="Ver imagen completa: ${esc(alt || 'imagen')}">
+    <img class="${className}" src="${esc(url)}" alt="${esc(alt || '')}" loading="lazy">
+  </button>`;
+}
+
 export function activityDetailHTML(a) {
   const cat = categoryMeta(a.category);
   const start = parseLocal(a.starts_at);
@@ -61,7 +68,7 @@ export function activityDetailHTML(a) {
         <span class="badge badge-outline">${esc(relativeLabel(a.starts_at))}</span>
       </div>
       <h2>${esc(a.title)}</h2>
-      ${a.image_url ? `<img class="event-image" src="${esc(a.image_url)}" alt="${esc(a.title)}" loading="lazy">` : ''}
+      ${zoomableImage(a.image_url, a.title, 'event-image')}
       <div class="event-facts">
         <div class="event-fact">${icon('calendar', 16)}<div><b>Fecha</b>${esc(fmtDateLong(a.starts_at))}</div></div>
         <div class="event-fact">${icon('clock', 16)}<div><b>Hora</b>${esc(fmtTime(a.starts_at))}${end ? ` a ${esc(fmtTime(a.ends_at))}` : ''}</div></div>
@@ -151,7 +158,7 @@ export function noticeCard(n, { full = false } = {}) {
         <span class="text-sm text-muted" style="margin-left:auto">${esc(fmtDateShort(n.published_at))}</span>
       </div>
       <h3 class="notice-title">${esc(n.title)}</h3>
-      ${n.image_url ? `<img class="notice-image" src="${esc(n.image_url)}" alt="${esc(n.title)}" loading="lazy">` : ''}
+      ${zoomableImage(n.image_url, n.title, 'notice-image')}
       <p class="notice-body">${esc(full ? n.body || '' : truncate(n.body || '', 190))}</p>
       <div class="notice-meta">
         ${n.author ? `<span>${icon('user', 12)} ${esc(n.author)}</span>` : ''}
@@ -167,7 +174,7 @@ export function openNotice(id) {
   openModal({
     title: n.title,
     subtitle: n.published_at ? `Publicado el ${fmtDateLong(n.published_at)}` : '',
-    body: `${n.image_url ? `<img class="notice-image" src="${esc(n.image_url)}" alt="${esc(n.title)}" loading="lazy">` : ''}
+    body: `${zoomableImage(n.image_url, n.title, 'notice-image')}
       <p class="event-desc">${esc(n.body || '')}</p>
       <div class="cluster mt-3">
         ${n.author ? `<span class="badge badge-outline">${icon('user', 12)} ${esc(n.author)}</span>` : ''}
@@ -336,5 +343,39 @@ export function openAlbum(id) {
 
   el.querySelectorAll('[data-photo]').forEach((btn) => {
     btn.addEventListener('click', () => openPhoto(Number(btn.dataset.photo)));
+  });
+}
+
+/** Abre una sola imagen en grande, sin recortarla. */
+export function openImageLightbox(url, alt = '') {
+  if (!url) return;
+  const box = document.createElement('div');
+  box.className = 'lightbox open';
+  box.innerHTML = `
+    <div class="lightbox-head">
+      <h3>${esc(alt || 'Imagen')}</h3>
+      <button type="button" class="btn-icon" data-lb-close aria-label="Cerrar">${icon('x', 18)}</button>
+    </div>
+    <div class="lightbox-stage">
+      <img src="${esc(url)}" alt="${esc(alt || '')}">
+    </div>
+    <div class="lightbox-foot">
+      <span>${esc(alt || '')}</span>
+    </div>`;
+  document.body.appendChild(box);
+  document.body.classList.add('no-scroll');
+
+  const close = () => {
+    box.remove();
+    document.body.classList.remove('no-scroll');
+    document.removeEventListener('keydown', onKey);
+  };
+  const onKey = (e) => {
+    if (e.key === 'Escape') close();
+  };
+  document.addEventListener('keydown', onKey);
+  box.querySelector('[data-lb-close]').addEventListener('click', close);
+  box.addEventListener('click', (e) => {
+    if (e.target === box) close();
   });
 }
