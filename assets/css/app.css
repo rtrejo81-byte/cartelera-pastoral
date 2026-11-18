@@ -414,6 +414,16 @@
 .activity-card.is-past { opacity: .68; }
 
 /* ---------------- Avisos ---------------- */
+.notice-image {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--cream-2);
+  margin: .55rem 0;
+}
+
 .notice-card {
   position: relative;
   display: flex;

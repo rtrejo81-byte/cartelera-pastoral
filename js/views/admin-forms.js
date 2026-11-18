@@ -46,8 +46,9 @@ export const FORMS = {
       { name: 'recurrence', label: 'Se repite', type: 'select', options: RECURRENCES.map((r) => ({ value: r.id, label: r.label })) },
       { name: 'recurrence_until', label: 'Repetir hasta', type: 'date', hint: 'Opcional. Sin fecha, se repite de forma indefinida.' },
       { name: 'description', label: 'Descripción', type: 'textarea', full: true },
+      { name: 'image_url', label: 'Imagen de la actividad (opcional)', type: 'image', full: true },
     ],
-    defaults: { category: 'familiar', status: 'approved', capacity: 0, recurrence: 'none' },
+    defaults: { category: 'familiar', status: 'approved', capacity: 0, recurrence: 'none', image_url: '' },
   },
 
   notices: {
@@ -62,8 +63,9 @@ export const FORMS = {
       { name: 'author', label: 'Firma (quién lo publica)', type: 'text' },
       { name: 'pinned', label: 'Fijar arriba en la lista', type: 'checkbox' },
       { name: 'body', label: 'Contenido', type: 'textarea', rows: 6, full: true },
+      { name: 'image_url', label: 'Imagen del aviso (opcional)', type: 'image', full: true },
     ],
-    defaults: { priority: 'normal', status: 'approved', pinned: false },
+    defaults: { priority: 'normal', status: 'approved', pinned: false, image_url: '' },
   },
 
   birthdays: {
@@ -182,6 +184,9 @@ function valueFor(fieldDef, record) {
 
 function fieldHTML(fieldDef, record) {
   const value = valueFor(fieldDef, record);
+  if (fieldDef.type === 'image') {
+    return `<div style="${fieldDef.full ? 'grid-column:1 / -1' : ''}">${imageFieldHTML(fieldDef, value)}</div>`;
+  }
   const html =
     fieldDef.type === 'checkbox'
       ? field({ label: fieldDef.label, name: fieldDef.name, type: 'checkbox', value })
@@ -199,6 +204,65 @@ function fieldHTML(fieldDef, record) {
           max: fieldDef.max || '',
         });
   return `<div style="${fieldDef.full ? 'grid-column:1 / -1' : ''}">${html}</div>`;
+}
+
+function imageFieldHTML(fieldDef, value) {
+  return `<div class="field">
+    <label class="label" for="image-${esc(fieldDef.name)}">${esc(fieldDef.label)}</label>
+    <div class="image-field">
+      <div class="image-preview" data-image-preview>${value ? `<img src="${esc(value)}" alt="">` : icon('image', 26)}</div>
+      <div class="image-field-body">
+        <input class="input" id="image-${esc(fieldDef.name)}" name="${esc(fieldDef.name)}" type="url"
+               value="${esc(value)}" placeholder="https://… o sube una imagen" data-image-url>
+        <div class="cluster">
+          <label class="btn btn-light btn-sm" style="cursor:pointer;margin:0">
+            ${icon('upload', 15)} Subir imagen
+            <input type="file" accept="image/*" hidden data-image-file>
+          </label>
+          <button type="button" class="btn btn-ghost btn-sm" data-image-clear>${icon('trash', 15)} Quitar</button>
+        </div>
+        <span class="field-hint">Se comprime a 1600 px. También puedes pegar un enlace directo de Drive o de otro sitio.</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function bindImageFields(el) {
+  el.querySelectorAll('[data-image-url]').forEach((input) => {
+    const wrap = input.closest('.image-field');
+    if (!wrap) return;
+    const preview = wrap.querySelector('[data-image-preview]');
+    const fileInput = wrap.querySelector('[data-image-file]');
+    const clear = wrap.querySelector('[data-image-clear]');
+    const update = () => {
+      const url = input.value.trim();
+      preview.innerHTML = url ? `<img src="${esc(url)}" alt="">` : icon('image', 26);
+    };
+    input.addEventListener('input', update);
+    input.addEventListener('change', update);
+    clear?.addEventListener('click', () => {
+      input.value = '';
+      update();
+      input.focus();
+    });
+    fileInput?.addEventListener('change', async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      fileInput.disabled = true;
+      try {
+        toast('Subiendo imagen…', 'info', 2000);
+        const url = await store.uploadImage(file);
+        input.value = url;
+        update();
+        toast('Imagen lista. Guarda para publicar.', 'ok');
+      } catch (err) {
+        toast(err.message || 'No se pudo subir la imagen.', 'error', 6000);
+      } finally {
+        fileInput.disabled = false;
+        fileInput.value = '';
+      }
+    });
+  });
 }
 
 export function openRecordForm(name, record = null, { onSaved, defaults = null } = {}) {
@@ -227,6 +291,7 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
   const saveBtn = el.querySelector('[data-save]');
 
   if (spec.photos) bindPhotos(el, photos);
+  bindImageFields(el);
 
   const save = async () => {
     const data = readForm(form);
@@ -234,6 +299,10 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
     for (const f of spec.fields) {
       if (f.required && (!data[f.name] || String(data[f.name]).trim() === '')) {
         showFormError(form, `El campo “${f.label}” es obligatorio.`);
+        return;
+      }
+      if (f.type === 'image' && data[f.name] && !/^https?:\/\//i.test(String(data[f.name]).trim())) {
+        showFormError(form, `La imagen de “${f.label}” debe ser un enlace http(s) o una foto subida.`);
         return;
       }
     }

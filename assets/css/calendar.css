@@ -276,6 +276,24 @@
 /* ---------------- Detalle de actividad ---------------- */
 .event-detail .event-kicker { display: flex; flex-wrap: wrap; gap: .45rem; margin-bottom: .8rem; }
 .event-detail h2 { font-size: 1.5rem; line-height: 1.2; }
+.event-detail .event-image {
+  width: 100%;
+  max-height: 340px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--cream-2);
+  margin: .9rem 0;
+}
+.day-thumb {
+  width: 100%;
+  max-height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--cream-2);
+  margin: .45rem 0 .2rem;
+}
 .event-facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -19,6 +19,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
 - **Galería** general de álbumes con visor de fotos.
 - **Fotos por comunidad**: cada comunidad tiene su espacio y puede subir sus propios álbumes; también acepta enlaces externos (Drive, etc.).
+- **Imagen opcional en actividades y avisos**: se ve en la ficha, en la agenda del día y en la tarjeta del aviso.
 - **Equipo y comunidades**: los cinco ejes de la pastoral y las cinco comunidades, con sus coordinadores y datos de contacto.
 - **Oración**: envío de intenciones (públicas o solo para el equipo) y botón “Amén”.
 - **Propuesta pública de actividades**: cualquier miembro envía una idea y un coordinador la aprueba.

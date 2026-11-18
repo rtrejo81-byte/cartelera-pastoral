@@ -55,6 +55,7 @@ create table if not exists public.activities (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   description text default '',
+  image_url text default '',
   category text not null default 'familiar',
   starts_at timestamp not null,
   ends_at timestamp,
@@ -77,6 +78,7 @@ create table if not exists public.notices (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   body text default '',
+  image_url text default '',
   priority text not null default 'normal'
     check (priority in ('normal', 'importante', 'urgente')),
   pinned boolean not null default false,
@@ -184,7 +186,9 @@ create table if not exists public.service_assignments (
 alter table public.activities add column if not exists community text default '';
 alter table public.activities add column if not exists recurrence text not null default 'none';
 alter table public.activities add column if not exists recurrence_until date;
+alter table public.activities add column if not exists image_url text default '';
 alter table public.albums add column if not exists community text default '';
+alter table public.notices add column if not exists image_url text default '';
 
 do $$
 begin

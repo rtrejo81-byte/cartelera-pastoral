@@ -61,6 +61,7 @@ export function activityDetailHTML(a) {
         <span class="badge badge-outline">${esc(relativeLabel(a.starts_at))}</span>
       </div>
       <h2>${esc(a.title)}</h2>
+      ${a.image_url ? `<img class="event-image" src="${esc(a.image_url)}" alt="${esc(a.title)}" loading="lazy">` : ''}
       <div class="event-facts">
         <div class="event-fact">${icon('calendar', 16)}<div><b>Fecha</b>${esc(fmtDateLong(a.starts_at))}</div></div>
         <div class="event-fact">${icon('clock', 16)}<div><b>Hora</b>${esc(fmtTime(a.starts_at))}${end ? ` a ${esc(fmtTime(a.ends_at))}` : ''}</div></div>
@@ -150,6 +151,7 @@ export function noticeCard(n, { full = false } = {}) {
         <span class="text-sm text-muted" style="margin-left:auto">${esc(fmtDateShort(n.published_at))}</span>
       </div>
       <h3 class="notice-title">${esc(n.title)}</h3>
+      ${n.image_url ? `<img class="notice-image" src="${esc(n.image_url)}" alt="${esc(n.title)}" loading="lazy">` : ''}
       <p class="notice-body">${esc(full ? n.body || '' : truncate(n.body || '', 190))}</p>
       <div class="notice-meta">
         ${n.author ? `<span>${icon('user', 12)} ${esc(n.author)}</span>` : ''}
@@ -165,7 +167,8 @@ export function openNotice(id) {
   openModal({
     title: n.title,
     subtitle: n.published_at ? `Publicado el ${fmtDateLong(n.published_at)}` : '',
-    body: `<p class="event-desc">${esc(n.body || '')}</p>
+    body: `${n.image_url ? `<img class="notice-image" src="${esc(n.image_url)}" alt="${esc(n.title)}" loading="lazy">` : ''}
+      <p class="event-desc">${esc(n.body || '')}</p>
       <div class="cluster mt-3">
         ${n.author ? `<span class="badge badge-outline">${icon('user', 12)} ${esc(n.author)}</span>` : ''}
         ${n.expires_at ? `<span class="badge badge-outline">${icon('clock', 12)} Hasta ${esc(fmtDateMedium(n.expires_at))}</span>` : ''}
