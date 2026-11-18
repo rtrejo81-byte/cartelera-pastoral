@@ -112,7 +112,8 @@ create table if not exists public.resources (
   url text not null,
   status text not null default 'approved'
     check (status in ('pending', 'approved', 'rejected', 'archived')),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
 );
 
 create table if not exists public.contacts (

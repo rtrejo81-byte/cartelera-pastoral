@@ -35,7 +35,7 @@ Debe aparecer **“Success. No rows returned”**. Ese único archivo crea:
 - La sincronización en vivo (Realtime).
 - El espacio de imágenes (`media`) en Storage.
 
-> **¿Ya tenías el proyecto instalado?** Vuelve a ejecutar `schema.sql` completo. Es idempotente y agrega lo nuevo: las columnas `recurrence`, `recurrence_until`, `community` e `image_url` en actividades, `community` en álbumes, `image_url` en avisos, y las tablas `holy_hours` y `service_assignments`.
+> **¿Ya tenías el proyecto instalado?** Vuelve a ejecutar `schema.sql` completo. Es idempotente y agrega lo nuevo: las columnas `recurrence`, `recurrence_until`, `community` e `image_url` en actividades, `community` en álbumes, `image_url` en avisos, `created_at` en recursos, y las tablas `holy_hours` y `service_assignments`.
 
 ### Contenido inicial (opcional)
 
