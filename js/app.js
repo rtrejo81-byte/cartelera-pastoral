@@ -16,6 +16,7 @@ import communityView from './views/community.js';
 import resourcesView from './views/resources.js';
 import birthdaysView from './views/birthdays.js';
 import galleryView from './views/gallery.js';
+import photosView from './views/photos.js';
 import santisimoView from './views/santisimo.js';
 import contactsView from './views/contacts.js';
 import prayerView from './views/prayer.js';
@@ -30,6 +31,7 @@ const ROUTES = {
   '/recursos': resourcesView,
   '/cumpleanos': birthdaysView,
   '/galeria': galleryView,
+  '/fotos': photosView,
   '/santisimo': santisimoView,
   '/contactos': contactsView,
   '/oracion': prayerView,
@@ -45,6 +47,7 @@ const TITLES = {
   '/recursos': 'Recursos',
   '/cumpleanos': 'Cumpleaños',
   '/galeria': 'Galería',
+  '/fotos': 'Fotos por comunidad',
   '/santisimo': 'Santísimo',
   '/contactos': 'Contactos',
   '/oracion': 'Oración',

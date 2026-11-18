@@ -91,6 +91,15 @@
 .filter-chip[aria-pressed="true"] .pill-dot { box-shadow: 0 0 0 2px rgba(246, 239, 227, .35); }
 .filter-chip .count { opacity: .6; font-size: .72rem; }
 .filters .spacer { flex: 1 1 auto; }
+.filters-community { margin-top: -.55rem; }
+.filter-label {
+  margin-right: .15rem;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 
 /* ---------------- Rejilla mensual ---------------- */
 .cal-shell {

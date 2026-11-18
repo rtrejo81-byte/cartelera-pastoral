@@ -35,7 +35,7 @@ function renderLogin(root) {
       <div class="wrap" style="display:grid;place-items:center">
         <div class="login-card">
           <span class="brand" style="justify-content:center">
-            <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="52" height="52">
+            <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="72" height="72">
             <span class="brand-text">
               <span class="brand-name">Pastoral Familiar</span>
               <span class="brand-sub">Panel de coordinadores</span>
@@ -422,7 +422,7 @@ const TABLE_DEFS = {
     newLabel: 'Nuevo álbum',
     head: ['Álbum', 'Fecha', 'Fotos', 'Estado', ''],
     rows: (a) => [
-      { html: `<span class="strong">${esc(a.title)}<small>${esc(truncate(a.description || '', 60))}</small></span>`, cls: 'strong' },
+      { html: `<span class="strong">${esc(a.title)}<small>${a.community ? esc(a.community) + ' · ' : ''}${esc(truncate(a.description || '', 60))}</small></span>`, cls: 'strong' },
       { html: esc(fmtDateShort(a.date)) },
       { html: esc(String(Array.isArray(a.photos) ? a.photos.length : 0)) },
       { html: statusBadge(a.status) },

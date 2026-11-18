@@ -4,7 +4,7 @@
 
 import { icon } from '../icons.js';
 import { store } from '../store.js';
-import { CATEGORIES, MONTHS, WEEKDAYS } from '../config.js';
+import { CATEGORIES, COMMUNITIES, MONTHS, WEEKDAYS } from '../config.js';
 import { pageHead, emptyState, openModal, closeModal, categoryMeta, categoryBadge, site, toast } from '../ui.js';
 import {
   esc, parseLocal, fmtTime, fmtDateLong, fmtMonthYear, monthMatrix, startOfMonth,
@@ -36,18 +36,29 @@ export default function calendarView(root, ctx) {
     cursor: monthFromParam(params.get('mes')),
     view: params.get('vista') === 'agenda' ? 'agenda' : params.get('vista') === 'mes' ? 'mes' : isNarrow ? 'agenda' : 'mes',
     cats: new Set(CATEGORIES.map((c) => c.id)),
+    community: COMMUNITIES.some((c) => c.value === params.get('comunidad')) ? params.get('comunidad') : 'all',
   };
 
   const syncUrl = () => {
-    const query = `mes=${state.cursor.getFullYear()}-${String(state.cursor.getMonth() + 1).padStart(2, '0')}&vista=${state.view}`;
+    const query = `mes=${state.cursor.getFullYear()}-${String(state.cursor.getMonth() + 1).padStart(2, '0')}&vista=${state.view}${
+      state.community !== 'all' ? `&comunidad=${encodeURIComponent(state.community)}` : ''
+    }`;
     history.replaceState(null, '', `#/calendario?${query}`);
   };
 
-  const monthActivities = () => {
-    const start = startOfMonth(state.cursor);
-    const end = new Date(state.cursor.getFullYear(), state.cursor.getMonth() + 1, 0, 23, 59, 59);
-    return store.activitiesInRange(start, end).filter((a) => state.cats.has(a.category || 'familiar'));
+  const monthRange = () => [
+    startOfMonth(state.cursor),
+    new Date(state.cursor.getFullYear(), state.cursor.getMonth() + 1, 0, 23, 59, 59),
+  ];
+
+  const monthBase = () => {
+    const [start, end] = monthRange();
+    return store.activitiesInRange(start, end).filter(
+      (a) => state.community === 'all' || a.community === state.community
+    );
   };
+
+  const monthActivities = () => monthBase().filter((a) => state.cats.has(a.category || 'familiar'));
 
   const paint = () => {
     const list = monthActivities();
@@ -82,10 +93,7 @@ export default function calendarView(root, ctx) {
 
         <div class="filters" aria-label="Filtrar por tipo de actividad">
           ${CATEGORIES.map((c) => {
-            const count = store.activitiesInRange(
-              startOfMonth(state.cursor),
-              new Date(state.cursor.getFullYear(), state.cursor.getMonth() + 1, 0, 23, 59, 59)
-            ).filter((a) => a.category === c.id).length;
+            const count = monthBase().filter((a) => a.category === c.id).length;
             return `<button type="button" class="filter-chip" data-cat="${c.id}" aria-pressed="${state.cats.has(c.id)}">
               <span class="pill-dot" style="--dot:${c.color}"></span>${esc(c.label)}
               ${count ? `<span class="count">${count}</span>` : ''}
@@ -94,6 +102,19 @@ export default function calendarView(root, ctx) {
           <div class="spacer"></div>
           <button type="button" class="btn btn-quiet btn-sm" data-cats-all>Todas</button>
           <button type="button" class="btn btn-quiet btn-sm" data-cats-none>Ninguna</button>
+        </div>
+
+        <div class="filters filters-community" aria-label="Filtrar por comunidad">
+          <span class="filter-label">Comunidad</span>
+          <button type="button" class="filter-chip" data-community="all" aria-pressed="${state.community === 'all'}">
+            Todas
+          </button>
+          ${COMMUNITIES.map((c) => {
+            const count = monthBase().filter((a) => a.community === c.value).length;
+            return `<button type="button" class="filter-chip" data-community="${esc(c.value)}" aria-pressed="${state.community === c.value}">
+              ${esc(c.label)}${count ? `<span class="count">${count}</span>` : ''}
+            </button>`;
+          }).join('')}
         </div>
 
         ${
@@ -111,7 +132,10 @@ export default function calendarView(root, ctx) {
           list.length === 0
             ? `<div class="mt-3">${emptyState({
                 icon: 'calendar',
-                title: 'No hay actividades en este mes',
+                title:
+                  state.community === 'all'
+                    ? 'No hay actividades en este mes'
+                    : `No hay actividades de ${COMMUNITIES.find((c) => c.value === state.community)?.label || 'esta comunidad'}`,
                 text: 'Prueba con otro mes, activa más filtros o propone una nueva actividad para la pastoral.',
                 action: '<a class="btn btn-primary btn-sm mt-1" href="#/proponer">Proponer una actividad</a>',
               })}</div>`
@@ -202,7 +226,11 @@ export default function calendarView(root, ctx) {
 
   function openDay(key) {
     const day = parseLocal(key);
-    const events = store.activitiesOn(day);
+    const events = store.activitiesOn(day).filter(
+      (a) =>
+        state.cats.has(a.category || 'familiar') &&
+        (state.community === 'all' || a.community === state.community)
+    );
     const body = events.length
       ? `<div class="day-list">${events
           .map((a) => {
@@ -317,6 +345,13 @@ export default function calendarView(root, ctx) {
     root.querySelector('[data-cats-none]')?.addEventListener('click', () => {
       state.cats.clear();
       paint();
+    });
+    root.querySelectorAll('[data-community]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.community = btn.dataset.community;
+        syncUrl();
+        paint();
+      });
     });
     root.querySelectorAll('[data-day-open]').forEach((btn) => {
       btn.addEventListener('click', (e) => {

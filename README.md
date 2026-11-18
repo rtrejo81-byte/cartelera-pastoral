@@ -10,14 +10,15 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 
 ## Lo que incluye
 
-- **Calendario** con vista de mes y agenda, filtros por tipo de actividad, exportación a `.ics` (Google/Apple Calendar) e impresión.
+- **Calendario** con vista de mes y agenda, filtros por tipo de actividad y **por comunidad**, exportación a `.ics` (Google/Apple Calendar) e impresión.
 - **Actividades fijas recurrentes**: la misa de comunidad de cada viernes (6:00 p. m.) y la misa parroquial del primer domingo (5:00 p. m.) se repiten solas en el calendario, sin duplicarlas mes a mes.
 - **Servicios asignados**: cada misa de viernes muestra qué comunidad se encarga ese día; se administra por fecha.
 - **Horario del Santísimo**: los domingos, una hora de adoración por comunidad, organizada mes a mes y editable desde el panel.
 - **Avisos** con prioridad, fijados arriba, fecha de vigencia y búsqueda.
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
-- **Galería** de álbumes con visor de fotos.
+- **Galería** general de álbumes con visor de fotos.
+- **Fotos por comunidad**: cada comunidad tiene su espacio y puede subir sus propios álbumes.
 - **Equipo y comunidades**: los cinco ejes de la pastoral y las cinco comunidades, con sus coordinadores y datos de contacto.
 - **Oración**: envío de intenciones (públicas o solo para el equipo) y botón “Amén”.
 - **Propuesta pública de actividades**: cualquier miembro envía una idea y un coordinador la aprueba.
@@ -36,6 +37,8 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 ![Servicios de misa y comunidad](docs/capturas/servicios.jpg)
 
 ![Equipo y comunidades de la pastoral](docs/capturas/equipo.jpg)
+
+![Fotos por comunidad](docs/capturas/fotos.jpg)
 
 <p align="center">
   <img src="docs/capturas/movil.jpg" alt="Vista móvil" width="300">
@@ -150,7 +153,7 @@ cartelera-pastoral/
 │   ├── icons.js               Iconos SVG
 │   ├── router.js              Rutas por hash
 │   ├── app.js                 Arranque y navegación
-│   └── views/                 Una vista por sección + panel
+│   └── views/                 Una vista por sección + panel (incluye fotos por comunidad)
 ├── supabase/
 │   ├── schema.sql             Tablas, permisos (RLS), realtime, storage
 │   └── seed.sql               Contenido inicial opcional

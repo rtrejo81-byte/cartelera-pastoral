@@ -26,6 +26,7 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] La **misa de comunidad** aparece todos los viernes a las 6:00 p. m.
 - [ ] La **misa parroquial** aparece el primer domingo de cada mes a las 5:00 p. m.
 - [ ] Al abrir una misa de viernes, se ve la **comunidad asignada**.
+- [ ] La fila **Comunidad** filtra las actividades (por ejemplo, Santa Mónica).
 - [ ] Los filtros por tipo de actividad funcionan.
 - [ ] La vista **Agenda** y la exportación `.ics` funcionan.
 
@@ -43,6 +44,7 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] Avisos: prioridad, fijados y búsqueda.
 - [ ] Recursos: documentos y enlaces.
 - [ ] Galería: álbumes (las fotos reales se subirán después).
+- [ ] **Fotos por comunidad**: cada comunidad tiene su espacio y su botón “Subir fotos”.
 - [ ] Oración: envío de una intención.
 - [ ] “Proponer actividad”: una propuesta queda pendiente de aprobación.
 - [ ] Panel (`/#/admin`): se puede entrar en modo demo con cualquier correo y contraseña.

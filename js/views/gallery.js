@@ -17,7 +17,8 @@ export default function galleryView(root) {
       eyebrow: 'Memoria viva',
       title: 'Galería de la pastoral',
       subtitle: 'Retiros, convivencias y celebraciones. Los momentos que nos recuerdan que caminar juntos vale la pena.',
-      actions: `<a class="btn btn-ghost" href="#/contactos">${icon('send', 16)} Compartir fotos</a>`,
+      actions: `<a class="btn btn-ghost" href="#/contactos">${icon('send', 16)} Compartir fotos</a>
+                <a class="btn btn-primary" href="#/fotos">${icon('image', 16)} Fotos por comunidad</a>`,
     })}
 
     <section class="section-tight">

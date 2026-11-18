@@ -35,7 +35,7 @@ Debe aparecer **“Success. No rows returned”**. Ese único archivo crea:
 - La sincronización en vivo (Realtime).
 - El espacio de imágenes (`media`) en Storage.
 
-> **¿Ya tenías el proyecto instalado?** Vuelve a ejecutar `schema.sql` completo. Es idempotente y agrega lo nuevo: las columnas `recurrence`, `recurrence_until` y `community` en actividades, y las tablas `holy_hours` y `service_assignments`.
+> **¿Ya tenías el proyecto instalado?** Vuelve a ejecutar `schema.sql` completo. Es idempotente y agrega lo nuevo: las columnas `recurrence`, `recurrence_until` y `community` en actividades, `community` en álbumes, y las tablas `holy_hours` y `service_assignments`.
 
 ### Contenido inicial (opcional)
 
@@ -151,6 +151,7 @@ Sin el bucket público, las fotos se suben pero no se ven.
 7. Revisa que la **misa de comunidad** aparezca todos los viernes y la **misa parroquial** el primer domingo del mes.
 8. Agrega un horario en **Panel → Santísimo** y verifícalo en `/#/santisimo`.
 9. Asigna una comunidad a un viernes en **Panel → Servicios** y comprueba que aparezca en el detalle de esa misa.
+10. Entra a `/#/fotos`, elige una comunidad y sube una foto de prueba; debe aparecer en la galería.
 
 Si todo eso funciona, la cartelera ya es colaborativa.
 

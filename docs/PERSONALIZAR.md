@@ -86,6 +86,8 @@ La fecha y hora de la actividad son el **punto de partida** de la serie: de ahí
 
 La lógica vive en `js/recurrence.js`. Para agregar otra regla (por ejemplo, «todos los sábados»), añade una opción a `RECURRENCES` y un caso en `expandActivity`.
 
+En el calendario, la fila **Comunidad** filtra las actividades por comunidad. Las misas de viernes toman la comunidad de la tabla de **Servicios**, así que el filtro también las muestra correctamente.
+
 ---
 
 ## 5. Santísimo y servicios de misa
@@ -221,7 +223,7 @@ Ya aparece en el menú, en el menú móvil y en el pie. Si usas iconos existente
 El modo demo arranca con datos de `js/seed.js`. Si cambias la estructura de los datos, sube `SEED_VERSION` para que los navegadores vuelvan a sembrar:
 
 ```js
-export const SEED_VERSION = 7;
+export const SEED_VERSION = 10;
 ```
 
 En Supabase, el contenido de ejemplo es opcional: `supabase/seed.sql`.
@@ -230,14 +232,19 @@ En Supabase, el contenido de ejemplo es opcional: `supabase/seed.sql`.
 
 ## 10. Galería de fotos
 
-Desde el panel → **Galería**:
+Hay dos vistas:
 
-1. Crea un álbum (título, fecha, color de portada).
+- `/#/galeria`: todos los álbumes de la pastoral.
+- `/#/fotos`: un espacio por comunidad, con su botón **Subir fotos**.
+
+Cada comunidad puede subir hasta 4 fotos por álbum desde su teléfono. El álbum queda ligado a esa comunidad y aparece también en la galería general. En modo demo las fotos se guardan comprimidas en el navegador (límite de unos 5 MB); con Supabase se guardan en el bucket `media`.
+
+También se puede administrar desde el panel → **Galería**:
+
+1. Crea un álbum (título, fecha, comunidad, color de portada).
 2. Pulsa **Subir imágenes** o pega un enlace.
 3. Escribe una descripción por foto.
 4. Guarda.
-
-Con Supabase, las imágenes se guardan en el bucket `media`. En modo demo se guardan comprimidas en el navegador (no subas muchas: el límite es de unos 5 MB).
 
 Si quieres usar fotos alojadas en otro lugar (Drive, Flickr, etc.), pega el enlace directo a la imagen en el campo de URL. Debe terminar en `.jpg`, `.png` o `.webp` y ser accesible sin iniciar sesión.
 

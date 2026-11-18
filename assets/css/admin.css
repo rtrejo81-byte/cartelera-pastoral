@@ -201,6 +201,7 @@
   box-shadow: var(--shadow-lg);
 }
 .login-card .brand { justify-content: center; margin-bottom: 1.2rem; }
+.login-card .brand-mark { width: 64px; height: 64px; }
 .login-card h1 { font-size: 1.65rem; text-align: center; line-height: 1.15; }
 .login-card .login-sub { margin: .5rem 0 1.6rem; text-align: center; font-size: .88rem; color: var(--muted); }
 .login-card .btn-block { margin-top: .4rem; }

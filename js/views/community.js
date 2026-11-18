@@ -41,6 +41,15 @@ export default function communityView(root) {
           <a class="btn btn-primary" href="#/santisimo">${icon('sun', 16)} Ver horario del mes</a>
         </div>
 
+        <div class="contact-strip mt-3">
+          <div>
+            <p class="eyebrow" style="margin-bottom:.35rem">Fotos</p>
+            <h3>El álbum de tu comunidad</h3>
+            <p>Cada comunidad puede subir sus propias fotos: celebraciones, encuentros y momentos compartidos.</p>
+          </div>
+          <a class="btn btn-primary" href="#/fotos">${icon('image', 16)} Ver fotos por comunidad</a>
+        </div>
+
         ${
           services.length
             ? `<div class="card card-pad-lg mt-3">

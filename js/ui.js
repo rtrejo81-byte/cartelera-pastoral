@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    Interfaz compartida: cabecera, pie, modales, toasts
    ========================================================= */
 
@@ -175,7 +175,7 @@ export function renderHeader() {
     ${store.mode === 'demo' ? demoBanner() : ''}
     <div class="wrap header-inner">
       <a class="brand" href="#/" aria-label="${esc(s.name)} · inicio">
-        <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="46" height="46">
+        <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="54" height="54">
         <span class="brand-text">
           <span class="brand-name">${esc(s.name)}</span>
           <span class="brand-sub">${esc(s.parish)}</span>
@@ -194,7 +194,7 @@ export function renderHeader() {
     <aside class="drawer" id="drawer" aria-label="Menú">
       <div class="drawer-head">
         <span class="brand">
-          <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="40" height="40">
+          <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="48" height="48">
           <span class="brand-text"><span class="brand-name">${esc(s.name)}</span></span>
         </span>
         <button type="button" class="btn-icon" id="drawer-close" aria-label="Cerrar menú">${icon('x', 18)}</button>
@@ -255,7 +255,7 @@ export function renderFooter() {
       <div class="footer-grid">
         <div class="footer-brand">
           <span class="brand">
-            <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="46" height="46">
+            <img class="brand-mark" src="assets/img/logo-mark.png" alt="" width="54" height="54">
             <span class="brand-text">
               <span class="brand-name">${esc(s.name)}</span>
               <span class="brand-sub">${esc(s.parish)}</span>

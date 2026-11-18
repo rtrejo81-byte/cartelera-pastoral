@@ -51,6 +51,15 @@ export const CATEGORIES = [
   { id: 'reunion', label: 'Reunión', color: '#556B67', bg: '#E9EDEA' },
 ];
 
+/** Comunidades de la pastoral (se usan en filtros, fotos y asignaciones) */
+export const COMMUNITIES = [
+  { value: 'Comunidad Santa Mónica', label: 'Santa Mónica', tone: 'rose' },
+  { value: 'Comunidad San Juan Pablo II', label: 'San Juan Pablo II', tone: 'teal' },
+  { value: 'Comunidad San José', label: 'San José', tone: 'gold' },
+  { value: 'Comunidad San Francisco de Asís', label: 'San Francisco', tone: 'sage' },
+  { value: 'Comunidad de Jóvenes', label: 'Jóvenes', tone: 'clay' },
+];
+
 /** Secciones del sitio. `nav: true` las muestra en el menú principal. */
 export const SECTIONS = [
   { id: 'inicio', path: '/', label: 'Inicio', icon: 'home', nav: true },
@@ -60,6 +69,7 @@ export const SECTIONS = [
   { id: 'recursos', path: '/recursos', label: 'Recursos', icon: 'book', nav: true },
   { id: 'cumpleanos', path: '/cumpleanos', label: 'Cumpleaños', icon: 'cake', nav: false },
   { id: 'galeria', path: '/galeria', label: 'Galería', icon: 'image', nav: false },
+  { id: 'fotos', path: '/fotos', label: 'Fotos por comunidad', icon: 'image', nav: false },
   { id: 'santisimo', path: '/santisimo', label: 'Santísimo', icon: 'sun', nav: false },
   { id: 'contactos', path: '/contactos', label: 'Contactos', icon: 'phone', nav: false },
   { id: 'oracion', path: '/oracion', label: 'Oración', icon: 'heart', nav: false },

@@ -132,6 +132,7 @@ create table if not exists public.albums (
   description text default '',
   date date not null default current_date,
   tone text default 'sage',
+  community text default '',
   status text not null default 'approved'
     check (status in ('pending', 'approved', 'rejected', 'archived')),
   photos jsonb not null default '[]'::jsonb,
@@ -183,6 +184,7 @@ create table if not exists public.service_assignments (
 alter table public.activities add column if not exists community text default '';
 alter table public.activities add column if not exists recurrence text not null default 'none';
 alter table public.activities add column if not exists recurrence_until date;
+alter table public.albums add column if not exists community text default '';
 
 do $$
 begin

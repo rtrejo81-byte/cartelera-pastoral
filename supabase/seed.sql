@@ -45,11 +45,11 @@ begin
       ('Taller: Los 5 lenguajes del amor',
        'Un espacio para descubrir cómo expresamos y recibimos amor en la familia.',
        'formacion', (now() + interval '7 days')::timestamp, (now() + interval '7 days' + interval '2 hours')::timestamp,
-       'Salón parroquial', 'Matrimonio Hernández', '7000-0002', 40, '', 'none', 'approved'),
+       'Salón parroquial', 'Matrimonio Hernández', '7000-0002', 40, 'Comunidad San Juan Pablo II', 'none', 'approved'),
       ('Rosario en familia',
        'Oramos juntos como Pastoral Familiar. Al final compartimos un refrigerio.',
        'familiar', (now() + interval '10 days')::timestamp, (now() + interval '10 days' + interval '1 hour')::timestamp,
-       'Capilla de la Virgen', 'Comisión de espiritualidad', '', 0, '', 'none', 'approved'),
+       'Capilla de la Virgen', 'Comisión de espiritualidad', '', 0, 'Comunidad San José', 'none', 'approved'),
       ('Retiro Familiar',
        'Un día completo para preparar el corazón en familia: reflexiones, dinámicas y misa.',
        'retiro', (now() + interval '18 days')::timestamp, (now() + interval '18 days' + interval '9 hours')::timestamp,
@@ -110,14 +110,23 @@ begin
       ('Plan de formación', 'Los temas, fechas y responsables de los encuentros del año.', 'Formación', 'doc', 'https://example.com/plan-formacion.pdf', 'approved'),
       ('Ficha de inscripción al retiro', 'Llena tus datos y entrégala a tu coordinador.', 'Inscripciones', 'form', 'https://example.com/inscripcion', 'approved');
 
-    insert into public.albums (title, description, date, tone, status, photos)
+    insert into public.albums (title, description, date, tone, community, status, photos)
     values
       ('Retiro Familiar', 'Un fin de semana para reencontrarnos como familia y con Dios.',
-       current_date - interval '40 days', 'sage', 'approved',
+       current_date - interval '40 days', 'sage', '', 'approved',
        '[{"id":"ph1","caption":"La bienvenida","url":""},{"id":"ph2","caption":"Trabajo en grupos","url":""},{"id":"ph3","caption":"Misa de cierre","url":""}]'::jsonb),
       ('Convivencia de las familias', 'Juegos, comida compartida y muchas risas.',
-       current_date - interval '18 days', 'clay', 'approved',
-       '[{"id":"ph4","caption":"Los juegos para los niños","url":""},{"id":"ph5","caption":"La mesa compartida","url":""}]'::jsonb);
+       current_date - interval '18 days', 'clay', '', 'approved',
+       '[{"id":"ph4","caption":"Los juegos para los niños","url":""},{"id":"ph5","caption":"La mesa compartida","url":""}]'::jsonb),
+      ('Misa de la Sagrada Familia', 'Celebración con la bendición de las familias y sus velas.',
+       current_date - interval '5 days', 'gold', 'Comunidad Santa Mónica', 'approved',
+       '[{"id":"ph6","caption":"Entrada de las familias","url":""},{"id":"ph7","caption":"Bendición de las velas","url":""}]'::jsonb),
+      ('Taller para matrimonios', 'Una mañana de formación y diálogo entre esposos.',
+       current_date - interval '32 days', 'teal', 'Comunidad San Juan Pablo II', 'approved',
+       '[{"id":"ph8","caption":"Bienvenida del matrimonio facilitador","url":""},{"id":"ph9","caption":"Trabajo en parejas","url":""}]'::jsonb),
+      ('Noche de jóvenes', 'Música, testimonio y convivencia de la Comunidad de Jóvenes.',
+       current_date - interval '20 days', 'clay', 'Comunidad de Jóvenes', 'approved',
+       '[{"id":"ph10","caption":"La bienvenida","url":""},{"id":"ph11","caption":"El grupo de jóvenes","url":""}]'::jsonb);
 
     insert into public.prayer_requests (name, text, visibility, status, prayers)
     values

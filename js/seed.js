@@ -8,7 +8,7 @@
 import { addDays, ymd, toLocalDateTime } from './utils.js';
 import { firstSundayDay } from './recurrence.js';
 
-export const SEED_VERSION = 8;
+export const SEED_VERSION = 9;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -129,6 +129,7 @@ export function buildSeed() {
       description:
         'Un espacio para descubrir cómo expresamos y recibimos amor en la familia. Dirigido a matrimonios y padres de familia. Habrá material impreso y refrigerio.',
       category: 'formacion',
+      community: 'Comunidad San Juan Pablo II',
       starts_at: at(7, 18, 30),
       ends_at: at(7, 20, 30),
       location: 'Salón parroquial',
@@ -145,6 +146,7 @@ export function buildSeed() {
       title: 'Rosario en familia',
       description: 'Oramos juntos como Pastoral Familiar. Se recomienda llegar diez minutos antes. Al final compartiremos un pequeño refrigerio.',
       category: 'familiar',
+      community: 'Comunidad San José',
       starts_at: at(10, 19, 0),
       ends_at: at(10, 20, 0),
       location: 'Capilla de la Virgen',
@@ -242,6 +244,7 @@ export function buildSeed() {
       title: 'Cine foro familiar',
       description: 'Proyección de una película sobre la vida en familia y conversatorio posterior. Palomitas incluidas.',
       category: 'familiar',
+      community: 'Comunidad de Jóvenes',
       starts_at: at(-13, 17, 0),
       ends_at: at(-13, 20, 0),
       location: 'Salón parroquial',
@@ -258,6 +261,7 @@ export function buildSeed() {
       title: 'Jornada de limpieza del templo',
       description: 'Propuesta de la comunidad para preparar el templo antes de la fiesta patronal. Se necesitan escobas, trapos y muchas manos.',
       category: 'servicio',
+      community: 'Comunidad Santa Mónica',
       starts_at: at(12, 8, 0),
       ends_at: at(12, 12, 0),
       location: 'Templo parroquial',
@@ -274,6 +278,7 @@ export function buildSeed() {
       title: 'Noche de talentos familiares',
       description: 'Una noche para compartir los dones de nuestras familias: canto, poesía, música, teatro. Inscripciones con la comisión de convivencia.',
       category: 'celebracion',
+      community: 'Comunidad de Jóvenes',
       starts_at: at(45, 18, 30),
       ends_at: at(45, 21, 0),
       location: 'Salón parroquial',
@@ -469,6 +474,7 @@ export function buildSeed() {
       description: 'Celebración con la bendición de las familias y sus velas.',
       date: ymd(addDays(new Date(), -5)),
       tone: 'gold',
+      community: 'Comunidad Santa Mónica',
       status: 'approved',
       photos: [
         { id: 'ph_8', caption: 'Entrada de las familias', url: '' },
@@ -482,10 +488,24 @@ export function buildSeed() {
       description: 'Una mañana de formación y diálogo entre esposos.',
       date: ymd(addDays(new Date(), -32)),
       tone: 'teal',
+      community: 'Comunidad San Juan Pablo II',
       status: 'approved',
       photos: [
         { id: 'ph_11', caption: 'Bienvenida del matrimonio facilitador', url: '' },
         { id: 'ph_12', caption: 'Trabajo en parejas', url: '' },
+      ],
+    },
+    {
+      id: 'alb_5',
+      title: 'Noche de jóvenes',
+      description: 'Música, testimonio y convivencia de la Comunidad de Jóvenes.',
+      date: ymd(addDays(new Date(), -20)),
+      tone: 'clay',
+      community: 'Comunidad de Jóvenes',
+      status: 'approved',
+      photos: [
+        { id: 'ph_13', caption: 'La bienvenida', url: '' },
+        { id: 'ph_14', caption: 'El grupo de jóvenes', url: '' },
       ],
     },
   ];

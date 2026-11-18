@@ -6,7 +6,7 @@
 import { icon } from '../icons.js';
 import { store } from '../store.js';
 import {
-  CATEGORIES, PRIORITIES, RESOURCE_KINDS, BIRTHDAY_KINDS, STATUS,
+  CATEGORIES, COMMUNITIES, PRIORITIES, RESOURCE_KINDS, BIRTHDAY_KINDS, STATUS,
 } from '../config.js';
 import { RECURRENCES } from '../recurrence.js';
 import { openModal, closeModal, field, readForm, showFormError, setBusy, toast } from '../ui.js';
@@ -34,7 +34,12 @@ export const FORMS = {
       { name: 'starts_at', label: 'Fecha y hora de inicio', type: 'datetime-local', required: true },
       { name: 'ends_at', label: 'Fecha y hora de fin', type: 'datetime-local' },
       { name: 'location', label: 'Lugar', type: 'text' },
-      { name: 'community', label: 'Comunidad asignada', type: 'text', placeholder: 'Ej. Comunidad San José' },
+      {
+        name: 'community',
+        label: 'Comunidad asignada',
+        type: 'select',
+        options: [{ value: '', label: 'Toda la pastoral' }, ...COMMUNITIES.map((c) => ({ value: c.value, label: c.value }))],
+      },
       { name: 'responsible', label: 'Responsable', type: 'text' },
       { name: 'contact', label: 'Teléfono de informes', type: 'text' },
       { name: 'capacity', label: 'Cupo (0 = sin límite)', type: 'number', min: '0' },
@@ -119,11 +124,17 @@ export const FORMS = {
     fields: [
       { name: 'title', label: 'Título del álbum', type: 'text', required: true },
       { name: 'date', label: 'Fecha', type: 'date', required: true },
+      {
+        name: 'community',
+        label: 'Comunidad',
+        type: 'select',
+        options: [{ value: '', label: 'Toda la pastoral' }, ...COMMUNITIES.map((c) => ({ value: c.value, label: c.value }))],
+      },
       { name: 'tone', label: 'Color de portada', type: 'select', options: TONES },
       { name: 'status', label: 'Estado', type: 'select', options: statusOptions },
       { name: 'description', label: 'Descripción', type: 'textarea', full: true },
     ],
-    defaults: { tone: 'sage', status: 'approved' },
+    defaults: { tone: 'sage', status: 'approved', community: '' },
     photos: true,
   },
 
@@ -131,12 +142,12 @@ export const FORMS = {
     label: 'Horario del Santísimo',
     fields: [
       { name: 'month', label: 'Mes', type: 'date', required: true, hint: 'Elige el día 1 del mes; se guarda el mes completo.' },
-      { name: 'community', label: 'Comunidad', type: 'text', required: true, placeholder: 'Ej. Comunidad San José' },
+      { name: 'community', label: 'Comunidad', type: 'select', required: true, options: COMMUNITIES.map((c) => ({ value: c.value, label: c.value })) },
       { name: 'start_time', label: 'Hora de inicio', type: 'time', required: true },
       { name: 'end_time', label: 'Hora de fin', type: 'time', required: true },
       { name: 'sort', label: 'Orden', type: 'number', min: '0' },
     ],
-    defaults: { sort: 0 },
+    defaults: { sort: 0, community: COMMUNITIES[0].value },
   },
 
   serviceAssignments: {
@@ -152,10 +163,10 @@ export const FORMS = {
           { value: 'domingo', label: 'Misa parroquial (domingo)' },
         ],
       },
-      { name: 'community', label: 'Comunidad asignada', type: 'text', required: true, placeholder: 'Ej. Comunidad San José' },
+      { name: 'community', label: 'Comunidad asignada', type: 'select', required: true, options: COMMUNITIES.map((c) => ({ value: c.value, label: c.value })) },
       { name: 'notes', label: 'Notas', type: 'text', full: true },
     ],
-    defaults: { kind: 'viernes' },
+    defaults: { kind: 'viernes', community: COMMUNITIES[0].value },
   },
 };
 
