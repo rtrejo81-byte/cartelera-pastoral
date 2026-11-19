@@ -174,7 +174,7 @@ Todos los editores pueden editar todo. Si más adelante quieres que cada coordin
 
 ## Fotos y almacenamiento
 
-El plan Free incluye **1 GB** para fotos, **50 MB** por archivo y **5 GB** de salida al mes. La web comprime cada foto a 1600 px antes de subirla, así que una foto típica queda en 250–600 KB: caben aproximadamente **2,000 a 4,000 fotos**.
+El plan Free incluye **1 GB** para fotos, **50 MB** por archivo y **5 GB** de salida al mes. La web comprime cada foto a 1600 px en WebP antes de subirla, así que una foto típica queda en 200–450 KB: caben aproximadamente **2,300 a 5,000 fotos**.
 
 También se pueden usar **enlaces externos** (Drive, Flickr) sin consumir ese 1 GB, pero el enlace debe abrir la imagen directamente y ser público. Detalles y conversión de enlaces de Drive: [FOTOS-Y-ALMACENAMIENTO.md](FOTOS-Y-ALMACENAMIENTO.md).
 

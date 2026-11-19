@@ -399,7 +399,7 @@ export function telUrl(phone) {
 
 /* ---------------- Imágenes ---------------- */
 /** Reduce una imagen elegida por el usuario para que quepa en el navegador. */
-export function compressImage(file, maxSide = 1400, quality = 0.82) {
+export function compressImage(file, maxSide = 1400, quality = 0.82, preferred = 'image/webp') {
   return new Promise((resolve, reject) => {
     if (!file.type.startsWith('image/')) {
       reject(new Error('El archivo no es una imagen.'));
@@ -419,7 +419,11 @@ export function compressImage(file, maxSide = 1400, quality = 0.82) {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', quality));
+        let dataUrl = canvas.toDataURL(preferred, quality);
+        if (preferred === 'image/webp' && !dataUrl.startsWith('data:image/webp')) {
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+        }
+        resolve(dataUrl);
       };
       img.src = String(reader.result);
     };

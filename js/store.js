@@ -479,6 +479,22 @@ export function birthdaysInMonth(month = new Date().getMonth()) {
 }
 
 /* ---------------- Escritura ---------------- */
+function storagePathFromUrl(url) {
+  const marker = '/storage/v1/object/public/media/';
+  const value = String(url || '');
+  const index = value.indexOf(marker);
+  if (index < 0) return null;
+  return decodeURIComponent(value.slice(index + marker.length).split('?')[0]);
+}
+
+async function deleteMediaUrls(urls) {
+  if (!client) return;
+  const paths = [...new Set((urls || []).map(storagePathFromUrl).filter(Boolean))];
+  if (!paths.length) return;
+  const { error } = await client.storage.from('media').remove(paths);
+  if (error) console.warn('[store] no se pudieron borrar archivos del bucket', error.message);
+}
+
 function cleanPayload(row, { forInsert = false } = {}) {
   const out = {};
   for (const [key, value] of Object.entries(row)) {
@@ -513,6 +529,7 @@ export async function create(name, row) {
 
 export async function update(name, id, patch) {
   const payload = cleanPayload(patch);
+  const before = name === 'albums' ? byId('albums', id) : null;
   if (state.mode === 'demo') {
     const current = byId(name, id);
     if (!current) throw new Error('No se encontró el registro.');
@@ -524,10 +541,18 @@ export async function update(name, id, patch) {
   const { data, error } = await client.from(TABLE[name]).update(payload).eq('id', id).select().single();
   if (error) throw new Error(friendlyDbError(error, name));
   await refresh();
+
+  if (name === 'albums' && before && Array.isArray(payload.photos)) {
+    const keep = new Set(payload.photos.map((p) => p.url).filter(Boolean));
+    const removed = (before.photos || []).map((p) => p.url).filter((url) => url && !keep.has(url));
+    await deleteMediaUrls(removed);
+  }
+
   return data;
 }
 
 export async function remove(name, id) {
+  const album = name === 'albums' ? byId('albums', id) : null;
   if (state.mode === 'demo') {
     state.data[name] = all(name).filter((item) => item.id !== id);
     persistDemo();
@@ -537,6 +562,7 @@ export async function remove(name, id) {
   const { error } = await client.from(TABLE[name]).delete().eq('id', id);
   if (error) throw new Error(friendlyDbError(error, name));
   await refresh();
+  if (album) await deleteMediaUrls((album.photos || []).map((p) => p.url));
   return true;
 }
 
@@ -589,10 +615,11 @@ export async function uploadImage(file) {
   let contentType = file.type || 'image/jpeg';
 
   try {
-    const compressed = await compressImage(file, 1600, 0.82);
+    const compressed = await compressImage(file, 1600, 0.82, 'image/webp');
     blob = dataUrlToBlob(compressed);
-    ext = 'jpg';
-    contentType = 'image/jpeg';
+    const mime = blob.type || 'image/jpeg';
+    ext = mime.includes('webp') ? 'webp' : mime.includes('png') ? 'png' : 'jpg';
+    contentType = mime;
   } catch (err) {
     console.warn('[store] no se pudo comprimir la imagen; se sube el original', err);
   }

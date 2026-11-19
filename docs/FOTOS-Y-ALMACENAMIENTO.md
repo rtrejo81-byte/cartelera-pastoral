@@ -19,19 +19,21 @@ La base de datos **no** guarda las fotos: guarda solo la dirección. Las imágen
 
 ## Cuántas fotos caben
 
-La web comprime cada foto a un máximo de **1600 px** y calidad JPEG 82 % antes de subirla. Una foto típica de teléfono queda entre **250 y 600 KB**.
+La web comprime cada foto a un máximo de **1600 px** y calidad 82 %, en **WebP** (o JPEG si el navegador es antiguo). Una foto típica de teléfono queda entre **200 y 450 KB**.
 
 También puedes tomar fotos directamente con la cámara del teléfono: el botón **“Tomar foto”** abre la cámara trasera y cada toque agrega una foto más al mismo álbum. Puedes tomar todas las que necesites y quitar las que no te gusten antes de publicar.
 
 | Tamaño promedio | Fotos aproximadas en 1 GB |
 | --- | --- |
-| 250 KB | ~4,000 |
-| 400 KB | ~2,500 |
-| 600 KB | ~1,700 |
+| 200 KB | ~5,000 |
+| 300 KB | ~3,400 |
+| 450 KB | ~2,300 |
 
 Sin compresión, una foto de 4 MB solo permitiría ~250. Por eso la compresión está activada también al subir a Supabase.
 
 > No hay un límite fijo de fotos por álbum: puedes seleccionar varias o tomarlas con la cámara del teléfono. El límite real es el **1 GB** del plan y la compresión automática.
+>
+> Al **eliminar un álbum** o quitar una foto desde el panel, la web también borra el archivo del bucket `media` para liberar espacio. Los archivos que se hayan subido antes de este cambio, o los que se borren directamente en la base de datos, hay que limpiarlos a mano en **Storage → media**.
 
 ## Enlaces externos (Drive, Flickr, etc.)
 
