@@ -51,6 +51,7 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] Oración: envío de una intención.
 - [ ] “Proponer actividad”: una propuesta queda pendiente de aprobación.
 - [ ] Panel (`/#/admin`): se puede entrar en modo demo con cualquier correo y contraseña.
+- [ ] En celular, el panel muestra **Cerrar sesión** debajo del menú de secciones.
 
 ### 6. Teléfono
 - [ ] El menú se abre bien.
