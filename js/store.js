@@ -647,6 +647,26 @@ const ROLE_LABELS = {
   viewer: 'Solo lectura',
 };
 
+export async function storageUsage() {
+  if (state.mode !== 'cloud' || !client) return null;
+  let offset = 0;
+  let bytes = 0;
+  let count = 0;
+  for (let page = 0; page < 50; page++) {
+    const { data, error } = await client.storage.from('media').list('galeria', { limit: 100, offset });
+    if (error) throw new Error(`No se pudo leer el almacenamiento: ${error.message}`);
+    if (!data?.length) break;
+    for (const item of data) {
+      if (!item.name || item.name.startsWith('.')) continue;
+      bytes += Number(item.metadata?.size || item.metadata?.contentLength || 0);
+      count += 1;
+    }
+    if (data.length < 100) break;
+    offset += 100;
+  }
+  return { bytes, count, limit: 1024 * 1024 * 1024 };
+}
+
 export function roleLabel() {
   return ROLE_LABELS[state.profile?.role] || 'Invitado';
 }
@@ -789,6 +809,7 @@ export const store = {
   incrementPrayer,
   saveSettings,
   uploadImage,
+  storageUsage,
   signIn,
   signOut,
   changePassword,

@@ -35,6 +35,16 @@ Sin compresión, una foto de 4 MB solo permitiría ~250. Por eso la compresión 
 >
 > Al **eliminar un álbum** o quitar una foto desde el panel, la web también borra el archivo del bucket `media` para liberar espacio. Los archivos que se hayan subido antes de este cambio, o los que se borren directamente en la base de datos, hay que limpiarlos a mano en **Storage → media**.
 
+## Medidor de espacio
+
+En **Panel → Ajustes → Almacenamiento de fotos** hay una barra con:
+
+- los **MB usados** y el porcentaje del 1 GB;
+- cuántos archivos hay en el bucket;
+- cuánto espacio libre queda.
+
+La barra se pone **dorada** al 70 % y **roja** al 90 %. El botón **Actualizar** vuelve a leer el bucket. El cálculo incluye también archivos antiguos que hayan quedado sin álbum, así que sirve para detectar basura acumulada.
+
 ## Enlaces externos (Drive, Flickr, etc.)
 
 Sí se pueden usar. En **Fotos por comunidad → Subir fotos** hay un campo:

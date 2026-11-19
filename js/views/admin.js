@@ -623,6 +623,28 @@ function settingsTab() {
       }
     </section>
 
+    <section class="admin-card" data-storage-card>
+      <div class="admin-card-head">
+        <div>
+          <h2>Almacenamiento de fotos</h2>
+          <p>Cuánto espacio del plan Free estás usando.</p>
+        </div>
+        <button type="button" class="btn btn-ghost btn-sm" data-storage-refresh>Actualizar</button>
+      </div>
+      <div class="storage-meter">
+        <div class="storage-meter-top">
+          <strong data-storage-used>Calculando…</strong>
+          <span data-storage-percent>—</span>
+        </div>
+        <div class="storage-track"><span class="storage-fill" data-storage-bar></span></div>
+        <div class="storage-meter-foot">
+          <span data-storage-count>—</span>
+          <span>Plan Free · 1 GB</span>
+        </div>
+        <p class="field-hint" data-storage-note style="margin:.55rem 0 0"></p>
+      </div>
+    </section>
+
     <section class="admin-card">
       <div class="admin-card-head">
         <div>
@@ -657,8 +679,7 @@ function settingsTab() {
     </section>`;
 }
 
-function settingsInput(label, name, value, required = false, type = 'text') {
-  return `<div class="field">
+function settingsInput(label, name, value, required = false, type = 'text') {  return `<div class="field">
     <label class="label" for="set_${name}">${esc(label)}${required ? ' <span class="req">*</span>' : ''}</label>
     <input class="input" id="set_${name}" name="${name}" type="${type}" value="${esc(value ?? '')}"${required ? ' required' : ''}>
   </div>`;
@@ -672,6 +693,58 @@ function toggleRow(section, checked) {
       <span class="track"></span>
     </label>
   </div>`;
+}
+
+function paintStorage(main) {
+  const card = main.querySelector('[data-storage-card]');
+  if (!card) return;
+  const used = card.querySelector('[data-storage-used]');
+  const percent = card.querySelector('[data-storage-percent]');
+  const bar = card.querySelector('[data-storage-bar]');
+  const count = card.querySelector('[data-storage-count]');
+  const note = card.querySelector('[data-storage-note]');
+  const refresh = card.querySelector('[data-storage-refresh]');
+
+  const load = async () => {
+    if (store.mode !== 'cloud') {
+      used.textContent = 'Modo demo';
+      percent.textContent = '—';
+      bar.style.width = '0%';
+      count.textContent = 'Las fotos viven en este navegador';
+      note.textContent = 'Al conectar Supabase verás aquí el consumo real del bucket de fotos.';
+      return;
+    }
+    refresh.disabled = true;
+    used.textContent = 'Calculando…';
+    note.textContent = 'Leyendo los archivos del bucket…';
+    try {
+      const usage = await store.storageUsage();
+      if (!usage) throw new Error('No se pudo leer el almacenamiento.');
+      const mb = usage.bytes / (1024 * 1024);
+      const pct = Math.min(100, (usage.bytes / usage.limit) * 100);
+      used.textContent = mb >= 1024 ? `${(mb / 1024).toFixed(2)} GB usados` : `${mb.toFixed(1)} MB usados`;
+      percent.textContent = `${pct.toFixed(1)} %`;
+      bar.style.width = `${usage.bytes ? Math.max(pct, 1) : 0}%`;
+      bar.dataset.level = pct >= 90 ? 'danger' : pct >= 70 ? 'warn' : 'ok';
+      count.textContent = `${usage.count} ${usage.count === 1 ? 'archivo' : 'archivos'} en el bucket`;
+      const free = Math.max(0, 1024 - mb);
+      note.textContent =
+        free > 0
+          ? `Quedan unos ${free.toFixed(0)} MB libres. Las fotos se comprimen a 1600 px para que rindan más.`
+          : 'No queda espacio libre. Borra álbumes antiguos o archiva fotos en Drive.';
+    } catch (err) {
+      used.textContent = 'No disponible';
+      percent.textContent = '—';
+      bar.style.width = '0%';
+      count.textContent = 'No se pudo consultar el bucket';
+      note.textContent = err.message || 'Revisa la conexión con Supabase.';
+    } finally {
+      refresh.disabled = false;
+    }
+  };
+
+  refresh?.addEventListener('click', load);
+  load();
 }
 
 /* ---------------- Eventos ---------------- */
@@ -798,4 +871,6 @@ function bindAdmin(root, tab) {
       }
     });
   }
+
+  paintStorage(main);
 }

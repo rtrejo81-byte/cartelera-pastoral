@@ -24,6 +24,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Oración**: envío de intenciones (públicas o solo para el equipo) y botón “Amén”.
 - **Propuesta pública de actividades**: cualquier miembro envía una idea y un coordinador la aprueba.
 - **Panel de administración** con acceso, bandeja de aprobación, alta/edición/baja de todo el contenido y ajustes del sitio.
+- **Medidor de almacenamiento** en Ajustes: MB usados, porcentaje del 1 GB y archivos en el bucket.
 - **Acceso de coordinadores**: cada uno entra con su teléfono y contraseña, y puede cambiar su contraseña desde Ajustes.
 - **Crear desde el calendario**: un coordinador toca un día y agrega la actividad con la fecha ya precargada.
 - **Modo demo local**: la web funciona sin configurar nada, guardando los datos en el navegador.
