@@ -80,15 +80,25 @@ https://lh3.googleusercontent.com/d/ARCHIVO_ID
 **Limitaciones de Drive:**
 - Si el archivo deja de ser público, la foto desaparece de la web.
 - Drive no es un CDN: puede tardar o bloquear la carga.
-- Los enlaces de la página de Drive (`/file/d/.../view`) **no** funcionan como imagen; hay que usar el formato directo.
-- Los enlaces de Google Photos normalmente no sirven como imagen directa.
+- Los enlaces de la página de Drive (`/file/d/.../view`) no funcionan como imagen; la app los convierte al formato directo automáticamente.
+- Si el enlace no apunta a una foto concreta, la app muestra un error.
+
+### Google Photos no sirve como imagen
+
+Google Photos **no ofrece enlaces directos** a la imagen. Los enlaces `photos.app.goo.gl/...` y `photos.google.com/share/...` abren una página de álbum, no un archivo `.jpg`, y la web no puede mostrarlos como foto.
+
+La app ya detecta esos enlaces y muestra un mensaje en vez de dejar una imagen rota. Opciones:
+
+1. **Descargar la foto** desde Google Photos (menú ⋮ → Descargar) y subirla a Supabase.
+2. Pasarla a **Google Drive**, compartirla como pública y usar el enlace directo.
+3. Si quieres compartir el **álbum completo**, pega el enlace de Google Photos en la descripción de una actividad, aviso o recurso como enlace normal; no como imagen.
 
 Los enlaces externos **no consumen** los 1 GB de Supabase, pero tampoco están respaldados por la web. Úsalos para material muy pesado o videos; para las fotos de la pastoral, subirlas a Supabase es más estable.
 
 ## Buenas prácticas
 
 - **Guarda los originales** en tu computadora o en Drive. Supabase no reemplaza un respaldo.
-- **Borra fotos antiguas** cuando se acerque el límite: Panel → Galería → eliminar álbum. Ojo: eliminar el álbum **no** borra el archivo del bucket; también hay que borrarlo en **Storage → media**.
+- **Borra fotos antiguas** cuando se acerque el límite: Panel → Galería → eliminar álbum. Al borrar desde el panel, la web también borra los archivos del bucket. Si borras directamente en Supabase, revisa **Storage → media** para eliminar los archivos huérfanos.
 - Revisa el consumo en **Supabase → Storage** y en **Organization → Usage**.
 - Si algún día se llena, el plan Pro incluye 100 GB por unos $25/mes. Para una pastoral, 1 GB con compresión debería alcanzar para miles de fotos.
 

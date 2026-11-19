@@ -10,7 +10,7 @@ import {
 } from '../config.js';
 import { RECURRENCES } from '../recurrence.js';
 import { openModal, closeModal, field, readForm, showFormError, setBusy, toast } from '../ui.js';
-import { esc, toDateInput, toDateTimeInput, uid } from '../utils.js';
+import { esc, toDateInput, toDateTimeInput, uid, normalizeImageUrl, imageUrlProblem } from '../utils.js';
 
 const statusOptions = Object.entries(STATUS).map(([value, meta]) => ({ value, label: meta.label }));
 
@@ -221,7 +221,7 @@ function imageFieldHTML(fieldDef, value) {
           </label>
           <button type="button" class="btn btn-ghost btn-sm" data-image-clear>${icon('trash', 15)} Quitar</button>
         </div>
-        <span class="field-hint">Se comprime a 1600 px. También puedes pegar un enlace directo de Drive o de otro sitio.</span>
+        <span class="field-hint">Se comprime a 1600 px. También puedes pegar un enlace directo de Drive o de otro sitio. Google Photos no sirve como imagen directa.</span>
       </div>
     </div>
   </div>`;
@@ -302,9 +302,13 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
         showFormError(form, `El campo “${f.label}” es obligatorio.`);
         return;
       }
-      if (f.type === 'image' && data[f.name] && !/^https?:\/\//i.test(String(data[f.name]).trim())) {
-        showFormError(form, `La imagen de “${f.label}” debe ser un enlace http(s) o una foto subida.`);
-        return;
+      if (f.type === 'image' && data[f.name]) {
+        const problem = imageUrlProblem(data[f.name]);
+        if (problem) {
+          showFormError(form, problem);
+          return;
+        }
+        data[f.name] = normalizeImageUrl(data[f.name]);
       }
     }
     if (name === 'activities' && data.starts_at && data.ends_at && data.ends_at < data.starts_at) {
@@ -325,11 +329,20 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
     if (name === 'resources') payload.updated_at = new Date().toISOString();
     if (name === 'notices' && !payload.published_at) payload.published_at = new Date().toISOString();
     if (name === 'albums') {
-      payload.photos = [...el.querySelectorAll('[data-photo-row]')]
+      const rows = [...el.querySelectorAll('[data-photo-row]')];
+      for (const row of rows) {
+        const url = row.querySelector('[data-url]').value.trim();
+        const problem = imageUrlProblem(url);
+        if (problem) {
+          showFormError(form, problem);
+          return;
+        }
+      }
+      payload.photos = rows
         .map((row) => ({
           id: row.dataset.photoId || uid('ph'),
           caption: row.querySelector('[data-caption]').value.trim(),
-          url: row.querySelector('[data-url]').value.trim(),
+          url: normalizeImageUrl(row.querySelector('[data-url]').value.trim()),
         }))
         .filter((p) => p.caption || p.url);
     }

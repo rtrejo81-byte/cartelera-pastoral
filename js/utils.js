@@ -398,6 +398,54 @@ export function telUrl(phone) {
 }
 
 /* ---------------- Imágenes ---------------- */
+/** Convierte enlaces de Drive a un enlace directo; rechaza páginas que no son imágenes. */
+export function normalizeImageUrl(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  let url;
+  try {
+    url = new URL(raw);
+  } catch {
+    return '';
+  }
+  if (!/^https?:$/.test(url.protocol)) return '';
+
+  const host = url.hostname.replace(/^www\./i, '').toLowerCase();
+  if (host === 'photos.app.goo.gl' || host === 'photos.google.com') return '';
+
+  if (host === 'drive.google.com') {
+    const fromPath = url.pathname.match(/^\/file\/d\/([^/]+)/)?.[1];
+    const id = fromPath || url.searchParams.get('id');
+    if (!id) return '';
+    return `https://drive.google.com/uc?export=view&id=${encodeURIComponent(id)}`;
+  }
+
+  return url.toString();
+}
+
+/** Devuelve un mensaje claro si el enlace no sirve como imagen. */
+export function imageUrlProblem(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  let url;
+  try {
+    url = new URL(raw);
+  } catch {
+    return 'El enlace no es válido. Debe comenzar con http:// o https://';
+  }
+  if (!/^https?:$/.test(url.protocol)) {
+    return 'El enlace debe comenzar con http:// o https://';
+  }
+  const host = url.hostname.replace(/^www\./i, '').toLowerCase();
+  if (host === 'photos.app.goo.gl' || host === 'photos.google.com') {
+    return 'Los enlaces de Google Photos abren una página, no son una imagen directa. Descarga la foto y súbela, o usa un enlace directo de Drive/Cloudinary.';
+  }
+  if (host === 'drive.google.com' && !normalizeImageUrl(raw)) {
+    return 'Ese enlace de Drive no apunta a una foto concreta. Abre la foto, compártela como “Cualquier persona con el enlace” y pega su enlace directo.';
+  }
+  return '';
+}
+
 /** Reduce una imagen elegida por el usuario para que quepa en el navegador. */
 export function compressImage(file, maxSide = 1400, quality = 0.82, preferred = 'image/webp') {
   return new Promise((resolve, reject) => {

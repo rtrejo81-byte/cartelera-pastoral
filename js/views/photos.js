@@ -11,7 +11,7 @@ import {
   showFormError, setBusy, toast,
 } from '../ui.js';
 import { albumCard } from '../cards.js';
-import { esc, ymd, uid, pluralize } from '../utils.js';
+import { esc, ymd, uid, pluralize, normalizeImageUrl, imageUrlProblem } from '../utils.js';
 
 const TONE_OPTIONS = [
   { value: 'sage', label: 'Verde' },
@@ -132,7 +132,7 @@ function openUpload(communityValue) {
           name: 'photo_url',
           type: 'url',
           placeholder: 'https://…',
-          hint: 'Drive, Flickr u otro sitio. No ocupa espacio en Supabase; el archivo debe ser público y el enlace debe abrir la imagen directamente.',
+          hint: 'Drive, Flickr u otro sitio. Google Photos no permite enlaces directos: descarga la foto y súbela.',
         })}
       </form>`,
     footer: `
@@ -187,21 +187,23 @@ function openUpload(communityValue) {
   saveBtn.addEventListener('click', async () => {
     const data = readForm(form);
     const files = [...Array.from(input.files || []), ...captured];
-    const externalUrl = String(data.photo_url || '').trim();
+    const externalRaw = String(data.photo_url || '').trim();
+    const externalProblem = imageUrlProblem(externalRaw);
+    const externalUrl = normalizeImageUrl(externalRaw);
     if (!data.title || data.title.trim().length < 3) {
       showFormError(form, 'Escribe un título para el álbum.');
       return;
     }
-    if (!files.length && !externalUrl) {
+    if (!files.length && !externalRaw) {
       showFormError(form, 'Selecciona al menos una foto o pega un enlace directo.');
+      return;
+    }
+    if (externalProblem) {
+      showFormError(form, externalProblem);
       return;
     }
     if (files.some((f) => !f.type.startsWith('image/'))) {
       showFormError(form, 'Uno de los archivos no es una imagen.');
-      return;
-    }
-    if (externalUrl && !/^https?:\/\//i.test(externalUrl)) {
-      showFormError(form, 'El enlace debe comenzar con http:// o https://');
       return;
     }
 
