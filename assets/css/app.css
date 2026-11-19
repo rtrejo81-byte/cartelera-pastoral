@@ -805,7 +805,7 @@
   color: rgba(246, 239, 227, .55);
 }
 .footer-col ul { display: grid; gap: .45rem; }
-.footer-col a, .footer-col span {
+.footer-col a, .footer-col span, .footer-install {
   color: rgba(233, 240, 236, .86);
   font-size: .87rem;
   text-decoration: none;
@@ -813,7 +813,15 @@
   align-items: center;
   gap: .45rem;
 }
-.footer-col a:hover { color: #fff; text-decoration: underline; }
+.footer-install {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.footer-col a:hover, .footer-install:hover { color: #fff; text-decoration: underline; }
 .footer-bottom {
   display: flex;
   flex-wrap: wrap;

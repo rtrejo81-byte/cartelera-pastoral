@@ -4,9 +4,9 @@
 
 import { boot, store, onChange } from './store.js';
 import { currentRoute, normalizePath } from './router.js';
-import { renderHeader, renderFooter, toast, site, closeModal } from './ui.js';
+import { renderHeader, renderFooter, toast, site, closeModal, openModal } from './ui.js';
 import { icon } from './icons.js';
-import { qs, debounce } from './utils.js';
+import { qs, debounce, esc } from './utils.js';
 import { openActivity, openNotice, openAlbum, openImageLightbox } from './cards.js';
 
 import homeView from './views/home.js';
@@ -129,6 +129,62 @@ const softRefresh = debounce(() => {
   renderRoute({ scroll: false, soft: true });
 }, 180);
 
+let installPrompt = null;
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  installPrompt = event;
+});
+window.addEventListener('appinstalled', () => {
+  installPrompt = null;
+  toast('La app quedó instalada en tu teléfono.', 'ok');
+});
+
+function showInstallHelp() {
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (standalone) {
+    toast('Ya estás usando la cartelera como app instalada.', 'info');
+    return;
+  }
+  const ua = navigator.userAgent || '';
+  const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const inApp = /FBAN|FBAV|Instagram|Line|WhatsApp|Twitter|LinkedIn/i.test(ua);
+  const url = `${location.origin}${location.pathname}`;
+
+  let body;
+  if (inApp) {
+    body = `<p>Estás viendo la web dentro de otra aplicación (WhatsApp, Facebook, Instagram…). Para instalar la app:</p>
+      <ol style="margin:.6rem 0 0;padding-left:1.2rem;display:grid;gap:.5rem">
+        <li>Abre este enlace en <b>Chrome</b> (Android) o <b>Safari</b> (iPhone):<br><b>${esc(url)}</b></li>
+        <li>Toca el menú del navegador.</li>
+        <li>Elige <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.</li>
+      </ol>`;
+  } else if (ios) {
+    body = `<p>En iPhone o iPad se instala desde <b>Safari</b>:</p>
+      <ol style="margin:.6rem 0 0;padding-left:1.2rem;display:grid;gap:.5rem">
+        <li>Abre esta página en <b>Safari</b>.</li>
+        <li>Toca el botón <b>Compartir</b>.</li>
+        <li>Elige <b>Agregar a pantalla de inicio</b> y confirma.</li>
+      </ol>
+      <p class="field-hint" style="margin-top:.7rem">Si estás en Chrome de iPhone, el menú puede no mostrar la opción; usa Safari.</p>`;
+  } else {
+    body = `<p>En Android o en la computadora se instala desde <b>Chrome</b>:</p>
+      <ol style="margin:.6rem 0 0;padding-left:1.2rem;display:grid;gap:.5rem">
+        <li>Abre esta página en <b>Chrome</b>.</li>
+        <li>Toca el menú <b>⋮</b>.</li>
+        <li>Elige <b>Instalar app</b> o <b>Agregar a pantalla principal</b>.</li>
+        <li>Confirma. El icono aparecerá como una app más.</li>
+      </ol>
+      <p class="field-hint" style="margin-top:.7rem">En computadora, el icono de instalar suele estar en la barra de direcciones. Si no aparece, asegúrate de no estar en una ventana de incógnito.</p>`;
+  }
+
+  openModal({
+    title: 'Instalar la cartelera',
+    subtitle: 'Un icono en tu teléfono, sin pasar por la tienda de apps.',
+    body,
+    footer: '<button type="button" class="btn btn-primary" data-close>Entendido</button>',
+  });
+}
+
 async function start() {
   try {
     await boot();
@@ -180,6 +236,26 @@ async function start() {
     event.preventDefault();
     event.stopPropagation();
     openImageLightbox(image.dataset.imageOpen, image.querySelector('img')?.alt || '');
+  });
+
+  // Botón "Instalar app" del pie.
+  document.addEventListener('click', async (event) => {
+    const install = event.target.closest('[data-install-app]');
+    if (!install) return;
+    event.preventDefault();
+    if (installPrompt) {
+      try {
+        installPrompt.prompt();
+        const choice = await installPrompt.userChoice;
+        installPrompt = null;
+        if (choice?.outcome === 'accepted') toast('Instalando la cartelera…', 'ok');
+        else toast('Puedes instalarla cuando quieras desde el pie de página.', 'info');
+      } catch {
+        showInstallHelp();
+      }
+      return;
+    }
+    showInstallHelp();
   });
 
   onChange((type, detail) => {

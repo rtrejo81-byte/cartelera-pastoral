@@ -11,6 +11,10 @@ La web ya es una **PWA**: se puede instalar en el teléfono con su propio icono,
 3. Elige **“Instalar app”** o **“Agregar a pantalla principal”**.
 4. Confirma. Aparece el icono de la Pastoral Familiar.
 
+Si no encuentras esa opción, baja hasta el pie de la página y toca **“Instalar app en el teléfono”**: la web te muestra los pasos según tu teléfono.
+
+> Si abriste el enlace dentro de WhatsApp, Facebook o Instagram, primero ábrelo en **Chrome** o **Safari**. Esos navegadores internos no permiten instalar la app.
+
 ### iPhone (Safari)
 
 1. Abre la misma dirección en **Safari**.

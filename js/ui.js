@@ -1,4 +1,4 @@
-﻿/* =========================================================
+/* =========================================================
    Interfaz compartida: cabecera, pie, modales, toasts
    ========================================================= */
 
@@ -274,6 +274,7 @@ export function renderFooter() {
           <h4>Comunidad</h4>
           <ul>
             ${nav.slice(5).map((item) => `<li><a href="#${item.path}">${esc(item.label)}</a></li>`).join('')}
+            <li><button type="button" class="footer-install" data-install-app>${icon('download', 14)} Instalar app en el teléfono</button></li>
             <li><a href="#/admin">Panel de coordinadores</a></li>
           </ul>
         </div>
