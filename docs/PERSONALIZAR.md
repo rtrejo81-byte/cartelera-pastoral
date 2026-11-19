@@ -237,7 +237,7 @@ Hay dos vistas:
 - `/#/galeria`: todos los álbumes de la pastoral.
 - `/#/fotos`: un espacio por comunidad, con su botón **Subir fotos**.
 
-Cada comunidad puede subir hasta 4 fotos por álbum desde su teléfono. El álbum queda ligado a esa comunidad y aparece también en la galería general. En modo demo las fotos se guardan comprimidas en el navegador (límite de unos 5 MB); con Supabase se guardan en el bucket `media`.
+Cada comunidad puede subir las fotos que necesite, eligiéndolas del teléfono o tomándolas con la cámara. El álbum queda ligado a esa comunidad y aparece también en la galería general. En modo demo las fotos se guardan comprimidas en el navegador (límite de unos 5 MB); con Supabase se guardan en el bucket `media`.
 
 También se puede administrar desde el panel → **Galería**:
 

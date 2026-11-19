@@ -114,9 +114,17 @@ function openUpload(communityValue) {
         </div>
         ${field({ label: 'Descripción', name: 'description', type: 'textarea', rows: 2, placeholder: '¿Qué actividad fue?' })}
         <div class="field">
-          <label class="label" for="photos-files">Fotos (archivos)</label>
+          <label class="label" for="photos-files">Fotos del álbum</label>
           <input class="input" type="file" id="photos-files" accept="image/*" multiple>
-          <span class="field-hint">Hasta 4 fotos por vez. Se comprimen a 1600 px para ahorrar espacio.</span>
+          <div class="cluster" style="margin-top:.35rem">
+            <label class="btn btn-light btn-sm" style="cursor:pointer;margin:0">
+              ${icon('camera', 15)} Tomar foto
+              <input type="file" id="photos-camera" accept="image/*" capture="environment" hidden>
+            </label>
+            <span class="field-hint" id="photos-camera-count">Toca “Tomar foto” las veces que necesites.</span>
+            <button type="button" class="btn btn-ghost btn-sm" data-clear-camera style="display:none">Quitar tomadas</button>
+          </div>
+          <span class="field-hint">Puedes subir todas las fotos que necesites. Se comprimen a 1600 px para ahorrar espacio.</span>
           <span class="field-hint" id="photos-count">No has seleccionado fotos.</span>
         </div>
         ${field({
@@ -134,19 +142,51 @@ function openUpload(communityValue) {
 
   const form = el.querySelector('#photos-form');
   const input = el.querySelector('#photos-files');
+  const cameraInput = el.querySelector('#photos-camera');
   const count = el.querySelector('#photos-count');
+  const cameraCount = el.querySelector('#photos-camera-count');
+  const clearCamera = el.querySelector('[data-clear-camera]');
   const saveBtn = el.querySelector('[data-save]');
+  const captured = [];
 
-  input.addEventListener('change', () => {
+  const updateCount = () => {
     const files = Array.from(input.files || []);
-    count.textContent = files.length
-      ? `${pluralize(files.length, 'foto seleccionada', 'fotos seleccionadas')}: ${files.map((f) => f.name).join(', ')}`
+    const all = [...files, ...captured];
+    const total = all.length;
+    const names = all.map((f) => f.name);
+    const summary = names.slice(0, 3).join(', ') + (names.length > 3 ? ` y ${names.length - 3} más` : '');
+    count.textContent = total
+      ? `${pluralize(total, 'foto seleccionada', 'fotos seleccionadas')}: ${summary}`
       : 'No has seleccionado fotos.';
+    cameraCount.textContent = captured.length
+      ? `${pluralize(captured.length, 'foto tomada', 'fotos tomadas')} con la cámara.`
+      : 'Toca “Tomar foto” las veces que necesites.';
+    clearCamera.style.display = captured.length ? '' : 'none';
+  };
+
+  clearCamera.addEventListener('click', () => {
+    captured.length = 0;
+    updateCount();
+  });
+
+  input.addEventListener('change', updateCount);
+
+  cameraInput.addEventListener('change', () => {
+    const file = cameraInput.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      showFormError(form, 'La cámara no devolvió una imagen válida.');
+      cameraInput.value = '';
+      return;
+    }
+    captured.push(file);
+    cameraInput.value = '';
+    updateCount();
   });
 
   saveBtn.addEventListener('click', async () => {
     const data = readForm(form);
-    const files = Array.from(input.files || []);
+    const files = [...Array.from(input.files || []), ...captured];
     const externalUrl = String(data.photo_url || '').trim();
     if (!data.title || data.title.trim().length < 3) {
       showFormError(form, 'Escribe un título para el álbum.');
@@ -154,10 +194,6 @@ function openUpload(communityValue) {
     }
     if (!files.length && !externalUrl) {
       showFormError(form, 'Selecciona al menos una foto o pega un enlace directo.');
-      return;
-    }
-    if (files.length > 4) {
-      showFormError(form, 'Por ahora se pueden subir hasta 4 fotos por álbum.');
       return;
     }
     if (files.some((f) => !f.type.startsWith('image/'))) {
@@ -172,11 +208,15 @@ function openUpload(communityValue) {
     setBusy(saveBtn, true, 'Guardando fotos…');
     try {
       const photos = [];
-      for (const file of files) {
+      for (let i = 0; i < files.length; i++) {
+        setBusy(saveBtn, true, `Subiendo ${i + 1} de ${files.length}…`);
+        const file = files[i];
         const url = await store.uploadImage(file);
+        const rawCaption = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim();
+        const caption = /^image\d*$/i.test(rawCaption) ? `Foto ${photos.length + 1}` : rawCaption;
         photos.push({
           id: uid('ph'),
-          caption: file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '),
+          caption,
           url,
         });
       }

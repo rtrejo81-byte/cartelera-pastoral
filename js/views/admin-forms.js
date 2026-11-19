@@ -367,6 +367,10 @@ function photosEditorHTML(photos) {
           ${icon('upload', 15)} Subir imágenes
           <input type="file" id="photo-upload" accept="image/*" multiple hidden>
         </label>
+        <label class="btn btn-light btn-sm" style="cursor:pointer;margin:0">
+          ${icon('camera', 15)} Tomar foto
+          <input type="file" id="photo-camera" accept="image/*" capture="environment" hidden>
+        </label>
         <button type="button" class="btn btn-ghost btn-sm" data-add-photo>${icon('plus', 15)} Agregar por enlace</button>
       </div>
     </div>
@@ -420,10 +424,11 @@ function bindPhotos(el, initial) {
   });
 
   const upload = el.querySelector('#photo-upload');
-  upload?.addEventListener('change', async () => {
-    const files = Array.from(upload.files || []);
+  const camera = el.querySelector('#photo-camera');
+
+  const addFiles = async (files, sourceInput) => {
     if (!files.length) return;
-    upload.disabled = true;
+    sourceInput.disabled = true;
     try {
       for (const file of files) {
         toast(`Subiendo ${file.name}…`, 'info', 2000);
@@ -441,8 +446,11 @@ function bindPhotos(el, initial) {
     } catch (err) {
       toast(err.message || 'No se pudieron subir las imágenes.', 'error', 6000);
     } finally {
-      upload.disabled = false;
-      upload.value = '';
+      sourceInput.disabled = false;
+      sourceInput.value = '';
     }
-  });
+  };
+
+  upload?.addEventListener('change', () => addFiles(Array.from(upload.files || []), upload));
+  camera?.addEventListener('change', () => addFiles(Array.from(camera.files || []), camera));
 }

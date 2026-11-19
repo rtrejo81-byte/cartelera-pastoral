@@ -18,7 +18,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
 - **Galería** general de álbumes con visor de fotos.
-- **Fotos por comunidad**: cada comunidad tiene su espacio y puede subir sus propios álbumes; también acepta enlaces externos (Drive, etc.).
+- **Fotos por comunidad**: cada comunidad tiene su espacio y puede subir las fotos que necesite, desde archivos o con la cámara del teléfono; también acepta enlaces externos (Drive, etc.).
 - **Imagen opcional en actividades y avisos**: se ve completa en la ficha y en la agenda del día; al tocarla se abre en grande.
 - **Equipo y comunidades**: los cinco ejes de la pastoral y las cinco comunidades, con sus coordinadores y datos de contacto.
 - **Oración**: envío de intenciones (públicas o solo para el equipo) y botón “Amén”.
