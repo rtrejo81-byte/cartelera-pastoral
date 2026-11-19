@@ -28,6 +28,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Acceso de coordinadores**: cada uno entra con su teléfono y contraseña, y puede cambiar su contraseña desde Ajustes.
 - **Crear desde el calendario**: un coordinador toca un día y agrega la actividad con la fecha ya precargada.
 - **Modo demo local**: la web funciona sin configurar nada, guardando los datos en el navegador.
+- **Instalable como app (PWA)**: icono propio, pantalla completa y guía para generar un APK Android.
 - **Tiempo real** cuando está conectada a Supabase.
 - Diseño **responsive**, accesible con teclado y listo para imprimir.
 
@@ -131,6 +132,7 @@ where id = (select id from auth.users where email = 'correo@ejemplo.org');
 - **Logo**: el emblema oficial ya está integrado en `assets/img/logo-mark.png`; el archivo original quedó en `logo-oficial.jpg`. Si cambia, reemplaza `logo-mark.png` y `favicon.png`.
 - **Contenido inicial de Supabase**: opcional, [`supabase/seed.sql`](supabase/seed.sql).
 - **Fotos y almacenamiento** (límites del plan gratis, compresión y enlaces de Drive): **[docs/FOTOS-Y-ALMACENAMIENTO.md](docs/FOTOS-Y-ALMACENAMIENTO.md)**.
+- **Instalar como app o generar APK**: **[docs/APK.md](docs/APK.md)**.
 
 Más detalles para crecer el proyecto sin romper el calendario: **[docs/PERSONALIZAR.md](docs/PERSONALIZAR.md)**.
 

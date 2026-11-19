@@ -208,3 +208,11 @@ if (document.readyState === 'loading') {
 } else {
   start();
 }
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((err) => {
+      console.warn('[pwa] no se pudo registrar el service worker', err);
+    });
+  });
+}
