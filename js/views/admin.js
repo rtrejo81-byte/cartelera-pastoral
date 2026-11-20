@@ -247,13 +247,13 @@ function resumenTab() {
                       <span class="badge badge-outline">${esc(kind)}</span>
                       ${name === 'activities' && item.category ? categoryBadge(item.category) : ''}
                     </div>
-                    <h3>${esc(item.title || item.name || truncate(item.text, 70))}</h3>
+                    <h3>${esc(item.title || item.name || truncate(item.text || item.message || '', 70))}</h3>
                     <div class="meta">
                       ${item.submitted_by ? `<span>${icon('user', 12)} ${esc(item.submitted_by)}</span>` : ''}
                       ${item.starts_at ? `<span>${icon('calendar', 12)} ${esc(fmtDateShort(item.starts_at))} · ${esc(fmtTime(item.starts_at))}</span>` : ''}
                       ${item.created_at ? `<span>${icon('clock', 12)} ${esc(relativeLabel(item.created_at))}</span>` : ''}
                     </div>
-                    ${item.description ? `<p>${esc(truncate(item.description, 150))}</p>` : item.text ? `<p>“${esc(truncate(item.text, 150))}”</p>` : ''}
+                    ${item.description ? `<p>${esc(truncate(item.description, 150))}</p>` : item.text ? `<p>“${esc(truncate(item.text, 150))}”</p>` : item.message ? `<p>“${esc(truncate(item.message, 150))}”</p>` : ''}
                   </div>
                   <div class="approve-actions">
                     <button type="button" class="btn btn-ghost btn-sm" data-reject="${name}:${esc(item.id)}">Rechazar</button>
