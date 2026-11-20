@@ -29,6 +29,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Acceso de coordinadores**: cada uno entra con su teléfono y contraseña, y puede cambiar su contraseña desde Ajustes.
 - **Crear desde el calendario**: un coordinador toca un día y agrega la actividad con la fecha ya precargada.
 - **Modo demo local**: la web funciona sin configurar nada, guardando los datos en el navegador.
+- **Notificaciones del navegador** para novedades aprobadas, mientras la web o la PWA estén abiertas o en segundo plano.
 - **Instalable como app (PWA)**: icono propio, pantalla completa y guía para generar un APK Android.
 - **Tiempo real** cuando está conectada a Supabase.
 - Diseño **responsive**, accesible con teclado y listo para imprimir.

@@ -830,6 +830,15 @@
   text-align: left;
 }
 .footer-col a:hover, .footer-install:hover { color: #fff; text-decoration: underline; }
+.footer-social-title {
+  margin: .9rem 0 .2rem;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(246, 239, 227, .55);
+}
+.footer-notify { margin-top: .9rem; }
 .footer-bottom {
   display: flex;
   flex-wrap: wrap;

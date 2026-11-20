@@ -31,6 +31,15 @@ const TABLE = {
 };
 
 const COLLECTIONS = Object.keys(TABLE);
+const NAME_BY_TABLE = Object.fromEntries(Object.entries(TABLE).map(([name, table]) => [table, name]));
+const recentWrites = new Map();
+
+function markLocalWrite(table, id) {
+  if (!table || !id) return;
+  const key = `${table}:${id}`;
+  recentWrites.set(key, Date.now());
+  setTimeout(() => recentWrites.delete(key), 15000);
+}
 
 const state = {
   mode: 'demo',
@@ -196,8 +205,16 @@ async function initCloud() {
 
   channel = client
     .channel('pastoral-familiar-realtime')
-    .on('postgres_changes', { event: '*', schema: 'public' }, () => {
+    .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
       refresh().catch((err) => console.warn('[store] realtime', err));
+      if (!payload?.table) return;
+      const name = NAME_BY_TABLE[payload.table];
+      if (!name) return;
+      const id = payload.new?.id || payload.old?.id;
+      const key = `${payload.table}:${id}`;
+      const localWrite = recentWrites.get(key);
+      if (localWrite && Date.now() - localWrite < 15000) return;
+      emit('realtime', { name, eventType: payload.eventType, row: payload.new || payload.old });
     })
     .subscribe();
 }
@@ -550,6 +567,7 @@ export async function create(name, row) {
 
   const { data, error } = await client.from(TABLE[name]).insert(payload).select().single();
   if (error) throw new Error(friendlyDbError(error, name));
+  markLocalWrite(TABLE[name], data?.id);
   await refresh();
   return data;
 }
@@ -578,6 +596,7 @@ export async function update(name, id, patch) {
 
   const { data, error } = await client.from(TABLE[name]).update(payload).eq('id', id).select().single();
   if (error) throw new Error(friendlyDbError(error, name));
+  markLocalWrite(TABLE[name], id);
   await refresh();
 
   if (name === 'albums' && before && Array.isArray(payload.photos)) {
@@ -599,6 +618,7 @@ export async function remove(name, id) {
   }
   const { error } = await client.from(TABLE[name]).delete().eq('id', id);
   if (error) throw new Error(friendlyDbError(error, name));
+  markLocalWrite(TABLE[name], id);
   await refresh();
   if (album) await deleteMediaUrls((album.photos || []).map((p) => p.url));
   return true;

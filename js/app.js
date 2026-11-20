@@ -113,6 +113,7 @@ export async function renderRoute({ scroll = true, soft = false } = {}) {
 
   renderHeader();
   renderFooter();
+  updateNotifyLabel();
 
   const title = TITLES[base] || TITLES[ctx.path] || 'Cartelera';
   document.title = `${title} · ${site().name}`;
@@ -142,8 +143,143 @@ window.addEventListener('appinstalled', () => {
   toast('La app quedó instalada en tu teléfono.', 'ok');
 });
 
-function showInstallHelp() {
-  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+function updateNotifyLabel() {
+  document.querySelectorAll('[data-notify]').forEach((button) => {
+    let label = 'Activar notificaciones';
+    if (!('Notification' in window) || typeof window.Notification.requestPermission !== 'function') label = 'Notificaciones no disponibles';
+    else if (window.Notification.permission === 'granted') label = 'Notificaciones activas';
+    else if (window.Notification.permission === 'denied') label = 'Notificaciones bloqueadas';
+    button.innerHTML = `${icon('bell', 14)} ${label}`;
+  });
+}
+
+async function showBrowserNotification(title, body, url = '#/') {
+  if (!('Notification' in window) || window.Notification.permission !== 'granted') return;
+  const options = {
+    body,
+    icon: 'assets/img/icon-192.png',
+    badge: 'assets/img/icon-192.png',
+    tag: 'pf-cartelera',
+    data: { url },
+  };
+  try {
+    if ('serviceWorker' in navigator) {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration?.showNotification) {
+        await registration.showNotification(title, options);
+        return;
+      }
+    }
+    new window.Notification(title, options);
+  } catch {
+    /* el navegador puede bloquearlo sin avisar */
+  }
+}
+
+async function enableNotifications() {
+  if (!('Notification' in window) || typeof window.Notification.requestPermission !== 'function') {
+    toast('Este navegador no permite notificaciones. En iPhone, agrega la web a la pantalla de inicio y ábrela desde ahí.', 'error', 8000);
+    return;
+  }
+  if (window.Notification.permission === 'denied') {
+    toast('Las notificaciones están bloqueadas. Actívalas desde la configuración del navegador para este sitio.', 'error', 8000);
+    return;
+  }
+  if (window.Notification.permission === 'granted') {
+    updateNotifyLabel();
+    await showBrowserNotification('Notificaciones activas', 'Te avisaremos cuando haya algo nuevo en la cartelera.', '#/');
+    toast('Las notificaciones ya están activas.', 'ok');
+    return;
+  }
+  const permission = await window.Notification.requestPermission();
+  updateNotifyLabel();
+  if (permission === 'granted') {
+    toast('Notificaciones activadas.', 'ok');
+    await showBrowserNotification('Notificaciones activadas', 'Te avisaremos cuando se publique algo nuevo.', '#/');
+  } else {
+    toast('No se activaron las notificaciones. Puedes intentarlo de nuevo desde el pie de la página.', 'info', 6000);
+  }
+}
+
+function notifyRealtime(detail) {
+  if (!detail?.name || detail.eventType === 'DELETE') return;
+  const row = detail.row || {};
+  if (Object.prototype.hasOwnProperty.call(row, 'status') && row.status !== 'approved') return;
+  if (detail.name === 'prayers' && row.visibility !== 'public') return;
+
+  const verb = detail.eventType === 'INSERT' ? 'Nuevo' : 'Actualizado';
+  const snippet = (value, limit = 90) => {
+    const text = String(value || '').replace(/\s+/g, ' ').trim();
+    return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
+  };
+
+  let title = 'La cartelera se actualizó';
+  let body = 'Hay novedades en la Pastoral Familiar.';
+  let url = '#/';
+
+  switch (detail.name) {
+    case 'activities':
+      title = detail.eventType === 'INSERT' ? 'Nueva actividad' : 'Actividad actualizada';
+      body = snippet(row.title) || body;
+      url = '#/calendario';
+      break;
+    case 'notices':
+      title = detail.eventType === 'INSERT' ? 'Nuevo aviso' : 'Aviso actualizado';
+      body = snippet(row.title) || body;
+      url = '#/avisos';
+      break;
+    case 'shares':
+      title = detail.eventType === 'INSERT' ? 'Nuevo mensaje en Compartir' : 'Mensaje actualizado';
+      body = `${snippet(row.name || 'Anónimo', 30)}: ${snippet(row.message, 80)}`;
+      url = '#/compartir';
+      break;
+    case 'albums':
+      title = detail.eventType === 'INSERT' ? 'Nuevo álbum' : 'Galería actualizada';
+      body = snippet(row.title) || body;
+      url = '#/galeria';
+      break;
+    case 'birthdays':
+      title = detail.eventType === 'INSERT' ? 'Nueva celebración' : 'Celebración actualizada';
+      body = snippet(row.name) || body;
+      url = '#/cumpleanos';
+      break;
+    case 'resources':
+      title = detail.eventType === 'INSERT' ? 'Nuevo recurso' : 'Recurso actualizado';
+      body = snippet(row.title) || body;
+      url = '#/recursos';
+      break;
+    case 'contacts':
+      title = 'Directorio actualizado';
+      body = 'Se actualizaron los contactos de la pastoral.';
+      url = '#/contactos';
+      break;
+    case 'prayers':
+      title = 'Nueva intención';
+      body = 'Alguien compartió una intención pública.';
+      url = '#/oracion';
+      break;
+    case 'holyHours':
+      title = 'Horario del Santísimo actualizado';
+      body = 'Revisa el horario de adoración por comunidad.';
+      url = '#/santisimo';
+      break;
+    case 'serviceAssignments':
+      title = 'Servicios actualizados';
+      body = 'Cambió la comunidad asignada a una misa.';
+      url = '#/calendario';
+      break;
+    default:
+      break;
+  }
+
+  if (document.visibilityState === 'visible' && document.hasFocus()) {
+    toast(`${title}: ${body}`, 'info', 4500);
+  } else {
+    showBrowserNotification(title, body, url);
+  }
+}
+
+function showInstallHelp() {  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   if (standalone) {
     toast('Ya estás usando la cartelera como app instalada.', 'info');
     return;
@@ -261,9 +397,21 @@ async function start() {
     showInstallHelp();
   });
 
+  // Activar notificaciones del navegador.
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('[data-notify]')) return;
+    event.preventDefault();
+    enableNotifications();
+  });
+
   onChange((type, detail) => {
     if (type === 'error') {
       toast(detail?.message || 'Ocurrió un error.', 'error', 6000);
+      return;
+    }
+    if (type === 'realtime') {
+      notifyRealtime(detail);
+      softRefresh();
       return;
     }
     if (type === 'auth') {

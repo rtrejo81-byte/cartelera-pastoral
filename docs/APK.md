@@ -23,6 +23,15 @@ Si no encuentras esa opción, baja hasta el pie de la página y toca **“Instal
 
 En iPhone no se puede instalar un APK; la PWA es la forma correcta.
 
+## Notificaciones
+
+En el pie de la página hay un botón **“Activar notificaciones”**. Al tocarlo, el navegador pide permiso y luego avisa cuando se publica o actualiza una actividad, aviso, álbum o mensaje aprobado.
+
+- Funcionan con la web abierta o en segundo plano, y también en la PWA instalada.
+- En iPhone suelen requerir tener la web **agregada a la pantalla de inicio** y abrirla desde ahí.
+- Si la app está **completamente cerrada**, no llegan: para eso hace falta un servidor de notificaciones push (Supabase Edge Function + VAPID), que se puede agregar más adelante.
+- El permiso se puede bloquear desde la configuración del navegador; en ese caso el botón dirá **“Notificaciones bloqueadas”**.
+
 ## Generar un APK para Android
 
 El APK se puede crear sin programar usando **PWABuilder**:

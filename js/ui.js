@@ -249,6 +249,7 @@ export function renderFooter() {
   const s = site();
   const year = new Date().getFullYear();
   const nav = SECTIONS.filter((sec) => sec.id !== 'proponer' && sectionEnabled(sec.id));
+  const hasSocial = Boolean(s.instagram || s.facebook || s.whatsapp);
 
   qs('#site-footer').innerHTML = `
     <div class="wrap">
@@ -286,10 +287,19 @@ export function renderFooter() {
             ${s.address ? `<li><span>${icon('map-pin', 15)} ${esc(s.address)}</span></li>` : ''}
             ${s.meetingSchedule ? `<li><span>${icon('clock', 15)} ${esc(s.meetingSchedule)}</span></li>` : ''}
           </ul>
-          <div class="cluster" style="margin-top:.9rem">
-            ${s.instagram ? `<a class="btn-icon" href="${esc(s.instagram)}" target="_blank" rel="noopener" aria-label="Instagram" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC">${icon('instagram', 16)}</a>` : ''}
-            ${s.facebook ? `<a class="btn-icon" href="${esc(s.facebook)}" target="_blank" rel="noopener" aria-label="Facebook" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC"><img src="assets/img/facebook.svg" alt="" width="18" height="18"></a>` : ''}
-            ${s.whatsapp ? `<a class="btn-icon" href="https://wa.me/${esc(String(s.whatsapp).replace(/\D/g, ''))}" target="_blank" rel="noopener" aria-label="WhatsApp" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC">${icon('whatsapp', 16)}</a>` : ''}
+          ${
+            hasSocial
+              ? `<p class="footer-social-title">Redes sociales</p>
+                 <div class="cluster" style="margin-top:.45rem">
+                   ${s.instagram ? `<a class="btn-icon" href="${esc(s.instagram)}" target="_blank" rel="noopener" aria-label="Instagram" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC">${icon('instagram', 16)}</a>` : ''}
+                   ${s.facebook ? `<a class="btn-icon" href="${esc(s.facebook)}" target="_blank" rel="noopener" aria-label="Facebook" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC"><img src="assets/img/facebook.svg" alt="" width="18" height="18"></a>` : ''}
+                   ${s.whatsapp ? `<a class="btn-icon" href="https://wa.me/${esc(String(s.whatsapp).replace(/\D/g, ''))}" target="_blank" rel="noopener" aria-label="WhatsApp" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC">${icon('whatsapp', 16)}</a>` : ''}
+                 </div>`
+              : ''
+          }
+          <div class="footer-notify">
+            <p class="footer-social-title">Notificaciones</p>
+            <button type="button" class="footer-install" data-notify>${icon('bell', 14)} Activar notificaciones</button>
           </div>
         </div>
       </div>

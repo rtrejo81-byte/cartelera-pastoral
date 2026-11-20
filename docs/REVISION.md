@@ -33,6 +33,8 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] Los filtros por tipo de actividad funcionan.
 - [ ] **Compartir**: un mensaje enviado queda pendiente y aparece solo después de aprobarlo.
 - [ ] **Compartir**: un enlace de YouTube se muestra como video.
+- [ ] El pie muestra **Redes sociales** arriba de Facebook/Instagram.
+- [ ] El botón **Activar notificaciones** pide permiso y avisa de una publicación nueva.
 - [ ] La vista **Agenda** y la exportación `.ics` funcionan.
 
 ### 3. Santísimo
