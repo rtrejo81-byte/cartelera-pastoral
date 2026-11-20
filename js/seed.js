@@ -8,7 +8,7 @@
 import { addDays, ymd, toLocalDateTime } from './utils.js';
 import { firstSundayDay } from './recurrence.js';
 
-export const SEED_VERSION = 10;
+export const SEED_VERSION = 11;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -590,6 +590,7 @@ export function buildSeed() {
     prayers,
     holyHours,
     serviceAssignments,
+    shares: [],
     settings: {},
   };
 }

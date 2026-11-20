@@ -12,6 +12,7 @@ import { openActivity, openNotice, openAlbum, openImageLightbox } from './cards.
 import homeView from './views/home.js';
 import calendarView from './views/calendar.js';
 import noticesView from './views/notices.js';
+import shareView from './views/share.js';
 import communityView from './views/community.js';
 import resourcesView from './views/resources.js';
 import birthdaysView from './views/birthdays.js';
@@ -27,6 +28,7 @@ const ROUTES = {
   '/': homeView,
   '/calendario': calendarView,
   '/avisos': noticesView,
+  '/compartir': shareView,
   '/comunidad': communityView,
   '/recursos': resourcesView,
   '/cumpleanos': birthdaysView,
@@ -43,6 +45,7 @@ const TITLES = {
   '/': 'Inicio',
   '/calendario': 'Calendario',
   '/avisos': 'Avisos',
+  '/compartir': 'Compartir',
   '/comunidad': 'Comunidad',
   '/recursos': 'Recursos',
   '/cumpleanos': 'Cumpleaños',

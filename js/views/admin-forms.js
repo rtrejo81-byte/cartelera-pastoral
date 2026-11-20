@@ -120,6 +120,18 @@ export const FORMS = {
     defaults: { visibility: 'public', status: 'pending', prayers: 0 },
   },
 
+  shares: {
+    label: 'Mensaje',
+    wide: true,
+    fields: [
+      { name: 'name', label: 'Nombre (opcional)', type: 'text', placeholder: 'Déjalo vacío para publicar como Anónimo' },
+      { name: 'status', label: 'Estado', type: 'select', options: statusOptions },
+      { name: 'message', label: 'Mensaje', type: 'textarea', rows: 5, required: true, full: true },
+      { name: 'video_url', label: 'Enlace de video (opcional)', type: 'url', full: true, placeholder: 'https://youtube.com/watch?v=…', hint: 'YouTube, Vimeo o un enlace externo. No subas el archivo a Supabase.' },
+    ],
+    defaults: { status: 'approved' },
+  },
+
   albums: {
     label: 'Álbum',
     wide: true,

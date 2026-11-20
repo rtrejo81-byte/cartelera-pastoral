@@ -155,6 +155,18 @@ create table if not exists public.prayer_requests (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.shares (
+  id uuid primary key default gen_random_uuid(),
+  name text default '',
+  message text not null check (char_length(message) between 1 and 800),
+  video_url text default '',
+  status text not null default 'pending'
+    check (status in ('pending', 'approved', 'rejected', 'archived')),
+  moderated_at timestamptz,
+  moderated_by text default '',
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.settings (
   key text primary key,
   value jsonb not null default '{}'::jsonb
@@ -209,6 +221,7 @@ create index if not exists birthdays_date_idx on public.birthdays (date);
 create index if not exists resources_status_idx on public.resources (status);
 create index if not exists albums_status_idx on public.albums (status);
 create index if not exists prayers_status_idx on public.prayer_requests (status);
+create index if not exists shares_status_idx on public.shares (status, created_at desc);
 create index if not exists holy_hours_month_idx on public.holy_hours (month, sort);
 create index if not exists service_assignments_date_idx on public.service_assignments (date);
 
@@ -248,6 +261,7 @@ alter table public.resources enable row level security;
 alter table public.contacts enable row level security;
 alter table public.albums enable row level security;
 alter table public.prayer_requests enable row level security;
+alter table public.shares enable row level security;
 alter table public.holy_hours enable row level security;
 alter table public.service_assignments enable row level security;
 alter table public.settings enable row level security;
@@ -361,6 +375,26 @@ create policy "oracion edicion" on public.prayer_requests
   using (public.is_editor())
   with check (public.is_editor());
 
+-- Muro de la comunidad
+drop policy if exists "compartir lectura" on public.shares;
+create policy "compartir lectura" on public.shares
+  for select using (status = 'approved' or public.is_editor());
+
+drop policy if exists "compartir envio" on public.shares;
+create policy "compartir envio" on public.shares
+  for insert to anon, authenticated
+  with check (
+    status = 'pending'
+    and char_length(message) between 2 and 600
+    and char_length(coalesce(name, '')) <= 80
+  );
+
+drop policy if exists "compartir edicion" on public.shares;
+create policy "compartir edicion" on public.shares
+  for all to authenticated
+  using (public.is_editor())
+  with check (public.is_editor());
+
 -- Ajustes
 drop policy if exists "ajustes lectura" on public.settings;
 create policy "ajustes lectura" on public.settings
@@ -416,7 +450,7 @@ declare
 begin
   foreach t in array array[
     'activities', 'notices', 'birthdays', 'resources',
-    'contacts', 'albums', 'prayer_requests', 'settings', 'holy_hours', 'service_assignments'
+    'contacts', 'albums', 'prayer_requests', 'settings', 'holy_hours', 'service_assignments', 'shares'
   ]
   loop
     begin

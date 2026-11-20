@@ -188,7 +188,7 @@ function bindForm(root) {
     const button = form.querySelector('button[type="submit"]');
     setBusy(button, true, 'Enviando…');
     try {
-      await store.create('activities', payload);
+      await store.submitPublic('activities', payload);
       location.hash = '#/proponer?enviada=1';
     } catch (err) {
       setBusy(button, false);

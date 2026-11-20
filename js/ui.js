@@ -333,14 +333,15 @@ export function loadingBlock(label = 'Cargando…') {
 }
 
 /* ---------------- Campos de formulario ---------------- */
-export function field({ label, name, type = 'text', value = '', required = false, placeholder = '', hint = '', options = null, rows = 4, min = '', max = '', autocomplete = '' }) {
+export function field({ label, name, type = 'text', value = '', required = false, placeholder = '', hint = '', options = null, rows = 4, min = '', max = '', maxlength = null, autocomplete = '' }) {
   const id = `f_${name}`;
   const req = required ? ' required' : '';
   const reqMark = required ? ' <span class="req">*</span>' : '';
+  const maxLen = maxlength ? ` maxlength="${esc(maxlength)}"` : '';
   let control = '';
 
   if (type === 'textarea') {
-    control = `<textarea class="textarea" id="${id}" name="${name}" rows="${rows}" placeholder="${esc(placeholder)}"${req}>${esc(value)}</textarea>`;
+    control = `<textarea class="textarea" id="${id}" name="${name}" rows="${rows}" placeholder="${esc(placeholder)}"${maxLen}${req}>${esc(value)}</textarea>`;
   } else if (type === 'select') {
     control = `<select class="select" id="${id}" name="${name}"${req}>
       ${(options || []).map((opt) => `<option value="${esc(opt.value)}"${String(opt.value) === String(value) ? ' selected' : ''}>${esc(opt.label)}</option>`).join('')}
@@ -348,7 +349,7 @@ export function field({ label, name, type = 'text', value = '', required = false
   } else if (type === 'checkbox') {
     return `<label class="check"><input type="checkbox" id="${id}" name="${name}"${value ? ' checked' : ''}><span>${esc(label)}</span></label>`;
   } else {
-    control = `<input class="input" id="${id}" name="${name}" type="${type}" value="${esc(value)}" placeholder="${esc(placeholder)}"${min !== '' ? ` min="${esc(min)}"` : ''}${max !== '' ? ` max="${esc(max)}"` : ''}${autocomplete ? ` autocomplete="${esc(autocomplete)}"` : ''}${req}>`;
+    control = `<input class="input" id="${id}" name="${name}" type="${type}" value="${esc(value)}" placeholder="${esc(placeholder)}"${min !== '' ? ` min="${esc(min)}"` : ''}${max !== '' ? ` max="${esc(max)}"` : ''}${maxLen}${autocomplete ? ` autocomplete="${esc(autocomplete)}"` : ''}${req}>`;
   }
 
   return `<div class="field">

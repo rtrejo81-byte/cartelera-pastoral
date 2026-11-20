@@ -15,6 +15,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Servicios asignados**: cada misa de viernes muestra qué comunidad se encarga ese día; se administra por fecha.
 - **Horario del Santísimo**: los domingos, una hora de adoración por comunidad, organizada mes a mes y editable desde el panel.
 - **Avisos** con prioridad, fijados arriba, fecha de vigencia y búsqueda.
+- **Muro de la comunidad**: saludos, mensajes y videos enviados por cualquiera, con aprobación de un coordinador antes de publicarse.
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
 - **Galería** general de álbumes con visor de fotos.

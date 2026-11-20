@@ -324,7 +324,7 @@
   box-shadow: var(--shadow-xs);
 }
 .quickbar-item {
-  flex: 1 1 150px;
+  flex: 1 1 130px;
   display: flex;
   align-items: center;
   gap: .6rem;
@@ -1303,4 +1303,92 @@
   .holy-row { grid-template-columns: minmax(0, 1fr); gap: .15rem; padding: .95rem 1.05rem; }
   .holy-num { display: none; }
   .holy-time { font-size: 1.05rem; }
+}
+
+/* ---------------- Muro de la comunidad ---------------- */
+.share-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.4rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: linear-gradient(120deg, var(--paper), #FBF3E6);
+  box-shadow: var(--shadow-xs);
+}
+.share-banner-ico {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 14px;
+  background: var(--green-soft);
+  color: var(--green);
+}
+.share-banner h2 { font-size: 1.15rem; line-height: 1.25; }
+.share-banner p { margin: .35rem 0 0; font-size: .9rem; color: var(--ink-2); max-width: 72ch; }
+.share-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.share-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--paper);
+  box-shadow: var(--shadow-xs);
+}
+.share-card-head { display: flex; align-items: center; gap: .7rem; }
+.share-avatar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green-deep);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.share-author { min-width: 0; }
+.share-author b { display: block; font-size: .92rem; line-height: 1.2; }
+.share-author span { display: block; margin-top: .15rem; font-size: .72rem; color: var(--muted); }
+.share-quote { margin-left: auto; color: var(--gold-deep); opacity: .55; }
+.share-message {
+  margin: .85rem 0 0;
+  color: var(--ink-2);
+  font-size: .93rem;
+  line-height: 1.65;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.share-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: .9rem;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0C201B;
+}
+.share-video iframe { display: block; width: 100%; height: 100%; border: 0; }
+.share-video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  align-self: flex-start;
+  margin-top: .9rem;
+  color: var(--green);
+  font-size: .84rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.share-video-link:hover { text-decoration: underline; }
+@media (max-width: 760px) {
+  .share-grid { grid-template-columns: minmax(0, 1fr); }
+  .share-banner { padding: 1rem; }
+  .share-banner-ico { width: 40px; height: 40px; }
 }

@@ -31,6 +31,8 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] Un aviso con imagen muestra la foto en la tarjeta y al abrirlo.
 - [ ] La fila **Comunidad** filtra las actividades (por ejemplo, Santa Mónica).
 - [ ] Los filtros por tipo de actividad funcionan.
+- [ ] **Compartir**: un mensaje enviado queda pendiente y aparece solo después de aprobarlo.
+- [ ] **Compartir**: un enlace de YouTube se muestra como video.
 - [ ] La vista **Agenda** y la exportación `.ics` funcionan.
 
 ### 3. Santísimo

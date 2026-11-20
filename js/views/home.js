@@ -71,6 +71,7 @@ export default function homeView(root) {
       <div class="quickbar">
         ${quickLink('/calendario', 'calendar', 'Calendario', 'Mes y agenda')}
         ${quickLink('/avisos', 'megaphone', 'Avisos', 'Lo importante')}
+        ${quickLink('/compartir', 'quote', 'Compartir', 'Saludos y videos')}
         ${quickLink('/comunidad', 'users', 'Comunidad', 'Celebramos')}
         ${quickLink('/recursos', 'book', 'Recursos', 'Materiales')}
         ${quickLink('/galeria', 'image', 'Galería', 'Momentos')}

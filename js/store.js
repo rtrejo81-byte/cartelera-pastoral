@@ -27,6 +27,7 @@ const TABLE = {
   prayers: 'prayer_requests',
   holyHours: 'holy_hours',
   serviceAssignments: 'service_assignments',
+  shares: 'shares',
 };
 
 const COLLECTIONS = Object.keys(TABLE);
@@ -36,6 +37,7 @@ const state = {
   cloudError: '',
   ready: false,
   imageReady: true,
+  sharesReady: true,
   user: null,
   profile: null,
   data: {
@@ -48,6 +50,7 @@ const state = {
     prayers: [],
     holyHours: [],
     serviceAssignments: [],
+    shares: [],
   },
   settings: {},
   loading: false,
@@ -101,6 +104,7 @@ function persistDemo() {
       prayers: state.data.prayers,
       holyHours: state.data.holyHours,
       serviceAssignments: state.data.serviceAssignments,
+      shares: state.data.shares,
       settings: state.settings,
     };
     try {
@@ -216,8 +220,26 @@ async function loadProfile() {
 
 async function fetchTable(name) {
   const { data, error } = await client.from(TABLE[name]).select('*');
-  if (error) throw new Error(`No se pudo leer "${name}": ${error.message}`);
+  if (error) {
+    const err = new Error(`No se pudo leer "${name}": ${error.message}`);
+    err.code = error.code;
+    throw err;
+  }
   return data || [];
+}
+
+async function fetchShares() {
+  try {
+    const rows = await fetchTable('shares');
+    state.sharesReady = true;
+    return rows;
+  } catch (err) {
+    if (err.code === '42P01' || err.code === 'PGRST205' || /schema cache|does not exist/i.test(err.message)) {
+      state.sharesReady = false;
+      return [];
+    }
+    throw err;
+  }
 }
 
 async function fetchSettings() {
@@ -235,7 +257,7 @@ async function refresh() {
   if (state.mode !== 'cloud' || !client) return;
   state.loading = true;
   try {
-    const [activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, serviceAssignments, settings] = await Promise.all([
+    const [activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, serviceAssignments, shares, settings] = await Promise.all([
       fetchTable('activities'),
       fetchTable('notices'),
       fetchTable('birthdays'),
@@ -245,9 +267,10 @@ async function refresh() {
       fetchTable('prayers'),
       fetchTable('holyHours'),
       fetchTable('serviceAssignments'),
+      fetchShares(),
       fetchSettings(),
     ]);
-    state.data = { activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, serviceAssignments };
+    state.data = { activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, serviceAssignments, shares };
     state.settings = settings || {};
     emit('change', { source: 'cloud' });
   } catch (err) {
@@ -334,6 +357,10 @@ export function publicList(name) {
       return [...list]
         .filter((i) => i.status === 'approved' && i.visibility === 'public')
         .sort((a, b) => (parseLocal(b.created_at)?.getTime() || 0) - (parseLocal(a.created_at)?.getTime() || 0));
+    case 'shares':
+      return [...list]
+        .filter((i) => !i.status || i.status === 'approved')
+        .sort((a, b) => (parseLocal(b.created_at)?.getTime() || 0) - (parseLocal(a.created_at)?.getTime() || 0));
     default:
       return [...list];
   }
@@ -349,7 +376,7 @@ export function every(name) {
 
 export function pendingCount() {
   const count = (name) => all(name).filter((i) => i.status === 'pending').length;
-  return count('activities') + count('notices') + count('prayers');
+  return count('activities') + count('notices') + count('prayers') + count('shares');
 }
 
 /** Actividades próximas (incluye las fechas recurrentes), primeras `limit`. */
@@ -525,6 +552,17 @@ export async function create(name, row) {
   if (error) throw new Error(friendlyDbError(error, name));
   await refresh();
   return data;
+}
+
+export async function submitPublic(name, row) {
+  if (state.mode === 'demo') return create(name, row);
+  const payload = cleanPayload(row);
+  delete payload.id;
+  delete payload.created_at;
+  const { error } = await client.from(TABLE[name]).insert(payload);
+  if (error) throw new Error(friendlyDbError(error, name));
+  await refresh();
+  return { ...row };
 }
 
 export async function update(name, id, patch) {
@@ -782,6 +820,7 @@ export const store = {
   get cloudError() { return state.cloudError; },
   get ready() { return state.ready; },
   get imagesReady() { return imagesReady(); },
+  get sharesReady() { return state.sharesReady; },
   get loading() { return state.loading; },
   get user() { return state.user; },
   get profile() { return state.profile; },
@@ -805,6 +844,7 @@ export const store = {
   create,
   update,
   remove,
+  submitPublic,
   setStatus,
   incrementPrayer,
   saveSettings,

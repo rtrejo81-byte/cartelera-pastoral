@@ -175,7 +175,7 @@ function bindForm(root) {
     const button = form.querySelector('button[type="submit"]');
     setBusy(button, true, 'Enviando…');
     try {
-      await store.create('prayers', {
+      await store.submitPublic('prayers', {
         id: uid('pray'),
         name: (data.name || '').trim() || 'Anónimo',
         text: data.text.trim(),

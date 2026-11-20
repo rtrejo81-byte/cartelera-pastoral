@@ -132,7 +132,7 @@ function renderShell(root, tab) {
         <aside class="admin-side">
           <p class="admin-side-title">Panel</p>
           <nav class="admin-nav" aria-label="Secciones del panel">
-            ${ADMIN_TABS.map((t) => {
+            ${ADMIN_TABS.filter((t) => t.id !== 'compartir' || store.sharesReady).map((t) => {
               const active = t.id === tab;
               const badge = t.id === 'resumen' && pending ? `<span class="pill-count">${pending}</span>` : '';
               return `<a href="#/admin${t.id === 'resumen' ? '' : '/' + t.id}"${active ? ' aria-current="page"' : ''}>
@@ -168,6 +168,8 @@ function renderTab(tab) {
       return tableTab('activities');
     case 'avisos':
       return tableTab('notices');
+    case 'compartir':
+      return store.sharesReady ? tableTab('shares') : resumenTab();
     case 'cumpleanos':
       return tableTab('birthdays');
     case 'recursos':
@@ -193,7 +195,8 @@ function resumenTab() {
   const pendingNotices = store.all('notices').filter((i) => i.status === 'pending');
   const pendingPrayers = store.all('prayers').filter((i) => i.status === 'pending');
   const pendingAlbums = store.all('albums').filter((i) => i.status === 'pending');
-  const pendingTotal = pendingActivities.length + pendingNotices.length + pendingPrayers.length + pendingAlbums.length;
+  const pendingShares = store.all('shares').filter((i) => i.status === 'pending');
+  const pendingTotal = pendingActivities.length + pendingNotices.length + pendingPrayers.length + pendingAlbums.length + pendingShares.length;
   const upcoming = store.upcomingUnique(5);
   const notices = store.publicList('notices').length;
   const prayers = store.publicList('prayers').length;
@@ -203,6 +206,7 @@ function resumenTab() {
     ...pendingNotices.map((item) => ({ name: 'notices', item, kind: 'Aviso' })),
     ...pendingPrayers.map((item) => ({ name: 'prayers', item, kind: 'Intención' })),
     ...pendingAlbums.map((item) => ({ name: 'albums', item, kind: 'Álbum' })),
+    ...pendingShares.map((item) => ({ name: 'shares', item, kind: 'Mensaje' })),
   ];
 
   return `
@@ -415,6 +419,33 @@ const TABLE_DEFS = {
       { html: esc(String(p.prayers || 0)) },
     ],
     sort: (list) => [...list].sort((a, b) => (a.status === 'pending' ? -1 : 1) - (b.status === 'pending' ? -1 : 1)),
+  },
+  shares: {
+    label: 'Compartir',
+    intro: 'Saludos, mensajes y videos enviados por la comunidad. Apruébalos antes de publicarlos.',
+    icon: 'quote',
+    newLabel: 'Nuevo mensaje',
+    head: ['Mensaje', 'Video', 'Recibido', 'Estado', ''],
+    rows: (s) => [
+      {
+        html: `<span class="strong">${esc(s.name || 'Anónimo')}<small>${esc(truncate(s.message || '', 90))}</small></span>`,
+        cls: 'strong',
+      },
+      {
+        html: s.video_url
+          ? `<a href="${esc(s.video_url)}" target="_blank" rel="noopener">${icon('video', 14)} Ver</a>`
+          : '—',
+      },
+      { html: s.created_at ? esc(fmtDateShort(s.created_at)) : '—' },
+      { html: statusBadge(s.status) },
+    ],
+    sort: (list) =>
+      [...list].sort((a, b) => {
+        const pa = a.status === 'pending' ? 0 : 1;
+        const pb = b.status === 'pending' ? 0 : 1;
+        if (pa !== pb) return pa - pb;
+        return (parseLocal(b.created_at)?.getTime() || 0) - (parseLocal(a.created_at)?.getTime() || 0);
+      }),
   },
   albums: {
     label: 'Galería',
