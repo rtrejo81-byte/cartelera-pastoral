@@ -47,6 +47,12 @@
       "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }]
     },
     {
+      "name": "Compartir",
+      "short_name": "Compartir",
+      "url": "./#/compartir",
+      "icons": [{ "src": "assets/img/icon-192.png", "sizes": "192x192" }]
+    },
+    {
       "name": "Fotos por comunidad",
       "short_name": "Fotos",
       "url": "./#/fotos",

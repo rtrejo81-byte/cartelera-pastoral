@@ -551,6 +551,7 @@ function actionsCell(name, item) {
   const pending = item.status === 'pending';
   return `<td>
     <div class="actions">
+      ${pending ? `<button type="button" class="btn-icon" data-reject="${name}:${esc(item.id)}" title="Rechazar" aria-label="Rechazar">${icon('x', 16)}</button>` : ''}
       ${pending ? `<button type="button" class="btn-icon" data-approve="${name}:${esc(item.id)}" title="Aprobar" aria-label="Aprobar">${icon('check', 16)}</button>` : ''}
       <button type="button" class="btn-icon" data-edit="${name}:${esc(item.id)}" title="Editar" aria-label="Editar">${icon('edit', 16)}</button>
       <button type="button" class="btn-icon" data-delete="${name}:${esc(item.id)}" title="Eliminar" aria-label="Eliminar">${icon('trash', 16)}</button>
