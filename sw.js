@@ -21,6 +21,7 @@ const CORE = [
   './assets/img/icon-512.png',
   './assets/img/icon-maskable-512.png',
   './assets/img/apple-touch-icon.png',
+  './assets/img/facebook.svg',
   './js/app.js',
   './js/config.js',
   './js/store.js',

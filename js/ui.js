@@ -288,7 +288,7 @@ export function renderFooter() {
           </ul>
           <div class="cluster" style="margin-top:.9rem">
             ${s.instagram ? `<a class="btn-icon" href="${esc(s.instagram)}" target="_blank" rel="noopener" aria-label="Instagram" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC">${icon('instagram', 16)}</a>` : ''}
-            ${s.facebook ? `<a class="btn-icon" href="${esc(s.facebook)}" target="_blank" rel="noopener" aria-label="Facebook" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC">${icon('facebook', 16)}</a>` : ''}
+            ${s.facebook ? `<a class="btn-icon" href="${esc(s.facebook)}" target="_blank" rel="noopener" aria-label="Facebook" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC"><img src="assets/img/facebook.svg" alt="" width="18" height="18"></a>` : ''}
             ${s.whatsapp ? `<a class="btn-icon" href="https://wa.me/${esc(String(s.whatsapp).replace(/\D/g, ''))}" target="_blank" rel="noopener" aria-label="WhatsApp" style="width:34px;height:34px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#E9F0EC">${icon('whatsapp', 16)}</a>` : ''}
           </div>
         </div>

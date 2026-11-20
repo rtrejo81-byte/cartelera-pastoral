@@ -586,6 +586,14 @@
 .lightbox-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem 1.4rem; font-size: .82rem; color: rgba(255, 255, 255, .75); }
 .lightbox .btn-icon { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .2); color: #fff; }
 .lightbox .btn-icon:hover { background: rgba(255, 255, 255, .2); color: #fff; }
+.lightbox .btn-ghost {
+  color: #F6EFE3;
+  border-color: rgba(255, 255, 255, .24);
+  background: rgba(255, 255, 255, .06);
+}
+.lightbox .btn-ghost:hover { color: #fff; background: rgba(255, 255, 255, .16); }
+.lightbox .btn-ghost[disabled] { opacity: .38; cursor: default; }
+.btn-icon img { display: block; }
 
 .photo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
 .photo-grid button { border: 0; padding: 0; border-radius: 14px; overflow: hidden; background: var(--sand); aspect-ratio: 1; }
