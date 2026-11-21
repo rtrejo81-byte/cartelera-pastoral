@@ -270,7 +270,7 @@ async function fetchSettings() {
   return out;
 }
 
-async function refresh() {
+async function refresh({ emitChange = true } = {}) {
   if (state.mode !== 'cloud' || !client) return;
   state.loading = true;
   try {
@@ -289,7 +289,7 @@ async function refresh() {
     ]);
     state.data = { activities, notices, birthdays, resources, contacts, albums, prayers, holyHours, serviceAssignments, shares };
     state.settings = settings || {};
-    emit('change', { source: 'cloud' });
+    if (emitChange) emit('change', { source: 'cloud' });
   } catch (err) {
     console.error('[store] refresh', err);
     emit('error', { message: err.message });
@@ -298,6 +298,20 @@ async function refresh() {
     state.ready = true;
     emit('ready');
   }
+}
+
+/**
+ * Vuelve a leer la nube sin repintar si nada cambió.
+ * Devuelve true cuando hay datos nuevos.
+ */
+export async function refreshNow() {
+  if (state.mode !== 'cloud' || !client) return false;
+  const before = JSON.stringify(state.data) + JSON.stringify(state.settings);
+  await refresh({ emitChange: false });
+  const after = JSON.stringify(state.data) + JSON.stringify(state.settings);
+  if (before === after) return false;
+  emit('change', { source: 'poll' });
+  return true;
 }
 
 /* ---------------- Arranque ---------------- */
@@ -870,6 +884,7 @@ export const store = {
   saveSettings,
   uploadImage,
   storageUsage,
+  refreshNow,
   signIn,
   signOut,
   changePassword,

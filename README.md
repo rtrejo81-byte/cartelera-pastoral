@@ -16,6 +16,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Horario del Santísimo**: los domingos, una hora de adoración por comunidad, organizada mes a mes y editable desde el panel.
 - **Avisos** con prioridad, fijados arriba, fecha de vigencia y búsqueda.
 - **Muro de la comunidad**: saludos, mensajes y videos enviados por cualquiera, con aprobación de un coordinador antes de publicarse.
+- **Actualización automática**: el contenido se revisa cada minuto y al volver a la pestaña; la PWA detecta versiones nuevas. También hay un botón **Actualizar ahora** en el pie.
 - **Compartir QR**: código generado con la dirección actual, para imprimir o enviar por WhatsApp.
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.

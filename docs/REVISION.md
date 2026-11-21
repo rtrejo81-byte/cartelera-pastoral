@@ -35,6 +35,8 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] **Compartir**: un enlace de YouTube se muestra como video.
 - [ ] **Compartir QR**: el código se genera y cambia al elegir Inicio, Calendario o Compartir.
 - [ ] El QR se puede descargar, imprimir y enviar por WhatsApp.
+- [ ] **Actualización**: al cambiar un dato en Supabase, la página abierta se refresca sola; el pie muestra **Actualizar ahora**.
+- [ ] **Versión nueva**: al publicar cambios en GitHub, una PWA abierta se recarga sola sin formularios abiertos.
 - [ ] El pie muestra **Redes sociales** arriba de Facebook/Instagram.
 - [ ] El botón **Activar notificaciones** pide permiso y avisa de una publicación nueva.
 - [ ] La vista **Agenda** y la exportación `.ics` funcionan.

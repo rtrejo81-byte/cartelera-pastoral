@@ -282,7 +282,8 @@ function notifyRealtime(detail) {
   }
 }
 
-function showInstallHelp() {  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+function showInstallHelp() {
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   if (standalone) {
     toast('Ya estás usando la cartelera como app instalada.', 'info');
     return;
@@ -325,6 +326,52 @@ function showInstallHelp() {  const standalone = window.matchMedia('(display-mod
     body,
     footer: '<button type="button" class="btn btn-primary" data-close>Entendido</button>',
   });
+}
+
+async function autoRefreshContent() {
+  if (store.mode !== 'cloud' || !store.ready) return;
+  if (document.visibilityState !== 'visible') return;
+  if (!navigator.onLine) return;
+  if (location.hash.startsWith('#/qr')) return;
+  if (document.querySelector('.modal.open, .lightbox.open')) return;
+  if (document.querySelector('#main form')) return;
+  const active = document.activeElement;
+  if (active && active.matches && active.matches('input, textarea, select')) return;
+  await store.refreshNow();
+}
+
+let assetTags = null;
+let updateNoticeShown = false;
+
+async function checkAppVersion() {
+  if (document.visibilityState !== 'visible') return;
+  try {
+    const urls = ['index.html', 'js/app.js', 'assets/css/app.css'];
+    const tags = await Promise.all(
+      urls.map(async (url) => {
+        const response = await fetch(`${url}?v=${Date.now()}`, { method: 'HEAD', cache: 'no-store' });
+        return response.headers.get('etag') || response.headers.get('last-modified') || response.headers.get('content-length') || '';
+      })
+    );
+    const signature = tags.join('|');
+    if (!assetTags) {
+      assetTags = signature;
+      return;
+    }
+    if (signature === assetTags) return;
+    if (document.querySelector('.modal.open, #main form')) {
+      if (!updateNoticeShown) {
+        updateNoticeShown = true;
+        toast('Hay una versión nueva de la cartelera. Cierra el formulario y recarga para verla.', 'info', 8000);
+      }
+      return;
+    }
+    assetTags = signature;
+    toast('Actualizando a la última versión…', 'info', 1200);
+    setTimeout(() => window.location.reload(), 600);
+  } catch {
+    /* si no hay red, se reintenta después */
+  }
 }
 
 async function start() {
@@ -407,6 +454,26 @@ async function start() {
     enableNotifications();
   });
 
+  // Actualizar el contenido a pedido.
+  document.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-refresh-now]');
+    if (!button) return;
+    event.preventDefault();
+    if (store.mode !== 'cloud') {
+      toast('Estás en modo demo local; los cambios ya están en este navegador.', 'info');
+      return;
+    }
+    button.disabled = true;
+    try {
+      const changed = await store.refreshNow();
+      toast(changed ? 'Cartelera actualizada.' : 'No hay cambios nuevos.', 'ok');
+    } catch {
+      toast('No se pudo actualizar. Revisa la conexión.', 'error');
+    } finally {
+      button.disabled = false;
+    }
+  });
+
   onChange((type, detail) => {
     if (type === 'error') {
       toast(detail?.message || 'Ocurrió un error.', 'error', 6000);
@@ -428,6 +495,21 @@ async function start() {
   window.addEventListener('online', () => toast('Conexión restablecida.', 'ok'));
   window.addEventListener('offline', () => toast('Sin conexión. Algunas funciones no estarán disponibles.', 'error'));
 
+  // Respaldo del tiempo real: revisa cambios cada minuto y al volver a la pestaña.
+  setInterval(autoRefreshContent, 60000);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      autoRefreshContent();
+      checkAppVersion();
+    }
+  });
+  window.addEventListener('online', autoRefreshContent);
+  window.addEventListener('online', checkAppVersion);
+
+  // Si publicamos una versión nueva, la app abierta se actualiza sola.
+  checkAppVersion();
+  setInterval(checkAppVersion, 5 * 60 * 1000);
+
   if (store.mode === 'demo') {
     console.info('%cPastoral Familiar · modo demo local', 'color:#C0643C;font-weight:bold');
   }
@@ -440,8 +522,28 @@ if (document.readyState === 'loading') {
 }
 
 if ('serviceWorker' in navigator) {
+  let hadController = Boolean(navigator.serviceWorker.controller);
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController) {
+      hadController = true;
+      return;
+    }
+    if (document.querySelector('.modal.open, #main form')) {
+      toast('Hay una versión nueva de la cartelera. Cierra el formulario y recarga para verla.', 'info', 8000);
+      return;
+    }
+    window.location.reload();
+  });
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch((err) => {
+    navigator.serviceWorker.register('./sw.js').then((registration) => {
+      const check = () => registration.update().catch(() => {});
+      check();
+      setInterval(check, 30 * 60 * 1000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') check();
+      });
+    }).catch((err) => {
       console.warn('[pwa] no se pudo registrar el service worker', err);
     });
   });

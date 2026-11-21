@@ -838,7 +838,7 @@
   text-transform: uppercase;
   color: rgba(246, 239, 227, .55);
 }
-.footer-notify { margin-top: .9rem; }
+.footer-notify { display: grid; gap: .35rem; margin-top: .9rem; }
 .footer-bottom {
   display: flex;
   flex-wrap: wrap;
