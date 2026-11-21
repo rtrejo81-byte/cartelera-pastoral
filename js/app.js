@@ -13,6 +13,7 @@ import homeView from './views/home.js';
 import calendarView from './views/calendar.js';
 import noticesView from './views/notices.js';
 import shareView from './views/share.js';
+import qrView from './views/qr.js';
 import communityView from './views/community.js';
 import resourcesView from './views/resources.js';
 import birthdaysView from './views/birthdays.js';
@@ -29,6 +30,7 @@ const ROUTES = {
   '/calendario': calendarView,
   '/avisos': noticesView,
   '/compartir': shareView,
+  '/qr': qrView,
   '/comunidad': communityView,
   '/recursos': resourcesView,
   '/cumpleanos': birthdaysView,
@@ -46,6 +48,7 @@ const TITLES = {
   '/calendario': 'Calendario',
   '/avisos': 'Avisos',
   '/compartir': 'Compartir',
+  '/qr': 'Compartir QR',
   '/comunidad': 'Comunidad',
   '/recursos': 'Recursos',
   '/cumpleanos': 'Cumpleaños',

@@ -1409,3 +1409,61 @@
   .share-banner { padding: 1rem; }
   .share-banner-ico { width: 40px; height: 40px; }
 }
+
+/* ---------------- Compartir QR ---------------- */
+.qr-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+  gap: clamp(1.4rem, 4vw, 2.8rem);
+  align-items: start;
+}
+.qr-card {
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+}
+.qr-code {
+  width: min(100%, 360px);
+  margin: .6rem auto 1rem;
+  padding: .75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: #fff;
+}
+.qr-code svg { display: block; width: 100%; height: auto; }
+.qr-url {
+  margin: 0 auto .9rem;
+  max-width: 100%;
+  font-size: .76rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.qr-url a { color: var(--muted); text-decoration: none; }
+.qr-url a:hover { color: var(--green); text-decoration: underline; }
+.qr-actions { display: flex; flex-wrap: wrap; gap: .45rem; justify-content: center; }
+.qr-info {
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, .55);
+}
+.qr-info h2 { font-size: clamp(1.3rem, 2.5vw, 1.7rem); }
+.qr-info > p { margin: .5rem 0 1.2rem; color: var(--ink-2); font-size: .92rem; max-width: 56ch; }
+.qr-targets { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.3rem; }
+.qr-info .info-list { margin-bottom: 1.3rem; }
+@media (max-width: 820px) {
+  .qr-layout { grid-template-columns: minmax(0, 1fr); }
+  .qr-card { max-width: 460px; margin-inline: auto; width: 100%; }
+}
+@media print {
+  .site-header, .site-footer, .page-head .page-actions, .qr-actions, .qr-targets, .qr-info, .no-print { display: none !important; }
+  .qr-layout { display: block; }
+  .qr-card { border: 0; box-shadow: none; max-width: none; padding: 0; }
+  .qr-code { width: 12cm; max-width: 100%; margin: 1cm auto; border: 0; padding: 0; }
+  .qr-code svg { width: 100%; height: auto; }
+  .qr-url { font-size: .72rem; }
+  body { background: #fff; }
+}

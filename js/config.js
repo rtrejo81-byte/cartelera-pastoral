@@ -66,6 +66,7 @@ export const SECTIONS = [
   { id: 'calendario', path: '/calendario', label: 'Calendario', icon: 'calendar', nav: true },
   { id: 'avisos', path: '/avisos', label: 'Avisos', icon: 'megaphone', nav: true },
   { id: 'compartir', path: '/compartir', label: 'Compartir', icon: 'quote', nav: true },
+  { id: 'qr', path: '/qr', label: 'Compartir QR', icon: 'qr', nav: false },
   { id: 'comunidad', path: '/comunidad', label: 'Comunidad', icon: 'users', nav: true },
   { id: 'recursos', path: '/recursos', label: 'Recursos', icon: 'book', nav: true },
   { id: 'cumpleanos', path: '/cumpleanos', label: 'Cumpleaños', icon: 'cake', nav: false },

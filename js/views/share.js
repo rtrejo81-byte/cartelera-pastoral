@@ -22,7 +22,8 @@ export default function shareView(root) {
       subtitle:
         'Un espacio para dejar un saludo, un mensaje o un video. Todo pasa por revisión antes de publicarse para cuidar a nuestra comunidad.',
       actions: ready
-        ? `<button type="button" class="btn btn-primary" data-open-share>${icon('plus', 16)} Dejar un mensaje</button>`
+        ? `<button type="button" class="btn btn-primary" data-open-share>${icon('plus', 16)} Dejar un mensaje</button>
+           <a class="btn btn-ghost" href="#/qr">${icon('qr', 16)} Compartir QR</a>`
         : `<a class="btn btn-ghost" href="#/contactos">${icon('phone', 16)} Contactar al equipo</a>`,
     })}
 

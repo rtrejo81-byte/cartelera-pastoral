@@ -32,6 +32,7 @@ const CORE = [
   './js/seed.js',
   './js/icons.js',
   './js/recurrence.js',
+  './js/vendor/qrcode.js',
 ];
 
 self.addEventListener('install', (event) => {
