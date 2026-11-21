@@ -133,6 +133,15 @@ export async function renderRoute({ scroll = true, soft = false } = {}) {
 
 const softRefresh = debounce(() => {
   if (!store.ready) return;
+  // No repintar mientras alguien escribe: evita perder datos o cerrar un modal.
+  const loginOpen = Boolean(document.querySelector('#login-form'));
+  const blocked =
+    (document.querySelector('.modal.open, #main form') && !loginOpen) ||
+    (!loginOpen && document.activeElement?.matches?.('input, textarea, select'));
+  if (blocked) {
+    setTimeout(() => softRefresh(), 2500);
+    return;
+  }
   renderRoute({ scroll: false, soft: true });
 }, 180);
 
