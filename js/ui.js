@@ -159,6 +159,14 @@ export function confirmDialog({ title = '¿Estás seguro?', message = '', confir
 
 /* ---------------- Cabecera ---------------- */
 export function renderHeader() {
+  // El drawer debe vivir fuera del header: su backdrop-filter lo atraparía
+  // en un contenedor de 64px y el menú quedaría cortado en el celular.
+  qs('#drawer')?.remove();
+  qs('#drawer-backdrop')?.remove();
+  if (document.body.classList.contains('no-scroll') && !qs('.modal.open')) {
+    document.body.classList.remove('no-scroll');
+  }
+
   const s = site();
   const nav = navSections();
   const path = location.hash.replace(/^#/, '').split('?')[0] || '/';
@@ -213,6 +221,9 @@ export function renderHeader() {
   const drawer = qs('#drawer');
   const backdrop = qs('#drawer-backdrop');
   const toggle = qs('#nav-toggle');
+
+  // Sacarlos del header para que position:fixed use la pantalla completa.
+  document.body.append(backdrop, drawer);
 
   const setDrawer = (open) => {
     drawer.classList.toggle('open', open);
