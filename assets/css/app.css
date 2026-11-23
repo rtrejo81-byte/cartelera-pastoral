@@ -1467,3 +1467,77 @@
   .qr-url { font-size: .72rem; }
   body { background: #fff; }
 }
+
+/* ---------------- Novedades ---------------- */
+.novedades-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .7rem .95rem;
+  border: 1px solid rgba(246, 239, 227, .22);
+  border-radius: 999px;
+  background: var(--green-deep);
+  color: #F6EFE3;
+  box-shadow: 0 10px 30px -12px rgba(12, 32, 27, .65);
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .18s var(--ease), transform .18s var(--ease);
+}
+.novedades-fab:hover { background: var(--green); transform: translateY(-1px); }
+.novedades-fab[hidden] { display: none !important; }
+.novedades-count {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 .3rem;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #2B2118;
+  font-size: .7rem;
+  font-weight: 700;
+  animation: novPulse 2s ease-in-out infinite;
+}
+@keyframes novPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+.nov-group + .nov-group { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.nov-group-title {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 0 0 .55rem;
+  font-family: var(--font-sans);
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.nov-item {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .55rem .6rem;
+  margin-inline: -.6rem;
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  text-decoration: none;
+}
+.nov-item:hover { background: var(--cream-2); }
+.nov-item-copy { flex: 1; min-width: 0; }
+.nov-item-copy b { display: block; font-size: .9rem; line-height: 1.3; overflow-wrap: anywhere; }
+.nov-item-copy small { display: block; margin-top: .15rem; font-size: .74rem; color: var(--muted); overflow-wrap: anywhere; }
+.nov-item > svg { flex: none; color: var(--muted); }
+@media (max-width: 520px) {
+  .novedades-fab { right: .8rem; bottom: .8rem; padding: .62rem .8rem; }
+}
+@media print {
+  .novedades-fab { display: none !important; }
+}

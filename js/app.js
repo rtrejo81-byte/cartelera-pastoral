@@ -6,7 +6,7 @@ import { boot, store, onChange } from './store.js';
 import { currentRoute, normalizePath } from './router.js';
 import { renderHeader, renderFooter, toast, site, closeModal, openModal } from './ui.js';
 import { icon } from './icons.js';
-import { qs, debounce, esc } from './utils.js';
+import { qs, debounce, esc, parseLocal, fmtDateShort } from './utils.js';
 import { openActivity, openNotice, openAlbum, openImageLightbox } from './cards.js';
 
 import homeView from './views/home.js';
@@ -117,6 +117,7 @@ export async function renderRoute({ scroll = true, soft = false } = {}) {
   renderHeader();
   renderFooter();
   updateNotifyLabel();
+  refreshNovedades();
 
   const title = TITLES[base] || TITLES[ctx.path] || 'Cartelera';
   document.title = `${title} · ${site().name}`;
@@ -314,9 +315,156 @@ function notifyRealtime(detail) {
   }
 }
 
-function showInstallHelp() {
-  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  if (standalone) {
+const NOVEDADES_KEY = 'pf_novedades_seen_v1';
+const NOVEDADES_ALBUMS_KEY = 'pf_novedades_albums_v1';
+let novedadesButton = null;
+
+function albumSnapshot() {
+  try {
+    return JSON.parse(localStorage.getItem(NOVEDADES_ALBUMS_KEY) || '{}') || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveAlbumSnapshot() {
+  const snapshot = {};
+  store.publicList('albums').forEach((album) => {
+    snapshot[album.id] = Array.isArray(album.photos) ? album.photos.length : 0;
+  });
+  localStorage.setItem(NOVEDADES_ALBUMS_KEY, JSON.stringify(snapshot));
+}
+
+function ensureNovedadesButton() {
+  if (novedadesButton?.isConnected) return novedadesButton;
+  novedadesButton = document.getElementById('novedades-fab');
+  if (!novedadesButton) {
+    novedadesButton = document.createElement('button');
+    novedadesButton.type = 'button';
+    novedadesButton.id = 'novedades-fab';
+    novedadesButton.className = 'novedades-fab no-print';
+    novedadesButton.dataset.novedades = '';
+    document.body.appendChild(novedadesButton);
+  }
+  novedadesButton.addEventListener('click', openNovedades);
+  return novedadesButton;
+}
+
+function collectNovedades() {
+  if (!store.ready) return [];
+  const stored = Number(localStorage.getItem(NOVEDADES_KEY) || 0);
+  if (!stored) {
+    localStorage.setItem(NOVEDADES_KEY, String(Date.now()));
+    saveAlbumSnapshot();
+    return [];
+  }
+
+  const items = [];
+  const add = (type, title, date, path, extra = '') => {
+    const timestamp = parseLocal(date)?.getTime() || 0;
+    if (timestamp > stored && timestamp <= Date.now()) items.push({ type, title, date, path, extra, timestamp });
+  };
+
+  store.publicList('activities').forEach((item) => {
+    add('activities', item.title, item.created_at, '#/calendario', item.location || '');
+  });
+  store.publicList('notices').forEach((item) => {
+    add('notices', item.title, item.created_at || item.published_at, '#/avisos');
+  });
+
+  const albums = store.publicList('albums');
+  const snapshot = albumSnapshot();
+  const hasSnapshot = Object.keys(snapshot).length > 0;
+  albums.forEach((item) => {
+    const count = Array.isArray(item.photos) ? item.photos.length : 0;
+    const before = snapshot[item.id];
+    const created = parseLocal(item.created_at || item.date)?.getTime() || 0;
+    if (created > stored && created <= Date.now()) {
+      add('albums', item.title, item.created_at || item.date, '#/galeria', count ? `${count} foto${count === 1 ? '' : 's'}` : '');
+    } else if (hasSnapshot && before !== undefined && count > before) {
+      const diff = count - before;
+      items.push({
+        type: 'albums',
+        title: item.title,
+        date: new Date().toISOString(),
+        path: '#/galeria',
+        extra: `${diff} foto${diff === 1 ? '' : 's'} nueva${diff === 1 ? '' : 's'}`,
+        timestamp: Date.now(),
+      });
+    }
+  });
+
+  store.publicList('shares').forEach((item) => {
+    const message = String(item.message || '').replace(/\s+/g, ' ').trim();
+    add('shares', item.name || 'Anónimo', item.created_at, '#/compartir', message.slice(0, 70));
+  });
+
+  return items.sort((a, b) => b.timestamp - a.timestamp).slice(0, 20);
+}
+
+function refreshNovedades() {
+  const button = ensureNovedadesButton();
+  const items = collectNovedades();
+  if (!items.length) {
+    button.hidden = true;
+    return;
+  }
+  button.hidden = false;
+  const count = items.length > 9 ? '9+' : String(items.length);
+  button.innerHTML = `${icon('bell', 17)}<span>Novedades</span><span class="novedades-count">${count}</span>`;
+  button.setAttribute('aria-label', `Hay ${items.length} novedades. Toca para verlas.`);
+}
+
+function openNovedades() {
+  const items = collectNovedades();
+  if (!items.length) {
+    toast('No hay novedades desde tu última visita.', 'info');
+    return;
+  }
+
+  localStorage.setItem(NOVEDADES_KEY, String(Date.now()));
+  saveAlbumSnapshot();
+  refreshNovedades();
+  if (novedadesButton) novedadesButton.hidden = true;
+
+  const meta = {
+    activities: { label: 'Actividades', icon: 'calendar' },
+    notices: { label: 'Avisos', icon: 'megaphone' },
+    albums: { label: 'Fotos', icon: 'image' },
+    shares: { label: 'Mensajes', icon: 'quote' },
+  };
+  const groups = Object.keys(meta)
+    .map((type) => ({ type, ...meta[type], items: items.filter((item) => item.type === type) }))
+    .filter((group) => group.items.length);
+
+  const body = groups
+    .map(
+      (group) => `<div class="nov-group">
+        <h3 class="nov-group-title">${icon(group.icon, 16)} ${esc(group.label)}</h3>
+        ${group.items
+          .map(
+            (item) => `<a class="nov-item" href="${item.path}" data-close>
+              <span class="nov-item-copy">
+                <b>${esc(item.title)}</b>
+                <small>${esc(fmtDateShort(item.date))}${item.extra ? ` · ${esc(item.extra)}` : ''}</small>
+              </span>
+              ${icon('arrow-right', 14)}
+            </a>`
+          )
+          .join('')}
+      </div>`
+    )
+    .join('');
+
+  openModal({
+    title: 'Novedades',
+    subtitle: 'Lo nuevo desde tu última visita',
+    body,
+    footer: '<button type="button" class="btn btn-primary" data-close>Entendido</button>',
+  });
+}
+
+function showInstallHelp() {  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;  if (standalone) {
     toast('Ya estás usando la cartelera como app instalada.', 'info');
     return;
   }
@@ -517,6 +665,7 @@ async function start() {
       toast(detail?.message || 'Ocurrió un error.', 'error', 6000);
       return;
     }
+    if (type !== 'error') refreshNovedades();
     if (type === 'realtime') {
       notifyRealtime(detail);
       softRefresh();
@@ -539,6 +688,7 @@ async function start() {
     if (document.visibilityState === 'visible') {
       autoRefreshContent();
       checkAppVersion();
+      refreshNovedades();
     }
   });
   window.addEventListener('online', autoRefreshContent);
