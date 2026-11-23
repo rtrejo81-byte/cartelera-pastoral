@@ -37,6 +37,7 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] El QR se puede descargar, imprimir y enviar por WhatsApp.
 - [ ] **Actualización**: al cambiar un dato en Supabase, la página abierta se refresca sola; el pie muestra **Actualizar ahora**.
 - [ ] **Novedades**: al volver a entrar aparece un globito con lo nuevo y, al abrirlo, se marca como leído.
+- [ ] **Novedades**: incluye recursos nuevos además de actividades, avisos, fotos y mensajes.
 - [ ] **Versión nueva**: al publicar cambios en GitHub, una PWA abierta se recarga sola sin formularios abiertos.
 - [ ] El pie muestra **Redes sociales** arriba de Facebook/Instagram.
 - [ ] El botón **Activar notificaciones** pide permiso y avisa de una publicación nueva.

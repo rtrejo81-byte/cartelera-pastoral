@@ -359,9 +359,17 @@ function collectNovedades() {
     return [];
   }
 
+  const instant = (value) => {
+    if (!value) return 0;
+    const text = String(value);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return parseLocal(text)?.getTime() || 0;
+    const timestamp = new Date(text).getTime();
+    return Number.isNaN(timestamp) ? parseLocal(text)?.getTime() || 0 : timestamp;
+  };
+
   const items = [];
   const add = (type, title, date, path, extra = '') => {
-    const timestamp = parseLocal(date)?.getTime() || 0;
+    const timestamp = instant(date);
     if (timestamp > stored && timestamp <= Date.now()) items.push({ type, title, date, path, extra, timestamp });
   };
 
@@ -371,6 +379,9 @@ function collectNovedades() {
   store.publicList('notices').forEach((item) => {
     add('notices', item.title, item.created_at || item.published_at, '#/avisos');
   });
+  store.publicList('resources').forEach((item) => {
+    add('resources', item.title, item.created_at || item.updated_at, '#/recursos', item.category || '');
+  });
 
   const albums = store.publicList('albums');
   const snapshot = albumSnapshot();
@@ -378,7 +389,7 @@ function collectNovedades() {
   albums.forEach((item) => {
     const count = Array.isArray(item.photos) ? item.photos.length : 0;
     const before = snapshot[item.id];
-    const created = parseLocal(item.created_at || item.date)?.getTime() || 0;
+    const created = instant(item.created_at || item.date);
     if (created > stored && created <= Date.now()) {
       add('albums', item.title, item.created_at || item.date, '#/galeria', count ? `${count} foto${count === 1 ? '' : 's'}` : '');
     } else if (hasSnapshot && before !== undefined && count > before) {
@@ -431,6 +442,7 @@ function openNovedades() {
     activities: { label: 'Actividades', icon: 'calendar' },
     notices: { label: 'Avisos', icon: 'megaphone' },
     albums: { label: 'Fotos', icon: 'image' },
+    resources: { label: 'Recursos', icon: 'book' },
     shares: { label: 'Mensajes', icon: 'quote' },
   };
   const groups = Object.keys(meta)
