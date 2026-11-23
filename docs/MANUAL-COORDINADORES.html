@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual para coordinadores · Pastoral Familiar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBF7F0;
+    --cream-2: #F6EFE3;
+    --paper: #FFFFFF;
+    --ink: #17322C;
+    --ink-2: #3C544D;
+    --muted: #5F716B;
+    --line: #E7DED0;
+    --green: #1F4D42;
+    --green-deep: #12332C;
+    --green-soft: #E3EEE8;
+    --clay: #C0643C;
+    --clay-deep: #9E4B29;
+    --gold: #C9913F;
+    --gold-soft: #F9EED6;
+    --ok: #2C6E52;
+    --ok-soft: #E4F2EA;
+    --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0;
+    background: #DCD6CC;
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  @page { size: A4; margin: 0; }
+  .page {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    padding: 14mm 15mm 13mm;
+    overflow: hidden;
+    background: var(--cream);
+    page-break-after: always;
+    margin: 10mm auto;
+    box-shadow: 0 18px 50px -20px rgba(23, 50, 44, .38);
+  }
+  .page:last-child { page-break-after: auto; }
+  .page::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 100% 0, rgba(201, 145, 63, .09), transparent 30%),
+      radial-gradient(circle at 0 100%, rgba(31, 77, 66, .05), transparent 28%);
+  }
+  .page > * { position: relative; z-index: 1; }
+
+  .running {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding-bottom: 6mm;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 7.6pt;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+  }
+  .running img { width: 8mm; height: 8mm; border-radius: 50%; background: #fff; }
+  .running .num { margin-left: auto; color: var(--green); letter-spacing: .06em; }
+
+  h1, h2, h3 { font-family: var(--display); color: var(--ink); }
+  h1 { margin: 0; font-size: 33pt; line-height: 1.02; letter-spacing: -.025em; font-weight: 600; }
+  h1 em { color: var(--clay); font-style: italic; font-weight: 500; }
+  h2 { margin: 7mm 0 3mm; font-size: 22pt; line-height: 1.05; letter-spacing: -.02em; font-weight: 600; }
+  h2 .kicker { display: block; margin-bottom: 2mm; font-family: var(--sans); font-size: 7.5pt; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--clay); }
+  h3 { margin: 0 0 2mm; font-family: var(--sans); font-size: 8pt; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--green); }
+  p { margin: 0 0 3.4mm; font-size: 9.5pt; line-height: 1.58; color: var(--ink-2); }
+  strong { color: var(--ink); font-weight: 650; }
+  .lead { font-size: 10.5pt; line-height: 1.55; color: var(--ink-2); }
+  .small { font-size: 8pt; line-height: 1.5; color: var(--muted); }
+  .muted { color: var(--muted); }
+  .clay { color: var(--clay-deep); }
+  .green { color: var(--green); }
+
+  .cover {
+    display: flex;
+    flex-direction: column;
+    padding: 15mm 16mm 13mm;
+    background:
+      radial-gradient(ellipse at 8% 12%, rgba(201, 145, 63, .16), transparent 32%),
+      radial-gradient(ellipse at 100% 100%, rgba(31, 77, 66, .10), transparent 35%),
+      var(--cream);
+  }
+  .cover-top { display: flex; align-items: center; gap: 4mm; }
+  .cover-top img { width: 15mm; height: 15mm; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(23, 50, 44, .08); }
+  .cover-top .brand-name { font-family: var(--display); font-size: 14pt; font-weight: 600; line-height: 1.1; }
+  .cover-top .brand-sub { margin-top: 1mm; color: var(--muted); font-size: 7pt; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+  .cover-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 10mm; align-items: center; margin-top: 20mm; }
+  .cover-kicker { display: inline-flex; align-items: center; gap: 3mm; margin-bottom: 7mm; color: var(--clay); font-size: 8pt; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+  .cover-kicker::before { content: ""; width: 11mm; height: 1px; background: var(--clay); }
+  .cover h1 { font-size: 44pt; }
+  .cover .lead { max-width: 88mm; margin-top: 7mm; font-size: 11pt; }
+  .cover-tags { display: flex; flex-wrap: wrap; gap: 2.5mm; margin-top: 9mm; }
+  .tag { padding: 2mm 3mm; border: 1px solid var(--line); border-radius: 99px; background: rgba(255, 255, 255, .7); color: var(--ink-2); font-size: 7.5pt; font-weight: 600; }
+  .cover-phone { display: flex; justify-content: center; }
+  .cover-foot { margin-top: auto; padding-top: 8mm; border-top: 1px solid var(--line); display: flex; align-items: flex-end; justify-content: space-between; gap: 8mm; }
+  .cover-foot .motto { font-family: var(--display); font-style: italic; font-size: 15pt; color: var(--green); }
+  .cover-foot .meta { text-align: right; color: var(--muted); font-size: 7.5pt; line-height: 1.5; }
+
+  .phone {
+    width: 61mm;
+    padding: 2.2mm;
+    border-radius: 8mm;
+    background: var(--green-deep);
+    box-shadow: 0 14px 30px -18px rgba(23, 50, 44, .65), 0 2px 5px rgba(23, 50, 44, .12);
+  }
+  .phone img { display: block; width: 100%; border-radius: 6mm; }
+  .phone.small { width: 51mm; border-radius: 7mm; padding: 1.9mm; }
+  .phone.small img { border-radius: 5.3mm; }
+  .phone.big { width: 70mm; }
+  .phone-row { display: flex; gap: 5mm; justify-content: center; align-items: flex-start; }
+  .phone-cap { margin: 2.4mm 0 0; text-align: center; color: var(--muted); font-size: 7.2pt; font-weight: 600; letter-spacing: .04em; }
+
+  .steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+  .steps li { position: relative; padding-left: 10mm; margin-bottom: 3.4mm; counter-increment: step; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: -.2mm;
+    display: grid;
+    place-items: center;
+    width: 6.2mm;
+    height: 6.2mm;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 7.5pt;
+    font-weight: 700;
+  }
+  .steps b { display: block; margin-bottom: .5mm; color: var(--ink); font-size: 9.3pt; }
+  .steps span { display: block; color: var(--ink-2); font-size: 8.5pt; line-height: 1.48; }
+
+  .note, .tip, .warn {
+    padding: 3.5mm 4mm;
+    border-radius: 3mm;
+    font-size: 8.3pt;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .tip { border-left: 3px solid var(--gold); background: var(--gold-soft); }
+  .note { border-left: 3px solid var(--green); background: var(--green-soft); }
+  .warn { border-left: 3px solid var(--clay); background: #F8E6DB; }
+  .note b, .tip b, .warn b { color: var(--ink); }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; align-items: start; }
+  .split.wide { grid-template-columns: 1.12fr .88fr; }
+  .section-gap { margin-top: 7mm; }
+  .rule { height: 1px; background: var(--line); margin: 6mm 0; }
+
+  .mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm 6mm; }
+  .mini { padding: 3.5mm 4mm; border: 1px solid var(--line); border-radius: 3.5mm; background: rgba(255, 255, 255, .58); }
+  .mini h3 { margin-bottom: 1.5mm; }
+  .mini p { margin: 0; font-size: 8.2pt; line-height: 1.45; }
+
+  .checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 2.4mm; }
+  .checklist li { position: relative; padding-left: 8mm; color: var(--ink-2); font-size: 8.7pt; line-height: 1.45; }
+  .checklist li::before { content: "✓"; position: absolute; left: 0; top: -.2mm; display: grid; place-items: center; width: 5.3mm; height: 5.3mm; border-radius: 50%; background: var(--ok-soft); color: var(--ok); font-size: 7pt; font-weight: 800; }
+
+  .page-foot {
+    position: absolute;
+    left: 15mm;
+    right: 15mm;
+    bottom: 7mm;
+    display: flex;
+    justify-content: space-between;
+    gap: 5mm;
+    color: var(--muted);
+    font-size: 6.8pt;
+    letter-spacing: .04em;
+  }
+  .page-foot b { color: var(--green); font-weight: 600; }
+  .page-foot .pg { font-weight: 700; color: var(--green); }
+
+  .qr-box { display: flex; align-items: center; gap: 4mm; padding: 3.5mm 4mm; border: 1px solid var(--line); border-radius: 3.5mm; background: rgba(255,255,255,.65); }
+  .qr-box .ico { display: grid; place-items: center; width: 11mm; height: 11mm; flex: none; border-radius: 3mm; background: var(--green-soft); color: var(--green); font-size: 15pt; }
+  .qr-box b { display: block; font-size: 8.8pt; }
+  .qr-box span { display: block; margin-top: .7mm; color: var(--muted); font-size: 7.4pt; line-height: 1.4; }
+
+  .closing {
+    margin-top: 7mm;
+    padding: 6mm;
+    border-radius: 5mm;
+    background: var(--green-deep);
+    color: #F6EFE3;
+    text-align: center;
+  }
+  .closing .motto { font-family: var(--display); font-style: italic; font-size: 19pt; }
+  .closing p { margin: 2mm 0 0; color: rgba(246, 239, 227, .78); font-size: 8.3pt; }
+
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= PORTADA ================= -->
+<section class="page cover">
+  <div class="cover-top">
+    <img src="manual-img/logo-mark.png" alt="">
+    <div>
+      <div class="brand-name">Pastoral Familiar</div>
+      <div class="brand-sub">Parroquia Monte Tabor · Ciudad Merliot</div>
+    </div>
+  </div>
+
+  <div class="cover-grid">
+    <div>
+      <div class="cover-kicker">Guía práctica · 6 pasos</div>
+      <h1>Manual para<br><em>coordinadores</em></h1>
+      <p class="lead">Todo lo que necesitas para publicar actividades, avisos y fotos, aprobar lo que envía la comunidad y compartir la cartelera.</p>
+      <div class="cover-tags">
+        <span class="tag">Publicar</span>
+        <span class="tag">Aprobar</span>
+        <span class="tag">Notificar</span>
+        <span class="tag">Compartir</span>
+      </div>
+    </div>
+    <div class="cover-phone">
+      <div class="phone big">
+        <img src="manual-img/07-publico.png" alt="Portada de la cartelera en el teléfono">
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-foot">
+    <div>
+      <div class="motto">“Ante todo, amar y servir”</div>
+      <div class="small" style="margin-top:2mm">Una cartelera viva, hecha entre todos.</div>
+    </div>
+    <div class="meta">
+      Noviembre 2026<br>
+      cartelera-pastoral<br>
+      Documento interno
+    </div>
+  </div>
+</section>
+
+<!-- ================= PÁGINA 2 · ENTRAR ================= -->
+<section class="page">
+  <div class="running">
+    <img src="manual-img/logo-mark.png" alt="">
+    <span>Manual para coordinadores</span>
+    <span class="num">02</span>
+  </div>
+
+  <h2><span class="kicker">Paso 1</span>Entra al panel</h2>
+  <p class="lead">Cada coordinador tiene su propia cuenta. Se entra con el <strong>número de teléfono</strong> y la contraseña que te entregue un administrador.</p>
+
+  <div class="phone-row" style="margin-top:4mm">
+    <div>
+      <div class="phone small"><img src="manual-img/01-login.png" alt="Pantalla de acceso al panel"></div>
+      <p class="phone-cap">Acceso con teléfono y contraseña</p>
+    </div>
+    <div>
+      <div class="phone small"><img src="manual-img/02-panel.png" alt="Resumen del panel de coordinadores"></div>
+      <p class="phone-cap">Tu panel de trabajo</p>
+    </div>
+  </div>
+
+  <div class="split" style="margin-top:5mm">
+    <div>
+      <h3>Cómo entrar</h3>
+      <ol class="steps">
+        <li><b>Abre la cartelera</b><span>Toca el icono de persona en la esquina superior derecha o entra a <strong>/#/admin</strong>.</span></li>
+        <li><b>Escribe tu teléfono</b><span>Los 8 dígitos, por ejemplo <strong>7654-0943</strong>. También funciona tu correo, si lo tienes registrado.</span></li>
+        <li><b>Escribe tu contraseña</b><span>Y toca <strong>Entrar al panel</strong>.</span></li>
+      </ol>
+    </div>
+    <div>
+      <h3>Tu panel</h3>
+      <p><strong>Resumen</strong> muestra lo pendiente, las fechas próximas, avisos e intenciones. Arriba están las pestañas: Actividades, Avisos, Compartir, Cumpleaños, Santísimo, Servicios, Recursos, Galería, Contactos, Oración y Ajustes.</p>
+      <div class="note"><b>Primera vez:</b> cambia la contraseña temporal en <strong>Ajustes → Mi contraseña</strong>. No compartas tu cuenta: cada coordinador debe entrar con la suya.</div>
+    </div>
+  </div>
+
+  <div class="page-foot"><span><b>Pastoral Familiar</b> · Parroquia Monte Tabor</span><span class="pg">02</span></div>
+</section>
+
+<!-- ================= PÁGINA 3 · ACTIVIDAD ================= -->
+<section class="page">
+  <div class="running">
+    <img src="manual-img/logo-mark.png" alt="">
+    <span>Manual para coordinadores</span>
+    <span class="num">03</span>
+  </div>
+
+  <h2><span class="kicker">Paso 2</span>Publica una actividad</h2>
+  <p class="lead">Es la forma de que una fecha aparezca en el calendario y en la agenda de la comunidad.</p>
+
+  <div class="phone-row" style="margin-top:4mm">
+    <div>
+      <div class="phone small"><img src="manual-img/03-actividad.png" alt="Formulario de nueva actividad"></div>
+      <p class="phone-cap">Datos principales</p>
+    </div>
+    <div>
+      <div class="phone small"><img src="manual-img/03b-actividad-abajo.png" alt="Imagen y descripción de la actividad"></div>
+      <p class="phone-cap">Descripción e imagen</p>
+    </div>
+  </div>
+
+  <div class="split" style="margin-top:5mm">
+    <div>
+      <h3>Paso a paso</h3>
+      <ol class="steps">
+        <li><b>Abre Actividades → Nueva actividad</b><span>También puedes usar el botón verde del Resumen.</span></li>
+        <li><b>Completa lo esencial</b><span>Nombre claro, tipo, fecha y hora de inicio, lugar y comunidad.</span></li>
+        <li><b>Agrega detalle</b><span>Baja y escribe una descripción breve. Si quieres, sube una imagen o pega un enlace directo.</span></li>
+        <li><b>Revisa el estado</b><span>Déjalo en <strong>Publicado</strong> para que se vea. <strong>Pendiente</strong> es para que otro coordinador lo revise.</span></li>
+        <li><b>Guarda</b><span>Toca <strong>Guardar</strong>. En segundos aparece en el calendario.</span></li>
+      </ol>
+    </div>
+    <div>
+      <h3>Para que quede clara</h3>
+      <div class="mini-grid">
+        <div class="mini"><h3>Título</h3><p>Que diga qué es y para quién: “Retiro de Adviento para familias”.</p></div>
+        <div class="mini"><h3>Fecha y lugar</h3><p>Confirma el día, la hora y el salón antes de publicar.</p></div>
+        <div class="mini"><h3>Imagen</h3><p>Mejor horizontal y luminosa. La app la optimiza sola.</p></div>
+        <div class="mini"><h3>Comunidad</h3><p>Si es de toda la pastoral, deja “Toda la pastoral”.</p></div>
+      </div>
+      <div class="tip" style="margin-top:3.5mm"><b>Consejo:</b> si la actividad se repite, usa la opción de repetición del formulario. Así no tienes que crearla varias veces.</div>
+    </div>
+  </div>
+
+  <div class="page-foot"><span><b>Pastoral Familiar</b> · Parroquia Monte Tabor</span><span class="pg">03</span></div>
+</section>
+
+<!-- ================= PÁGINA 4 · AVISO ================= -->
+<section class="page">
+  <div class="running">
+    <img src="manual-img/logo-mark.png" alt="">
+    <span>Manual para coordinadores</span>
+    <span class="num">04</span>
+  </div>
+
+  <h2><span class="kicker">Paso 3</span>Publica un aviso</h2>
+  <p class="lead">Para lo importante que no puede perderse: un cambio, una inscripción, una fecha urgente.</p>
+
+  <div class="split" style="margin-top:5mm">
+    <div>
+      <div class="phone" style="margin:0 auto"><img src="manual-img/04-aviso.png" alt="Formulario de nuevo aviso"></div>
+      <p class="phone-cap">Nuevo aviso</p>
+    </div>
+    <div>
+      <ol class="steps">
+        <li><b>Avisos → Nuevo aviso</b><span>Escribe un título corto y directo.</span></li>
+        <li><b>Elige la prioridad</b><span>Normal, Importante o Urgente. Si es clave, marca <strong>Fijar arriba</strong>.</span></li>
+        <li><b>Explica qué, quién, cuándo y dónde</b><span>En el contenido, en pocas líneas. Agrega la firma si quieres.</span></li>
+        <li><b>Publica y guarda</b><span>Estado <strong>Publicado</strong> → <strong>Guardar</strong>.</span></li>
+      </ol>
+
+      <div class="tip"><b>Regla de oro:</b> si no sabes si es urgente, no lo marques urgente. Un aviso urgente pierde fuerza si todos lo son.</div>
+
+      <div class="note" style="margin-top:4mm"><b>Fijar arriba:</b> úsalo solo para lo que debe verse primero al entrar. Quita la fijación cuando ya pasó.</div>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="mini-grid">
+    <div class="mini"><h3>Buen título</h3><p>“Cambio de salón para el taller del sábado”, no “Aviso importante”.</p></div>
+    <div class="mini"><h3>Buen contenido</h3><p>Qué pasó, a quién afecta, cuándo y qué debe hacer la persona.</p></div>
+    <div class="mini"><h3>Prioridad</h3><p>Urgente solo si requiere acción inmediata. Lo demás, Normal.</p></div>
+    <div class="mini"><h3>Vigencia</h3><p>Si el aviso tiene fecha de fin, colócala para que deje de mostrarse.</p></div>
+  </div>
+
+  <div class="note" style="margin-top:4mm"><b>Ejemplo de un aviso claro:</b><br><b>Cambio de salón · Taller del sábado</b><br>El taller del sábado 29 se realizará en el Salón 2, a la misma hora. Por favor avisa a tu comunidad.</div>
+
+  <div class="page-foot"><span><b>Pastoral Familiar</b> · Parroquia Monte Tabor</span><span class="pg">04</span></div>
+</section>
+
+<!-- ================= PÁGINA 5 · FOTOS ================= -->
+<section class="page">
+  <div class="running">
+    <img src="manual-img/logo-mark.png" alt="">
+    <span>Manual para coordinadores</span>
+    <span class="num">05</span>
+  </div>
+
+  <h2><span class="kicker">Paso 4</span>Sube fotos de la comunidad</h2>
+  <p class="lead">Un álbum cuenta lo que las palabras no alcanzan. La galería también alimenta las fotos por comunidad.</p>
+
+  <div class="split" style="margin-top:5mm">
+    <div>
+      <ol class="steps">
+        <li><b>Galería → Nuevo álbum</b><span>O abre un álbum existente para agregar más fotos.</span></li>
+        <li><b>Ponle nombre y fecha</b><span>Elige la comunidad y el color de portada. Deja el estado en <strong>Publicado</strong>.</span></li>
+        <li><b>Agrega las fotos</b><span>Usa <strong>Subir imágenes</strong>, <strong>Tomar foto</strong> o <strong>Agregar por enlace</strong>.</span></li>
+        <li><b>Describe y guarda</b><span>Una frase por foto ayuda a recordar el momento. Luego <strong>Guardar</strong>.</span></li>
+      </ol>
+
+      <div class="warn" style="margin-top:4mm"><b>Antes de subir:</b> pide permiso a las personas que aparecen. Evita fotos borrosas o repetidas.</div>
+    </div>
+    <div>
+      <div class="phone" style="margin:0 auto"><img src="manual-img/05b-album-fotos.png" alt="Fotos del álbum, cámara y enlaces"></div>
+      <p class="phone-cap">Fotos del álbum</p>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:5mm"><b>La app comprime las fotos</b> a 1600 px antes de subirlas. Así caben miles en el almacenamiento gratuito y la galería abre más rápido.</div>
+
+  <div class="mini-grid" style="margin-top:4mm">
+    <div class="mini"><h3>Álbum nuevo</h3><p>Aparece en Galería y, si eliges una comunidad, también en Fotos por comunidad.</p></div>
+    <div class="mini"><h3>Más fotos</h3><p>Agrega al álbum existente en vez de crear uno nuevo para el mismo evento.</p></div>
+    <div class="mini"><h3>Enlaces</h3><p>Drive o Flickr públicos funcionan. Google Photos no permite el enlace directo.</p></div>
+    <div class="mini"><h3>Orden</h3><p>La portada y las primeras fotos son las que más se ven. Elige bien la primera.</p></div>
+  </div>
+
+  <div class="page-foot"><span><b>Pastoral Familiar</b> · Parroquia Monte Tabor</span><span class="pg">05</span></div>
+</section>
+
+<!-- ================= PÁGINA 6 · RECURSOS Y APROBAR ================= -->
+<section class="page">
+  <div class="running">
+    <img src="manual-img/logo-mark.png" alt="">
+    <span>Manual para coordinadores</span>
+    <span class="num">06</span>
+  </div>
+
+  <h2 style="font-size:19pt"><span class="kicker">Paso 5</span>Comparte recursos</h2>
+  <div class="split" style="margin-top:2mm">
+    <div>
+      <ol class="steps">
+        <li><b>Recursos → Nuevo recurso</b><span>Nombre claro y una descripción breve.</span></li>
+        <li><b>Elige categoría y tipo</b><span>Documento, formulario, enlace o video.</span></li>
+        <li><b>Pega el enlace o sube el archivo</b><span>Debe ser público y abrir directamente. Drive y YouTube funcionan; Google Photos no.</span></li>
+        <li><b>Publica y guarda</b><span>Estado <strong>Publicado</strong> → <strong>Guardar</strong>.</span></li>
+      </ol>
+    </div>
+    <div>
+      <div class="phone small" style="margin:0 auto;width:45mm"><img src="manual-img/06-recurso.png" alt="Formulario de nuevo recurso"></div>
+      <p class="phone-cap">Nuevo recurso</p>
+    </div>
+  </div>
+
+  <div class="rule" style="margin:4mm 0"></div>
+
+  <h2 style="font-size:19pt"><span class="kicker">Paso 6</span>Aprueba lo que envía la comunidad</h2>
+  <div class="split" style="margin-top:2mm">
+    <div>
+      <p>Cuando alguien propone una actividad o deja un mensaje, llega a <strong>Por revisar</strong>. Léelo con calma y decide:</p>
+      <ol class="steps">
+        <li><b>Aprobar</b><span>Se publica y puede generar notificación a los demás.</span></li>
+        <li><b>Rechazar</b><span>No se publica. Si hace falta, escribe a la persona para explicarle.</span></li>
+      </ol>
+      <div class="note"><b>Recuerda:</b> lo pendiente no aparece en la web ni avisa a la comunidad. La aprobación es tu responsabilidad.</div>
+    </div>
+    <div>
+      <div class="phone small" style="margin:0 auto;width:45mm"><img src="manual-img/08-revisar.png" alt="Sección Por revisar con botones Aprobar y Rechazar"></div>
+      <p class="phone-cap">Por revisar</p>
+    </div>
+  </div>
+
+  <div class="page-foot"><span><b>Pastoral Familiar</b> · Parroquia Monte Tabor</span><span class="pg">06</span></div>
+</section>
+
+<!-- ================= PÁGINA 7 · AVISAR, COMPARTIR Y CUIDADOS ================= -->
+<section class="page">
+  <div class="running">
+    <img src="manual-img/logo-mark.png" alt="">
+    <span>Manual para coordinadores</span>
+    <span class="num">07</span>
+  </div>
+
+  <h2><span class="kicker">Para terminar</span>Avisa, comparte y cuida la cartelera</h2>
+
+  <div class="split">
+    <div>
+      <h3>Notificaciones</h3>
+      <p>En el pie de la página, toca <strong>Activar notificaciones</strong>. Con <strong>Probar notificación</strong> compruebas el permiso del teléfono: la prueba llega en 7 segundos.</p>
+      <div class="note"><b>Importante:</b> tus propias publicaciones no te notifican a ti mismo; para probar, publica desde otro teléfono. Con la app completamente cerrada tampoco llegan.</div>
+
+      <h3 style="margin-top:5mm">Novedades</h3>
+      <p>El globito flotante <strong>Novedades</strong> muestra lo nuevo desde tu última visita: actividades, avisos, fotos, recursos y mensajes aprobados. Al abrirlo se marca como leído.</p>
+    </div>
+    <div>
+      <h3>Comparte con QR</h3>
+      <p>En el pie entra a <strong>Compartir QR</strong>. Elige Inicio, Calendario o Compartir; puedes descargar el QR, imprimirlo o enviarlo por WhatsApp.</p>
+      <div class="qr-box">
+        <div class="ico">▦</div>
+        <div><b>Ideal para la entrada del templo</b><span>Imprímelo en tamaño grande y pruébalo con tu cámara antes de pegarlo.</span></div>
+      </div>
+      <p class="small" style="margin-top:2.5mm">Si algún día cambia el dominio, vuelve a generar e imprimir el QR con la dirección nueva.</p>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <div class="split">
+    <div>
+      <h3>Buenas prácticas</h3>
+      <ul class="checklist">
+        <li>Título claro: qué es y para quién.</li>
+        <li>Revisa fecha, hora y lugar antes de publicar.</li>
+        <li>Elige bien la comunidad o “Toda la pastoral”.</li>
+        <li>Una imagen vale más que un párrafo largo.</li>
+        <li>No dupliques la misma actividad o aviso.</li>
+        <li>Aprueba o rechaza lo pendiente el mismo día.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Si algo no aparece</h3>
+      <ol class="steps">
+        <li><b>Revisa el estado</b><span>Debe decir <strong>Publicado</strong>, no Pendiente.</span></li>
+        <li><b>Actualiza</b><span>Toca <strong>Actualizar ahora</strong> en el pie o recarga.</span></li>
+        <li><b>Espera un momento</b><span>La web revisa cambios cada minuto.</span></li>
+        <li><b>Si es notificación</b><span>Prueba el botón de notificación y revisa los permisos del teléfono.</span></li>
+      </ol>
+      <div class="tip"><b>¿Olvidaste tu contraseña?</b> Escribe a un administrador. Por seguridad no se envía por correo; te asignará una temporal.</div>
+    </div>
+  </div>
+
+  <div class="closing">
+    <div class="motto">“Ante todo, amar y servir”</div>
+    <p>Gracias por cuidar la cartelera. Cada aviso, foto y actividad es una forma de acompañar a las familias de Monte Tabor.</p>
+  </div>
+
+  <div class="page-foot"><span><b>Pastoral Familiar</b> · Parroquia Monte Tabor</span><span class="pg">07</span></div>
+</section>
+
+</body>
+</html>

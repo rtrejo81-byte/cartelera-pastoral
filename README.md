@@ -18,6 +18,7 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Muro de la comunidad**: saludos, mensajes y videos enviados por cualquiera, con aprobación de un coordinador antes de publicarse.
 - **Novedades**: globito flotante con lo nuevo desde tu última visita (actividades, avisos, álbumes, recursos y mensajes).
 - **Actualización automática**: el contenido se revisa cada minuto y al volver a la pestaña; la PWA detecta versiones nuevas. También hay un botón **Actualizar ahora** en el pie.
+- **Manual para coordinadores**: guía visual en PDF para publicar, aprobar y compartir: [`docs/Manual-Coordinadores-Pastoral-Familiar.pdf`](docs/Manual-Coordinadores-Pastoral-Familiar.pdf).
 - **Compartir QR**: código generado con la dirección actual, para imprimir o enviar por WhatsApp.
 - **Cumpleaños y aniversarios** agrupados por mes.
 - **Recursos** (documentos, enlaces, formularios, videos) por categoría.
