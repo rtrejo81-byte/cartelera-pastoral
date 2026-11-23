@@ -27,6 +27,8 @@ En iPhone no se puede instalar un APK; la PWA es la forma correcta.
 
 En el pie de la página hay un botón **“Activar notificaciones”**. Al tocarlo, el navegador pide permiso y luego avisa cuando se publica o actualiza una actividad, aviso, álbum o mensaje aprobado.
 
+Para comprobar el permiso del teléfono, usa **“Probar notificación”**: la web avisa que la prueba llegará en 7 segundos; puedes bloquear el teléfono o cambiar de app y esperar el aviso del sistema.
+
 - Funcionan con la web abierta o en segundo plano, y también en la PWA instalada.
 - En iPhone suelen requerir tener la web **agregada a la pantalla de inicio** y abrirla desde ahí.
 - Si la app está **completamente cerrada**, no llegan: para eso hace falta un servidor de notificaciones push (Supabase Edge Function + VAPID), que se puede agregar más adelante.

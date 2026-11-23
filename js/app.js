@@ -213,6 +213,29 @@ async function enableNotifications() {
   }
 }
 
+async function testNotification() {
+  if (!('Notification' in window) || typeof window.Notification.requestPermission !== 'function') {
+    toast('Este navegador no permite notificaciones. En iPhone debe estar instalada como app y con iOS actualizado.', 'error', 9000);
+    return;
+  }
+  if (window.Notification.permission === 'denied') {
+    toast('Las notificaciones están bloqueadas. Habilítalas en la configuración del navegador para este sitio.', 'error', 9000);
+    return;
+  }
+  if (window.Notification.permission !== 'granted') {
+    const permission = await window.Notification.requestPermission();
+    updateNotifyLabel();
+    if (permission !== 'granted') {
+      toast('No se dio permiso para las notificaciones.', 'info', 6000);
+      return;
+    }
+  }
+  toast('La notificación de prueba llegará en 7 segundos. Puedes bloquear el teléfono o cambiar de app.', 'info', 9000);
+  setTimeout(() => {
+    showBrowserNotification('Prueba de la Pastoral Familiar', 'Si ves este aviso, las notificaciones funcionan en este teléfono.', '#/');
+  }, 7000);
+}
+
 function notifyRealtime(detail) {
   if (!detail?.name || detail.eventType === 'DELETE') return;
   const row = detail.row || {};
@@ -461,6 +484,12 @@ async function start() {
     if (!event.target.closest('[data-notify]')) return;
     event.preventDefault();
     enableNotifications();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('[data-test-notify]')) return;
+    event.preventDefault();
+    testNotification();
   });
 
   // Actualizar el contenido a pedido.

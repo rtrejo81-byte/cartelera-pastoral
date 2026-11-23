@@ -300,6 +300,7 @@ export function renderFooter() {
           <div class="footer-notify">
             <p class="footer-social-title">Notificaciones</p>
             <button type="button" class="footer-install" data-notify>${icon('bell', 14)} Activar notificaciones</button>
+            <button type="button" class="footer-install" data-test-notify>${icon('send', 14)} Probar notificación</button>
             <button type="button" class="footer-install" data-refresh-now>${icon('refresh', 14)} Actualizar ahora</button>
           </div>
         </div>
