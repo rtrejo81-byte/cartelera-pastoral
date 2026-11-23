@@ -3,7 +3,7 @@
    siga funcionando sin conexión. Los datos de Supabase no se
    cachean: siempre se piden a la nube. */
 
-const VERSION = 'pf-cartelera-v1';
+const VERSION = 'pf-cartelera-v2';
 const CACHE = `pf-cache-${VERSION}`;
 const INDEX = new URL('./index.html', self.location).href;
 
