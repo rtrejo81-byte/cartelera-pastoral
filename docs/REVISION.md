@@ -40,6 +40,7 @@ Esta guía es para que el equipo general revise la cartelera **antes** de abrirl
 - [ ] **Novedades**: incluye recursos nuevos además de actividades, avisos, fotos y mensajes.
 - [ ] **Cumpleaños**: se puede asignar comunidad o General, y el filtro público funciona.
 - [ ] **Panel**: el Resumen muestra el número de dispositivos conectados.
+- [ ] **Fotos**: el corazón suma y resta, y el contador se ve en la galería y en el visor.
 - [ ] **Versión nueva**: al publicar cambios en GitHub, una PWA abierta se recarga sola sin formularios abiertos.
 - [ ] El pie muestra **Redes sociales** arriba de Facebook/Instagram.
 - [ ] El botón **Activar notificaciones** pide permiso y avisa de una publicación nueva.

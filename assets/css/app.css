@@ -1597,3 +1597,34 @@
 .online-pill.is-offline .online-dot { background: var(--muted); box-shadow: 0 0 0 3px var(--cream-2); animation: none; }
 .online-pill.is-offline b { color: var(--muted); }
 @keyframes onlinePulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+
+/* ---------------- Me gusta en fotos ---------------- */
+.photo-grid button { position: relative; }
+.photo-like-count {
+  position: absolute;
+  right: .45rem;
+  bottom: .45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .18rem;
+  padding: .18rem .4rem;
+  border-radius: 999px;
+  background: rgba(18, 51, 44, .78);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  line-height: 1.2;
+  backdrop-filter: blur(4px);
+}
+.photo-like-count[hidden] { display: none; }
+.lightbox-like { flex: none; }
+.lightbox-like svg { transition: transform .18s var(--ease); }
+.lightbox-like.is-liked { color: var(--clay-deep); background: #fff; }
+.lightbox-like.is-liked svg { fill: currentColor; transform: scale(1.08); }
+@media (max-width: 640px) {
+  .lightbox-foot { flex-wrap: wrap; justify-content: center; }
+  .lightbox-foot > span { order: -1; flex-basis: 100%; text-align: center; }
+  .lightbox-foot [data-lb-prev] { order: 1; }
+  .lightbox-like { order: 2; }
+  .lightbox-foot [data-lb-next] { order: 3; }
+}

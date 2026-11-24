@@ -22,6 +22,8 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Cumpleaños por comunidad**: cada fecha puede pertenecer a una comunidad o quedar como General, y la vista pública se filtra por comunidad.
   - Si el proyecto ya está en Supabase, ejecuta una vez `supabase/add-birthday-community.sql` en el SQL Editor.
 - **Personas conectadas**: el Resumen del panel muestra cuántos dispositivos están viendo la cartelera en ese momento; no aparece en la web pública.
+- **Corazones en fotos**: cada foto de un álbum puede recibir un “Me gusta” con contador; se guarda por dispositivo.
+  - Para que los corazones se compartan en la nube, ejecuta una vez `supabase/add-photo-likes.sql`.
 - **Manual para coordinadores**: guía visual en PDF para publicar, aprobar y compartir: [`docs/Manual-Coordinadores-Pastoral-Familiar.pdf`](docs/Manual-Coordinadores-Pastoral-Familiar.pdf).
 - **Compartir QR**: código generado con la dirección actual, para imprimir o enviar por WhatsApp.
 - **Cumpleaños y aniversarios** agrupados por mes.

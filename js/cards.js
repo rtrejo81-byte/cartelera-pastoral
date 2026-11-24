@@ -271,16 +271,23 @@ export function albumCard(album) {
     </button>`;
 }
 
-export function openAlbum(id) {
+export async function openAlbum(id) {
   const album = store.byId('albums', id);
   if (!album) return;
+  await store.loadPhotoLikes();
   const photos = Array.isArray(album.photos) ? album.photos : [];
+  const photoKey = (photo, index) => photo.id || photo.url || `photo-${index}`;
+  const likePill = (index, key) => {
+    const count = store.photoLikeCount(album.id, key);
+    return count ? `<span class="photo-like-count" data-photo-like="${index}">${icon('heart', 11)} ${count}</span>` : `<span class="photo-like-count" data-photo-like="${index}" hidden></span>`;
+  };
   const body = photos.length
     ? `<div class="photo-grid">${photos
         .map(
           (p, index) => `
           <button type="button" data-photo="${index}">
             ${p.url ? `<img src="${esc(p.url)}" alt="${esc(p.caption || '')}" loading="lazy">` : `<span class="photo-fallback ${toneClass(album.tone)}">${icon('image', 28)}</span>`}
+            ${likePill(index, photoKey(p, index))}
           </button>`
         )
         .join('')}</div>
@@ -295,11 +302,21 @@ export function openAlbum(id) {
     footer: `<button type="button" class="btn btn-ghost" data-close>Cerrar</button>`,
   });
 
+  const updateGridLike = (index, count) => {
+    const pill = el.querySelector(`[data-photo-like="${index}"]`);
+    if (!pill) return;
+    pill.hidden = count === 0;
+    pill.innerHTML = `${icon('heart', 11)} ${count}`;
+  };
+
   let current = 0;
   const openPhoto = (index) => {
     current = index;
     const p = photos[current];
     if (!p) return;
+    const key = photoKey(p, current);
+    const liked = store.photoLiked(album.id, key);
+    const count = store.photoLikeCount(album.id, key);
     const box = document.createElement('div');
     box.className = 'lightbox open';
     box.innerHTML = `
@@ -313,6 +330,9 @@ export function openAlbum(id) {
       <div class="lightbox-foot">
         <button type="button" class="btn btn-ghost" data-lb-prev ${photos.length < 2 ? 'disabled' : ''}>${icon('chevron-left', 16)} Anterior</button>
         <span>${esc(p.caption || '')} · ${current + 1}/${photos.length}</span>
+        <button type="button" class="btn btn-light btn-sm lightbox-like${liked ? ' is-liked' : ''}" data-lb-like aria-pressed="${liked}" aria-label="Me gusta esta foto">
+          ${icon('heart', 16)} <span data-lb-like-count>${count}</span> Me gusta
+        </button>
         <button type="button" class="btn btn-ghost" data-lb-next ${photos.length < 2 ? 'disabled' : ''}>Siguiente ${icon('chevron-right', 16)}</button>
       </div>`;
     document.body.appendChild(box);
@@ -337,6 +357,23 @@ export function openAlbum(id) {
     box.querySelector('[data-lb-close]').addEventListener('click', close);
     box.querySelector('[data-lb-prev]').addEventListener('click', () => go(-1));
     box.querySelector('[data-lb-next]').addEventListener('click', () => go(1));
+
+    const likeButton = box.querySelector('[data-lb-like]');
+    likeButton.addEventListener('click', async () => {
+      likeButton.disabled = true;
+      try {
+        const result = await store.togglePhotoLike(album.id, key);
+        likeButton.classList.toggle('is-liked', result.liked);
+        likeButton.setAttribute('aria-pressed', String(result.liked));
+        likeButton.querySelector('[data-lb-like-count]').textContent = String(result.count);
+        updateGridLike(current, result.count);
+      } catch (err) {
+        toast(err.message || 'No se pudo guardar el corazón.', 'error', 5000);
+      } finally {
+        likeButton.disabled = false;
+      }
+    });
+
     box.addEventListener('click', (e) => {
       if (e.target === box) close();
     });

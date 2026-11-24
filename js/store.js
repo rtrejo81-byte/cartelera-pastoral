@@ -48,6 +48,8 @@ const state = {
   imageReady: true,
   sharesReady: true,
   birthdayCommunityReady: true,
+  photoLikesReady: false,
+  photoLikes: {},
   user: null,
   profile: null,
   data: {
@@ -71,6 +73,9 @@ let channel = null;
 let presenceChannel = null;
 let onlineDevices = 0;
 const PRESENCE_DEVICE_KEY = 'pf_device_id';
+const LOCAL_LIKES_KEY = 'pf_photo_likes_local_v1';
+const OWN_LIKES_KEY = 'pf_photo_likes_own_v1';
+const ownLikes = new Set();
 const listeners = new Set();
 let saveTimer = null;
 
@@ -138,6 +143,7 @@ function initDemo() {
   state.settings = seed.settings || {};
   state.mode = 'demo';
   state.ready = true;
+  loadPhotoLikes();
 
   try {
     const session = JSON.parse(sessionStorage.getItem(SS_KEY) || 'null');
@@ -242,6 +248,96 @@ function startPresence() {
   });
 }
 
+function localLikeCounts() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LOCAL_LIKES_KEY) || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveLocalLikeCounts() {
+  try {
+    localStorage.setItem(LOCAL_LIKES_KEY, JSON.stringify(state.photoLikes));
+  } catch {
+    /* sin almacenamiento local */
+  }
+}
+
+function loadOwnLikes() {
+  ownLikes.clear();
+  try {
+    const list = JSON.parse(localStorage.getItem(OWN_LIKES_KEY) || '[]');
+    if (Array.isArray(list)) list.forEach((key) => ownLikes.add(String(key)));
+  } catch {
+    /* lista vacía */
+  }
+}
+
+function saveOwnLikes() {
+  try {
+    localStorage.setItem(OWN_LIKES_KEY, JSON.stringify([...ownLikes]));
+  } catch {
+    /* sin almacenamiento local */
+  }
+}
+
+export function photoLikeCount(albumId, photoId) {
+  return Number(state.photoLikes[`${albumId}|${photoId}`]) || 0;
+}
+
+export function photoLiked(albumId, photoId) {
+  return ownLikes.has(`${albumId}|${photoId}`);
+}
+
+export async function loadPhotoLikes() {
+  loadOwnLikes();
+  if (state.mode === 'cloud' && client) {
+    try {
+      const { data, error } = await client.rpc('photo_like_counts');
+      if (error) throw error;
+      const map = {};
+      (data || []).forEach((row) => {
+        map[`${row.album_id}|${row.photo_key}`] = Number(row.likes) || 0;
+      });
+      state.photoLikes = map;
+      state.photoLikesReady = true;
+      return;
+    } catch {
+      state.photoLikesReady = false;
+    }
+  }
+  state.photoLikes = localLikeCounts();
+}
+
+export async function togglePhotoLike(albumId, photoId) {
+  const key = `${albumId}|${photoId}`;
+  const wasLiked = ownLikes.has(key);
+
+  if (state.mode === 'cloud' && state.photoLikesReady) {
+    const { data, error } = await client.rpc('toggle_photo_like', {
+      p_album_id: albumId,
+      p_photo_key: photoId,
+      p_visitor_id: deviceId(),
+    });
+    if (error) throw new Error(error.message || 'No se pudo guardar el corazón.');
+    state.photoLikes[key] = Number(data) || 0;
+  } else {
+    const count = Math.max(0, (Number(state.photoLikes[key]) || 0) + (wasLiked ? -1 : 1));
+    state.photoLikes[key] = count;
+    saveLocalLikeCounts();
+  }
+
+  if (wasLiked) ownLikes.delete(key);
+  else ownLikes.add(key);
+  saveOwnLikes();
+
+  const result = { liked: !wasLiked, count: Number(state.photoLikes[key]) || 0 };
+  emit('photoLikes', { key, ...result });
+  return result;
+}
+
 async function initCloud() {
   const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
   client = mod.createClient(SUPABASE.url, SUPABASE.anonKey, {
@@ -275,6 +371,8 @@ async function initCloud() {
   } catch {
     state.birthdayCommunityReady = false;
   }
+
+  await loadPhotoLikes();
 
   client.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_OUT') {
@@ -973,6 +1071,10 @@ export const store = {
   refreshNow,
   birthdayCommunityReady,
   onlineCount,
+  photoLikeCount,
+  photoLiked,
+  loadPhotoLikes,
+  togglePhotoLike,
   signIn,
   signOut,
   changePassword,

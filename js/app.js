@@ -747,6 +747,7 @@ async function start() {
       updateOnlineIndicators(detail.count || 0);
       return;
     }
+    if (type === 'photoLikes') return;
     if (type !== 'error') refreshNovedades();
     if (type === 'realtime') {
       notifyRealtime(detail);
