@@ -1542,3 +1542,20 @@
 @media print {
   .novedades-fab { display: none !important; }
 }
+
+/* ---------------- Bienvenida de notificaciones ---------------- */
+.notify-onboard { text-align: center; }
+.notify-onboard-ico {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: var(--green-soft);
+  color: var(--green);
+}
+.notify-onboard p { max-width: 34ch; margin: 0 auto 1rem; color: var(--ink-2); font-size: .93rem; line-height: 1.55; }
+.notify-onboard-list { display: grid; gap: .5rem; max-width: 300px; margin: 0 auto; text-align: left; }
+.notify-onboard-list span { display: flex; align-items: center; gap: .5rem; color: var(--muted); font-size: .82rem; }
+.notify-onboard-list svg { flex: none; color: var(--ok); }

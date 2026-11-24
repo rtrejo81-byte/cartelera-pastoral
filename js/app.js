@@ -476,7 +476,65 @@ function openNovedades() {
   });
 }
 
-function showInstallHelp() {  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;  if (standalone) {
+function isStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+}
+
+const NOTIFY_ONBOARD_KEY = 'pf_notify_onboarding_v1';
+
+function maybeShowNotificationOnboarding({ force = false } = {}) {
+  if (!('Notification' in window) || typeof window.Notification.requestPermission !== 'function') return;
+  if (!force && !isStandalone()) return;
+  if (window.Notification.permission !== 'default') return;
+  if (document.querySelector('.modal.open')) return;
+
+  const dismissed = Number(localStorage.getItem(NOTIFY_ONBOARD_KEY) || 0);
+  if (Date.now() - dismissed < 30 * 24 * 60 * 60 * 1000) return;
+
+  openModal({
+    title: 'Que no se te pase nada',
+    subtitle: 'Activa las notificaciones y entérate de lo nuevo de la pastoral.',
+    body: `<div class="notify-onboard">
+      <span class="notify-onboard-ico">${icon('bell', 30)}</span>
+      <p>Te avisaremos cuando se publique una actividad, un aviso, una foto o un recurso nuevo.</p>
+      <div class="notify-onboard-list">
+        <span>${icon('check', 14)} Un solo toque para activarlas</span>
+        <span>${icon('check', 14)} Puedes desactivarlas cuando quieras</span>
+        <span>${icon('check', 14)} En iPhone, ábrela desde el icono instalado</span>
+      </div>
+    </div>`,
+    footer: `<button type="button" class="btn btn-ghost" data-close>Ahora no</button>
+             <button type="button" class="btn btn-primary" data-notify-onboard>${icon('bell', 16)} Activar notificaciones</button>`,
+    onMount(el) {
+      el.querySelector('[data-notify-onboard]').addEventListener('click', async () => {
+        localStorage.setItem(NOTIFY_ONBOARD_KEY, String(Date.now()));
+        let permission = 'default';
+        try {
+          permission = await window.Notification.requestPermission();
+        } catch {
+          /* el navegador no mostró el permiso */
+        }
+        updateNotifyLabel();
+        closeModal();
+        if (permission === 'granted') {
+          toast('Notificaciones activadas. Te avisaremos de lo nuevo.', 'ok', 6000);
+          showBrowserNotification('Notificaciones activas', 'Ya puedes recibir avisos de la Pastoral Familiar.', '#/');
+        } else if (permission === 'denied') {
+          toast('Las notificaciones quedaron bloqueadas. Puedes activarlas desde la configuración del navegador.', 'error', 9000);
+        } else {
+          toast('No se activaron las notificaciones. Puedes intentarlo desde el pie de la página.', 'info', 6000);
+        }
+      });
+    },
+    onClose() {
+      localStorage.setItem(NOTIFY_ONBOARD_KEY, String(Date.now()));
+    },
+  });
+}
+
+function showInstallHelp() {
+  const standalone = isStandalone();
+  if (standalone) {
     toast('Ya estás usando la cartelera como app instalada.', 'info');
     return;
   }
@@ -710,6 +768,9 @@ async function start() {
   checkAppVersion();
   setInterval(checkAppVersion, 5 * 60 * 1000);
 
+  // Si acaban de instalar la app, ofrecer las notificaciones de una vez.
+  setTimeout(() => maybeShowNotificationOnboarding(), 1600);
+
   if (store.mode === 'demo') {
     console.info('%cPastoral Familiar · modo demo local', 'color:#C0643C;font-weight:bold');
   }
@@ -720,6 +781,11 @@ if (document.readyState === 'loading') {
 } else {
   start();
 }
+
+window.addEventListener('appinstalled', () => {
+  localStorage.removeItem(NOTIFY_ONBOARD_KEY);
+  setTimeout(() => maybeShowNotificationOnboarding({ force: true }), 800);
+});
 
 if ('serviceWorker' in navigator) {
   let hadController = Boolean(navigator.serviceWorker.controller);
