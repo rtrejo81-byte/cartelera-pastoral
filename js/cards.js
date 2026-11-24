@@ -202,6 +202,7 @@ export function birthdayCard(b) {
           ${isAnniversary ? `${esc(pluralize(years, 'año', 'años'))} de matrimonio` : d.toLocaleDateString('es', { month: 'long' })}
           ${b.note ? ` · ${esc(b.note)}` : ''}
         </div>
+        <div class="bday-community">${icon('users', 11)} ${esc(b.community || 'General')}</div>
       </div>
       ${isToday ? `<span class="badge badge-gold" style="margin-left:auto">${icon('cake', 12)} ¡Hoy!</span>` : ''}
     </div>`;

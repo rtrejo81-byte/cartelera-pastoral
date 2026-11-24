@@ -47,6 +47,7 @@ const state = {
   ready: false,
   imageReady: true,
   sharesReady: true,
+  birthdayCommunityReady: true,
   user: null,
   profile: null,
   data: {
@@ -67,6 +68,9 @@ const state = {
 
 let client = null;
 let channel = null;
+let presenceChannel = null;
+let onlineDevices = 0;
+const PRESENCE_DEVICE_KEY = 'pf_device_id';
 const listeners = new Set();
 let saveTimer = null;
 
@@ -165,6 +169,79 @@ export function imagesReady() {
   return state.mode === 'cloud' ? Boolean(state.imageReady) : true;
 }
 
+export function birthdayCommunityReady() {
+  return state.mode === 'cloud' ? Boolean(state.birthdayCommunityReady) : true;
+}
+
+export function onlineCount() {
+  return onlineDevices;
+}
+
+function deviceId() {
+  try {
+    let id = localStorage.getItem(PRESENCE_DEVICE_KEY);
+    if (!id) {
+      id = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(PRESENCE_DEVICE_KEY, id);
+    }
+    return id;
+  } catch {
+    return `device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  }
+}
+
+function refreshPresence() {
+  if (!presenceChannel) return;
+  const states = presenceChannel.presenceState() || {};
+  const devices = new Set();
+  Object.values(states).flat().forEach((item) => {
+    if (item?.device) devices.add(item.device);
+  });
+  if (devices.size === onlineDevices) return;
+  onlineDevices = devices.size;
+  emit('presence', { count: onlineDevices });
+}
+
+function trackPresence() {
+  if (!presenceChannel || document.visibilityState !== 'visible') return;
+  presenceChannel.track({
+    device: deviceId(),
+    online_at: new Date().toISOString(),
+  }).catch(() => {});
+}
+
+function startPresence() {
+  if (state.mode !== 'cloud' || !client || presenceChannel) return;
+  presenceChannel = client.channel('pastoral-familiar-presence', {
+    config: {
+      presence: {
+        key: `device-tab-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      },
+    },
+  });
+  presenceChannel
+    .on('presence', { event: 'sync' }, refreshPresence)
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        trackPresence();
+        refreshPresence();
+      }
+    });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      trackPresence();
+    } else {
+      presenceChannel?.untrack().catch(() => {});
+    }
+  });
+  window.addEventListener('pagehide', () => {
+    presenceChannel?.untrack().catch(() => {});
+  });
+}
+
 async function initCloud() {
   const mod = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
   client = mod.createClient(SUPABASE.url, SUPABASE.anonKey, {
@@ -192,6 +269,13 @@ async function initCloud() {
     state.imageReady = false;
   }
 
+  try {
+    const { error } = await client.from('birthdays').select('community').limit(1);
+    state.birthdayCommunityReady = !error;
+  } catch {
+    state.birthdayCommunityReady = false;
+  }
+
   client.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_OUT') {
       state.user = null;
@@ -217,6 +301,8 @@ async function initCloud() {
       emit('realtime', { name, eventType: payload.eventType, row: payload.new || payload.old });
     })
     .subscribe();
+
+  startPresence();
 }
 
 async function loadProfile() {
@@ -885,6 +971,8 @@ export const store = {
   uploadImage,
   storageUsage,
   refreshNow,
+  birthdayCommunityReady,
+  onlineCount,
   signIn,
   signOut,
   changePassword,

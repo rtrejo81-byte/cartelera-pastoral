@@ -8,7 +8,7 @@
 import { addDays, ymd, toLocalDateTime } from './utils.js';
 import { firstSundayDay } from './recurrence.js';
 
-export const SEED_VERSION = 11;
+export const SEED_VERSION = 12;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -351,15 +351,15 @@ export function buildSeed() {
   ];
 
   const birthdays = [
-    { id: 'bday_1', name: 'María Elena de Hernández', kind: 'birthday', date: birthdayDate(0, 3, 1979), phone: '7000-0010', note: 'Coordinadora de formación' },
-    { id: 'bday_2', name: 'José Antonio Rivera', kind: 'birthday', date: birthdayDate(0, 12, 1982), phone: '7000-0011', note: 'Coordinador general' },
-    { id: 'bday_3', name: 'Sofía Martínez', kind: 'birthday', date: birthdayDate(0, 18, 1996), phone: '', note: 'Enlace juvenil' },
-    { id: 'bday_4', name: 'Familia Hernández López', kind: 'anniversary', date: '2012-06-14', phone: '', note: 'Aniversario de matrimonio' },
-    { id: 'bday_5', name: 'Carmen de López', kind: 'birthday', date: birthdayDate(0, 26, 1968), phone: '7000-0012', note: '' },
-    { id: 'bday_6', name: 'Luis Fernando Rivera', kind: 'birthday', date: birthdayDate(1, 2, 1990), phone: '', note: 'Comisión de convivencia' },
-    { id: 'bday_7', name: 'Ana Lucía Martínez', kind: 'birthday', date: birthdayDate(1, 9, 1985), phone: '7000-0013', note: '' },
-    { id: 'bday_8', name: 'Familia Rivera Gómez', kind: 'anniversary', date: '2008-11-22', phone: '', note: 'Aniversario de matrimonio' },
-    { id: 'bday_9', name: 'Padre Miguel Ángel', kind: 'birthday', date: birthdayDate(1, 21, 1972), phone: '', note: 'Asesor espiritual' },
+    { id: 'bday_1', name: 'María Elena de Hernández', kind: 'birthday', date: birthdayDate(0, 3, 1979), phone: '7000-0010', note: 'Coordinadora de formación', community: 'Comunidad Santa Mónica' },
+    { id: 'bday_2', name: 'José Antonio Rivera', kind: 'birthday', date: birthdayDate(0, 12, 1982), phone: '7000-0011', note: 'Coordinador general', community: '' },
+    { id: 'bday_3', name: 'Sofía Martínez', kind: 'birthday', date: birthdayDate(0, 18, 1996), phone: '', note: 'Enlace juvenil', community: 'Comunidad de Jóvenes' },
+    { id: 'bday_4', name: 'Familia Hernández López', kind: 'anniversary', date: '2012-06-14', phone: '', note: 'Aniversario de matrimonio', community: 'Comunidad San José' },
+    { id: 'bday_5', name: 'Carmen de López', kind: 'birthday', date: birthdayDate(0, 26, 1968), phone: '7000-0012', note: '', community: 'Comunidad Santa Mónica' },
+    { id: 'bday_6', name: 'Luis Fernando Rivera', kind: 'birthday', date: birthdayDate(1, 2, 1990), phone: '', note: 'Comisión de convivencia', community: 'Comunidad San Juan Pablo II' },
+    { id: 'bday_7', name: 'Ana Lucía Martínez', kind: 'birthday', date: birthdayDate(1, 9, 1985), phone: '7000-0013', note: '', community: 'Comunidad de Jóvenes' },
+    { id: 'bday_8', name: 'Familia Rivera Gómez', kind: 'anniversary', date: '2008-11-22', phone: '', note: 'Aniversario de matrimonio', community: 'Comunidad San Francisco de Asís' },
+    { id: 'bday_9', name: 'Padre Miguel Ángel', kind: 'birthday', date: birthdayDate(1, 21, 1972), phone: '', note: 'Asesor espiritual', community: '' },
   ];
 
   const resources = [

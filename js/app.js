@@ -578,6 +578,14 @@ function showInstallHelp() {
   });
 }
 
+function updateOnlineIndicators(count) {
+  document.querySelectorAll('[data-online-count]').forEach((el) => {
+    const value = el.querySelector('b');
+    if (value) value.textContent = String(count);
+    el.classList.toggle('is-offline', count === 0);
+  });
+}
+
 async function autoRefreshContent() {
   if (store.mode !== 'cloud' || !store.ready) return;
   if (document.visibilityState !== 'visible') return;
@@ -733,6 +741,10 @@ async function start() {
   onChange((type, detail) => {
     if (type === 'error') {
       toast(detail?.message || 'Ocurrió un error.', 'error', 6000);
+      return;
+    }
+    if (type === 'presence') {
+      updateOnlineIndicators(detail.count || 0);
       return;
     }
     if (type !== 'error') refreshNovedades();

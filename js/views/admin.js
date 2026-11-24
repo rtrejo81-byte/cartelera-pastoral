@@ -216,6 +216,9 @@ function resumenTab() {
         <p>Hola${store.profile?.full_name ? `, ${esc(store.profile.full_name.split(' ')[0])}` : ''}. Este es el estado de la cartelera hoy.</p>
       </div>
       <div class="admin-head-actions">
+        <span class="online-pill${store.mode === 'cloud' && store.onlineCount() > 0 ? '' : ' is-offline'}" data-online-count title="Dispositivos conectados ahora">
+          <span class="online-dot"></span><b>${store.mode === 'cloud' ? store.onlineCount() : '—'}</b> en línea
+        </span>
         <a class="btn btn-ghost" href="#/calendario">${icon('eye', 16)} Ver sitio</a>
         <button type="button" class="btn btn-primary" data-new="activities">${icon('plus', 16)} Nueva actividad</button>
       </div>
@@ -371,7 +374,7 @@ const TABLE_DEFS = {
     newLabel: 'Nueva celebración',
     head: ['Nombre', 'Tipo', 'Fecha', 'Nota', ''],
     rows: (b) => [
-      { html: `<span class="strong">${esc(b.name)}</span>`, cls: 'strong' },
+      { html: `<span class="strong">${esc(b.name)}<small>${esc(b.community || 'General')}</small></span>`, cls: 'strong' },
       { html: esc((BIRTHDAY_KINDS.find((k) => k.id === b.kind) || BIRTHDAY_KINDS[0]).label) },
       { html: esc(fmtDateShort(b.date)) },
       { html: esc(b.note || '—') },

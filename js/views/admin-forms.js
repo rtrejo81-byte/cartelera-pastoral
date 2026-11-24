@@ -75,9 +75,10 @@ export const FORMS = {
       { name: 'kind', label: 'Tipo', type: 'select', options: BIRTHDAY_KINDS.map((k) => ({ value: k.id, label: k.label })) },
       { name: 'date', label: 'Fecha', type: 'date', required: true },
       { name: 'phone', label: 'Teléfono', type: 'text' },
+      { name: 'community', label: 'Comunidad', type: 'select', options: [{ value: '', label: 'General · Toda la pastoral' }, ...COMMUNITIES.map((c) => ({ value: c.value, label: c.label }))] },
       { name: 'note', label: 'Nota (área, parentesco…)', type: 'text', full: true },
     ],
-    defaults: { kind: 'birthday' },
+    defaults: { kind: 'birthday', community: '' },
   },
 
   resources: {
@@ -284,7 +285,11 @@ export function openRecordForm(name, record = null, { onSaved, defaults = null }
   const isEdit = Boolean(record && record.id);
   const initial = record || { ...(spec.defaults || {}), ...(defaults || {}) };
   const photos = name === 'albums' && record ? Array.isArray(record.photos) ? [...record.photos] : [] : [];
-  const fields = spec.fields.filter((f) => f.type !== 'image' || store.imagesReady);
+  const fields = spec.fields.filter(
+    (f) =>
+      (f.type !== 'image' || store.imagesReady) &&
+      (name !== 'birthdays' || f.name !== 'community' || store.birthdayCommunityReady())
+  );
 
   const { el } = openModal({
     title: `${isEdit ? 'Editar' : 'Nuevo'} · ${spec.label}`,

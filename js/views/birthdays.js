@@ -4,7 +4,7 @@
 
 import { icon } from '../icons.js';
 import { store } from '../store.js';
-import { MONTHS, BIRTHDAY_KINDS } from '../config.js';
+import { MONTHS, BIRTHDAY_KINDS, COMMUNITIES } from '../config.js';
 import { pageHead, emptyState } from '../ui.js';
 import { birthdayCard } from '../cards.js';
 import { esc, parseLocal, pluralize } from '../utils.js';
@@ -52,6 +52,13 @@ export default function birthdaysView(root) {
               ${BIRTHDAY_KINDS.map((k) => `<button type="button" class="filter-chip" data-kind="${k.id}" aria-pressed="false">${esc(k.label)} <span class="count">${all.filter((b) => b.kind === k.id).length}</span></button>`).join('')}
             </div>
 
+            <p class="eyebrow eyebrow-plain" style="margin:1.1rem 0 .5rem">Por comunidad</p>
+            <div class="filters" role="group" aria-label="Filtrar por comunidad">
+              <button type="button" class="filter-chip" data-community="all" aria-pressed="true">Todas las comunidades <span class="count">${all.length}</span></button>
+              <button type="button" class="filter-chip" data-community="" aria-pressed="false">General <span class="count">${all.filter((b) => !b.community).length}</span></button>
+              ${COMMUNITIES.map((c) => `<button type="button" class="filter-chip" data-community="${esc(c.value)}" aria-pressed="false">${esc(c.label)} <span class="count">${all.filter((b) => b.community === c.value).length}</span></button>`).join('')}
+            </div>
+
             <div class="stack" style="gap:2rem" id="bday-groups">
               ${groups
                 .map(
@@ -60,7 +67,7 @@ export default function birthdaysView(root) {
                       <h2 class="section-title" style="font-size:1.35rem;text-transform:capitalize">${esc(MONTHS[g.month])}</h2>
                       <span class="text-sm text-muted">${esc(pluralize(g.items.length, 'celebración', 'celebraciones'))}</span>
                     </div>
-                    <div class="grid grid-2">${g.items.map((b) => `<div data-kind-item="${esc(b.kind || 'birthday')}">${birthdayCard(b)}</div>`).join('')}</div>
+                    <div class="grid grid-2">${g.items.map((b) => `<div data-kind-item="${esc(b.kind || 'birthday')}" data-community-item="${esc(b.community || '')}">${birthdayCard(b)}</div>`).join('')}</div>
                   </section>`
                 )
                 .join('')}
@@ -77,17 +84,33 @@ export default function birthdaysView(root) {
   if (!all.length) return;
 
   let kind = 'all';
+  let community = 'all';
+
+  const applyFilters = () => {
+    root.querySelectorAll('[data-kind-item]').forEach((item) => {
+      const kindOk = kind === 'all' || item.dataset.kindItem === kind;
+      const communityOk = community === 'all' || (item.dataset.communityItem || '') === community;
+      item.hidden = !(kindOk && communityOk);
+    });
+    root.querySelectorAll('[data-month]').forEach((section) => {
+      const visible = Array.from(section.querySelectorAll('[data-kind-item]')).some((i) => !i.hidden);
+      section.hidden = !visible;
+    });
+  };
+
   root.querySelectorAll('[data-kind]').forEach((btn) => {
     btn.addEventListener('click', () => {
       kind = btn.dataset.kind;
       root.querySelectorAll('[data-kind]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      root.querySelectorAll('[data-kind-item]').forEach((item) => {
-        item.hidden = kind !== 'all' && item.dataset.kindItem !== kind;
-      });
-      root.querySelectorAll('[data-month]').forEach((section) => {
-        const visible = Array.from(section.querySelectorAll('[data-kind-item]')).some((i) => !i.hidden);
-        section.hidden = !visible;
-      });
+      applyFilters();
+    });
+  });
+
+  root.querySelectorAll('[data-community]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      community = btn.dataset.community;
+      root.querySelectorAll('[data-community]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      applyFilters();
     });
   });
 }

@@ -99,6 +99,7 @@ create table if not exists public.birthdays (
   date date not null,
   phone text default '',
   note text default '',
+  community text default '',
   created_at timestamptz not null default now()
 );
 
@@ -202,6 +203,8 @@ alter table public.activities add column if not exists recurrence_until date;
 alter table public.activities add column if not exists image_url text default '';
 alter table public.albums add column if not exists community text default '';
 alter table public.notices add column if not exists image_url text default '';
+alter table public.birthdays add column if not exists community text default '';
+create index if not exists birthdays_community_idx on public.birthdays (community);
 
 do $$
 begin

@@ -19,6 +19,9 @@ Está hecho con **HTML, CSS y JavaScript puro**, sin compiladores ni dependencia
 - **Novedades**: globito flotante con lo nuevo desde tu última visita (actividades, avisos, álbumes, recursos y mensajes).
 - **Actualización automática**: el contenido se revisa cada minuto y al volver a la pestaña; la PWA detecta versiones nuevas. También hay un botón **Actualizar ahora** en el pie.
 - **Notificaciones al instalar**: al abrir la app instalada por primera vez, ofrece activarlas con un solo toque.
+- **Cumpleaños por comunidad**: cada fecha puede pertenecer a una comunidad o quedar como General, y la vista pública se filtra por comunidad.
+  - Si el proyecto ya está en Supabase, ejecuta una vez `supabase/add-birthday-community.sql` en el SQL Editor.
+- **Personas conectadas**: el Resumen del panel muestra cuántos dispositivos están viendo la cartelera en ese momento; no aparece en la web pública.
 - **Manual para coordinadores**: guía visual en PDF para publicar, aprobar y compartir: [`docs/Manual-Coordinadores-Pastoral-Familiar.pdf`](docs/Manual-Coordinadores-Pastoral-Familiar.pdf).
 - **Compartir QR**: código generado con la dirección actual, para imprimir o enviar por WhatsApp.
 - **Cumpleaños y aniversarios** agrupados por mes.
